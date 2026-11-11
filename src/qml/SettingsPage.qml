@@ -51,7 +51,7 @@ FormCard.FormCardPage {
 
         FormCard.FormSpinBoxDelegate {
             label: i18nc("@label:spinbox", "Noise gate")
-            description: i18nc("@info", "Sounds quieter than this are ignored. Lower it for a quiet instrument or a distant microphone. You can also drag the marker on the input level meter.")
+            description: i18nc("@info", "Sounds quieter than this are ignored. Lower it for a quiet instrument or a distant microphone. You can also drag the marker on the Noise gate adjust meter while tuning.")
             from: TunerController.minNoiseGate
             to: TunerController.maxNoiseGate
             stepSize: 1

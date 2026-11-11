@@ -398,54 +398,57 @@ Kirigami.Page {
     component NoiseGatePanel: ColumnLayout {
         spacing: Kirigami.Units.smallSpacing
 
+        // Label and current level sit on the meter's line, centred on its track.
         RowLayout {
             Layout.fillWidth: true
-            Layout.leftMargin: Kirigami.Units.largeSpacing
-            Layout.rightMargin: Kirigami.Units.largeSpacing
+            spacing: 0
+
             QQC2.Label {
-                Layout.fillWidth: true
-                text: i18nc("@label", "Input level")
+                Layout.alignment: Qt.AlignTop
+                Layout.topMargin: gateMeter.trackCenter - height / 2
+                text: i18nc("@label", "Noise gate adjust")
                 font: Kirigami.Theme.smallFont
                 color: Kirigami.Theme.disabledTextColor
             }
+            NoiseGateMeter {
+                id: gateMeter
+                Layout.fillWidth: true
+                db: TunerController.levelDb
+                peak: TunerController.peakDb
+                gate: TunerController.noiseGate
+                minimumGate: TunerController.minNoiseGate
+                maximumGate: TunerController.maxNoiseGate
+                defaultGate: TunerController.defaultNoiseGate
+                onGateMoved: value => TunerController.noiseGate = value
+            }
             QQC2.Label {
+                Layout.alignment: Qt.AlignTop
+                Layout.topMargin: gateMeter.trackCenter - height / 2
+                Layout.minimumWidth: levelMetrics.width
+                horizontalAlignment: Text.AlignRight
                 text: i18nc("input level in decibels", "%1 dB", TunerController.levelDb.toFixed(1).replace("-", "−"))
                 font: Kirigami.Theme.smallFont
                 color: TunerController.levelDb <= TunerController.noiseGate ? Kirigami.Theme.disabledTextColor : Kirigami.Theme.textColor
+                // Wide enough for any level, so the meter doesn't shift while the value changes.
+                TextMetrics {
+                    id: levelMetrics
+                    font: Kirigami.Theme.smallFont
+                    text: i18nc("input level in decibels", "%1 dB", "−00.0")
+                }
             }
         }
 
-        NoiseGateMeter {
-            Layout.fillWidth: true
-            db: TunerController.levelDb
-            peak: TunerController.peakDb
-            gate: TunerController.noiseGate
-            minimumGate: TunerController.minNoiseGate
-            maximumGate: TunerController.maxNoiseGate
-            defaultGate: TunerController.defaultNoiseGate
-            onGateMoved: value => TunerController.noiseGate = value
-        }
-
+        // Two buttons of the same width, centred under the meter.
         RowLayout {
-            Layout.fillWidth: true
-            Layout.leftMargin: Kirigami.Units.largeSpacing
-            Layout.rightMargin: Kirigami.Units.largeSpacing
+            readonly property real buttonWidth: Math.max(Kirigami.Units.gridUnit * 11, resetButton.implicitWidth, measureButton.implicitWidth)
+
+            Layout.alignment: Qt.AlignHCenter
             spacing: Kirigami.Units.smallSpacing
 
-            QQC2.Label {
-                text: i18nc("@label:spinbox", "Noise gate")
-            }
-            QQC2.SpinBox {
-                from: TunerController.minNoiseGate
-                to: TunerController.maxNoiseGate
-                value: TunerController.noiseGate
-                editable: true
-                textFromValue: (value, locale) => i18nc("decibels", "%1 dB", String(value).replace("-", "−"))
-                valueFromText: (text, locale) => parseInt(text.replace("−", "-").replace(/[^0-9-]/g, "")) || TunerController.defaultNoiseGate
-                onValueModified: TunerController.noiseGate = value
-                Accessible.name: i18nc("@label:spinbox", "Noise gate")
-            }
             QQC2.Button {
+                id: resetButton
+                Layout.preferredWidth: parent.buttonWidth
+                icon.name: "edit-reset"
                 text: i18nc("@action:button reset the noise gate", "Reset")
                 enabled: TunerController.noiseGate !== TunerController.defaultNoiseGate
                 onClicked: TunerController.noiseGate = TunerController.defaultNoiseGate
@@ -453,10 +456,10 @@ Kirigami.Page {
                 QQC2.ToolTip.visible: hovered
                 QQC2.ToolTip.delay: Kirigami.Units.toolTipDelay
             }
-            Item {
-                Layout.fillWidth: true
+            MeasureNoiseButton {
+                id: measureButton
+                Layout.preferredWidth: parent.buttonWidth
             }
-            MeasureNoiseButton {}
         }
     }
 
@@ -472,7 +475,6 @@ Kirigami.Page {
             : done ? i18nc("@action:button noise gate was set", "Done")
             : i18nc("@action:button", "Set from room noise")
         enabled: !TunerController.measuringNoise
-        Layout.minimumWidth: Kirigami.Units.gridUnit * 10
 
         QQC2.ToolTip.text: i18nc("@info:tooltip", "Keep quiet for two seconds: the noise gate is set just above the noise of the room.")
         QQC2.ToolTip.visible: hovered

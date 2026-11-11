@@ -1,12 +1,13 @@
 # Kamerton — TODO
 
-Mockups: [mockups/index.html](mockups/index.html) (open in a browser; v3 "C2" plus v4 "D" is the implemented layout)
+Mockups: [mockups/index.html](mockups/index.html) (open in a browser; v3 "C2" plus v4 "E" is the implemented layout)
 
-## Done: noise gate on the level meter (v4, variant D)
+## Done: noise gate on the level meter (v4, variant E)
 
-- [x] Input level meter in the tuner card with a dB scale and a draggable noise gate marker; hatched zone for ignored sounds
+- [x] "Noise gate adjust" meter in the tuner card, label and level on the meter line, dB scale, draggable gate marker; hatched zone for ignored sounds
 - [x] Mouse wheel, arrow keys, Page Up/Down and double-click reset on the meter; screen reader name and value
-- [x] Noise gate −/+ box, Reset, and "Set from room noise" (listens 2 s, gate 6 dB above the noise; feedback only on the button)
+- [x] Reset and "Set from room noise" under the meter, same size, centered (listens 2 s, gate 6 dB above the noise; feedback only on the button)
+- [x] String buttons sized to the UI font; badge glyphs drawn so they read at 18 px with any icon theme
 - [x] Gate limited to −70…−10 dB so the marker always stays on the meter
 - [x] Status bar removed
 - [x] String number and frequency on the headstock pegs; tuned and play / stop badges on the top edge of every string button

@@ -101,7 +101,7 @@ Tones fade in and out gently, so starting and stopping them doesn't click.
 
 ### Setting the noise gate
 
-The **Input level** meter under the note shows what the microphone hears, in dB: green is a healthy level, yellow is loud, red is close to clipping. The orange marker is the **noise gate**. Sounds left of it, in the hatched part, are ignored, and the tuner waits for a sound.
+The **Noise gate adjust** meter under the note shows what the microphone hears, in dB, with the current level on its right: green is a healthy level, yellow is loud, red is close to clipping. The orange marker is the **noise gate**. Sounds left of it, in the hatched part, are ignored, and the tuner waits for a sound.
 
 - **Drag the marker**, or click anywhere on the meter, while you tune. The change applies at once and is saved.
 - With the meter focused: the arrow keys move the gate by 1 dB, <kbd>Page Up</kbd>/<kbd>Page Down</kbd> by 5 dB. The mouse wheel works too.
@@ -118,7 +118,7 @@ Open **Configure Kamerton** from the ☰ menu or with <kbd>Ctrl</kbd>+<kbd>Shift
 | --- | --- | --- |
 | Microphone / input | System default | The input to listen to: a built-in mic, a USB audio interface, a webcam mic or any other PipeWire source. |
 | Speakers / output | System default | Where reference tones play. |
-| Noise gate | −55 dB | −70 to −10 dB. Sounds quieter than this are ignored. Easier to set on the input level meter while you tune, see [Setting the noise gate](#setting-the-noise-gate). |
+| Noise gate | −55 dB | −70 to −10 dB. Sounds quieter than this are ignored. Easier to set on the Noise gate adjust meter while you tune, see [Setting the noise gate](#setting-the-noise-gate). |
 | Concert pitch (A4) | 440 Hz | 400–480 Hz. Some orchestras use 442 Hz, baroque music 415 Hz. Also in the toolbar. |
 | In-tune tolerance | ±3 cents | How close a string must be to count as tuned: ±1–2 cents for recording, ±5 for a quick check. |
 | Display | Needle | The display to start with. You can also switch it under the tuner. |
@@ -160,7 +160,7 @@ All settings, including custom tunings, are stored in `~/.config/kamertonrc`. To
 | Key | Action |
 | --- | --- |
 | <kbd>Space</kbd> | Play or stop the selected string's reference tone (when Auto-detect string is off) |
-| <kbd>←</kbd> <kbd>→</kbd>, <kbd>Page Up</kbd>/<kbd>Page Down</kbd> | Move the noise gate by 1 or 5 dB (with the input level meter focused) |
+| <kbd>←</kbd> <kbd>→</kbd>, <kbd>Page Up</kbd>/<kbd>Page Down</kbd> | Move the noise gate by 1 or 5 dB (with the Noise gate adjust meter focused) |
 | <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>,</kbd> | Settings |
 | <kbd>Ctrl</kbd>+<kbd>Q</kbd> | Quit |
 
@@ -169,7 +169,7 @@ All settings, including custom tunings, are stored in `~/.config/kamertonrc`. To
 <details>
 <summary><b>The tuner doesn't react when I play</b></summary>
 
-Watch the input level meter under the note while you play.
+Watch the Noise gate adjust meter under the note while you play.
 - **It doesn't move:** Kamerton is listening to the wrong input. Choose the right one under *Microphone / input*, and check that the mic isn't muted in Plasma's audio settings.
 - **It moves but stays left of the orange noise gate marker:** drag the marker to the left, or move the mic closer.
 </details>

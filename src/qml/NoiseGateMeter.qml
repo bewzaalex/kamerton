@@ -35,6 +35,7 @@ QQC2.Slider {
 
     readonly property real trackY: Kirigami.Units.gridUnit * 1.3
     readonly property real trackHeight: 12
+    readonly property real trackCenter: trackY + trackHeight / 2
     readonly property color gateColor: Kirigami.Theme.neutralTextColor
     readonly property color trackColor: Kirigami.ColorUtils.linearInterpolation(Kirigami.Theme.backgroundColor, Kirigami.Theme.textColor, 0.2)
 
@@ -123,7 +124,8 @@ QQC2.Slider {
                         width: 2
                         height: track.height + 8
                         rotation: 45
-                        color: Qt.alpha(root.gateColor, 0.45)
+                        // Panel color, so the stripes show over any fill color.
+                        color: Qt.alpha(Kirigami.Theme.backgroundColor, 0.6)
                     }
                 }
             }
