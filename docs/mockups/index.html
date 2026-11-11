@@ -60,6 +60,16 @@ a { color: var(--accent); }
     ["v3-refined.html", "C1 · Switch and Start over under the headstock", ""],
     ["v3-refined.html?theme=light&startInstrument=violin&startDisplay=strobe&startAuto=true", "C1 · Violin, light, auto-detect on", ""]
   ]'></div>
+
+  <h2>v4 — noise gate on the level meter</h2>
+  <p>Adjust the noise gate while tuning. Plucks ring out and decay into the room noise; the tuner dims while the input is below the gate.
+     Try dragging the orange marker, the arrow keys and the mouse wheel on it. Add <code>&amp;room=noisy</code> for a louder room.</p>
+  <div class="grid" data-pages='[
+    ["v4-noise-gate.html?gate=a", "A · Drag the marker on the status bar meter", "Wider meter, a handle you can grab, hatched zone for ignored sounds, tooltip while dragging. Double-click resets."],
+    ["v4-noise-gate.html?gate=b&open=true", "B · Click the meter for a noise gate popup", "Large meter with a scale, −/+ buttons, Reset, and Set from room noise (listens 2 s, sets the gate 6 dB above it)."],
+    ["v4-noise-gate.html?gate=c", "C · Big input meter in the tuner card", "Always visible under the note, full width, easiest to hit. The status bar only shows the gate value."],
+    ["v4-noise-gate.html?gate=a&theme=light&room=noisy", "A · Light theme, noisy room", "With the default −55 dB gate the room noise keeps the tuner busy; drag the gate above it."]
+  ]'></div>
 </main>
 <script>
 for (const grid of document.querySelectorAll('[data-pages]')) {
