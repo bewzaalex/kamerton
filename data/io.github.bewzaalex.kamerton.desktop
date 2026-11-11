@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Kamerton
+GenericName=Instrument Tuner
+Comment=Tune your guitar, bass, ukulele, violin and other instruments
+Exec=kamerton
+Icon=io.github.bewzaalex.kamerton
+Terminal=false
+Categories=Qt;KDE;AudioVideo;Audio;Music;
+Keywords=tuner;guitar;bass;ukulele;violin;pitch;music;
+StartupNotify=true

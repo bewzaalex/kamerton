@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component type="desktop-application">
+  <id>io.github.bewzaalex.kamerton</id>
+  <launchable type="desktop-id">io.github.bewzaalex.kamerton.desktop</launchable>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <name>Kamerton</name>
+  <summary>Instrument tuner</summary>
+  <developer id="io.github.bewzaalex">
+    <name>Alex Bevza</name>
+  </developer>
+  <url type="homepage">https://github.com/bewzaalex/kamerton</url>
+  <url type="bugtracker">https://github.com/bewzaalex/kamerton/issues</url>
+  <url type="vcs-browser">https://github.com/bewzaalex/kamerton</url>
+  <categories>
+    <category>AudioVideo</category>
+    <category>Audio</category>
+    <category>Music</category>
+  </categories>
+  <content_rating type="oars-1.1"/>
+  <supports>
+    <control>pointing</control>
+    <control>keyboard</control>
+  </supports>
+  <screenshots>
+    <screenshot type="default">
+      <caption>Tuning a guitar with the needle display</caption>
+      <image>https://raw.githubusercontent.com/bewzaalex/kamerton/main/docs/screenshots/main-dark.png</image>
+    </screenshot>
+  </screenshots>
+  <description>
+    <p>Kamerton tunes guitars, basses, ukuleles, mandolins, banjos and the violin family
+    by listening through the microphone, or plays reference tones when a microphone is not available.</p>
+    <ul>
+      <li>Needle, strobe and LED bar displays</li>
+      <li>Automatic string detection, or pick a string and play its reference tone</li>
+      <li>Built-in and custom tunings</li>
+      <li>Adjustable concert pitch</li>
+      <li>Input level meter in dB with a noise gate</li>
+    </ul>
+  </description>
+  <releases>
+    <release version="0.1.0" date="2026-11-11"/>
+  </releases>
+</component>

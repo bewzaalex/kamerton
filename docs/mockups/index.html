@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kamerton mockups</title>
+<style>
+:root {
+  --bg: #eff0f1; --card: #ffffff; --text: #232629; --muted: #5b6670; --border: #bcc1c6; --accent: #1d6fa0; --chosen: #1d7a45;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #202326; --card: #2a2e32; --text: #fcfcfc; --muted: #a1a9b1; --border: #3f454b; --accent: #3daee9; --chosen: #3ccf7a; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.5 "Noto Sans", system-ui, sans-serif; }
+main { max-width: 1240px; margin: 0 auto; padding: 32px 16px 64px; }
+h1 { font-size: 28px; margin: 0 0 4px; }
+h2 { font-size: 20px; margin: 40px 0 4px; }
+p { margin: 0 0 12px; color: var(--muted); max-width: 70ch; }
+a { color: var(--accent); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 380px), 1fr)); gap: 16px; margin-top: 16px; }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; }
+.card.chosen { border: 2px solid var(--chosen); }
+.preview { position: relative; aspect-ratio: 3 / 2; overflow: hidden; border-bottom: 1px solid var(--border); background: var(--bg); }
+.preview iframe { position: absolute; left: 0; top: 0; width: 1200px; height: 800px; border: 0; transform-origin: 0 0; pointer-events: none; }
+.meta { padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; }
+.meta strong { font-size: 15px; }
+.meta span { color: var(--muted); font-size: 13px; }
+.badge { display: inline-block; margin-left: 6px; padding: 0 8px; border-radius: 10px; font-size: 12px; font-weight: 600; color: var(--chosen); border: 1px solid var(--chosen); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Kamerton mockups</h1>
+  <p>Interactive design mockups made while designing the app. Microphone input is simulated; the Reference tone buttons really play sound in the browser.
+     Open a card to try it full size. Settings can be changed with URL parameters, e.g. <code>?theme=light&amp;startInstrument=cello</code>.</p>
+
+  <h2>v1 — first design</h2>
+  <p>Separate Listen and Reference modes, needle / strobe / LED bar displays, headstock or string chips.</p>
+  <div class="grid" data-pages='[
+    ["v1-tuner.html", "Breeze Dark · Guitar · Needle", "Pick strings on the headstock, switch displays, change instrument and tuning."],
+    ["v1-tuner.html?startInstrument=bass4&startMode=reference", "Reference tone · Bass", "Pluck / Sine / Organ, cycle through all strings."],
+    ["v1-tuner.html?theme=light&startInstrument=violin&startDisplay=strobe", "Breeze Light · Violin · Strobe", "Instruments without a headstock use a row of string chips."],
+    ["v1-tuner.html?theme=light&startInstrument=ukulele&startDisplay=bar", "Breeze Light · Ukulele · LED bar", ""]
+  ]'></div>
+
+  <h2>v2 — one screen, reference tone built in</h2>
+  <p>The Listen / Reference toggle is gone and the mic is always on. Reference controls are disabled while strings are detected automatically.
+     The level meter shows dB, a peak tick and the noise gate marker.</p>
+  <div class="grid" data-pages='[
+    ["v2-one-screen.html", "A · Reference in the bottom bar", ""],
+    ["v2-one-screen.html?variant=side", "B · Reference under the headstock", ""],
+    ["v2-one-screen.html?variant=side&theme=light&startInstrument=violin&startDisplay=strobe&startAuto=true", "B · Violin, auto-detect on", "Without a headstock, variant B falls back to the bottom bar."]
+  ]'></div>
+
+  <h2>v3 — layout B refined</h2>
+  <p>Strings panel for every instrument, A4 next to the tuning menu, display style buttons under the tuner.</p>
+  <div class="grid" data-pages='[
+    ["v3-refined.html?layout=c2", "C2 · Auto-detect switch, Start over status button", "This is the layout implemented in the app.", true],
+    ["v3-refined.html", "C1 · Switch and Start over under the headstock", ""],
+    ["v3-refined.html?theme=light&startInstrument=violin&startDisplay=strobe&startAuto=true", "C1 · Violin, light, auto-detect on", ""]
+  ]'></div>
+</main>
+<script>
+for (const grid of document.querySelectorAll('[data-pages]')) {
+  for (const [href, title, note, chosen] of JSON.parse(grid.dataset.pages)) {
+    const card = document.createElement('a');
+    card.className = 'card' + (chosen ? ' chosen' : '');
+    card.href = href;
+    card.style.textDecoration = 'none';
+    card.style.color = 'inherit';
+    card.innerHTML = '<div class="preview"><iframe loading="lazy" tabindex="-1" aria-hidden="true"></iframe></div>'
+      + '<div class="meta"><strong></strong><span></span></div>';
+    card.querySelector('iframe').src = href;
+    card.querySelector('strong').textContent = title;
+    if (chosen) {
+      const badge = document.createElement('span');
+      badge.className = 'badge';
+      badge.textContent = 'chosen';
+      card.querySelector('strong').append(badge);
+    }
+    card.querySelector('.meta span').textContent = note;
+    grid.append(card);
+  }
+}
+// Scale the 1200×800 pages down to the card width.
+const fit = () => document.querySelectorAll('.preview').forEach((p) => {
+  p.querySelector('iframe').style.transform = `scale(${p.clientWidth / 1200})`;
+});
+new ResizeObserver(fit).observe(document.body);
+fit();
+</script>
+</body>
+</html>
