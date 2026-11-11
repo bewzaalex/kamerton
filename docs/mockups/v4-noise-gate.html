@@ -184,9 +184,6 @@ button:disabled{cursor:default}
               <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"></path></svg>
             </sc-if>
           </button>
-          <div style="display: flex; flex-direction: column; gap: 2px">
-            <span style="font-size: 26px; font-weight: 300; line-height: 1">{{cur.letter}}<span style="font-size: 14px; color: {{c.muted}}">{{cur.oct}}</span></span>
-          </div>
         </div>
         <div role="group" aria-label="Sound" style="display: flex; border: 1px solid {{c.border}}; border-radius: 5px; overflow: hidden; background: {{c.button}}">
           <sc-for list="{{timbres}}" as="tb" hint-placeholder-count="3">
