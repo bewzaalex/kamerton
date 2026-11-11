@@ -191,7 +191,7 @@ Kirigami.Page {
             Card {
                 Layout.fillHeight: !page.compact
                 Layout.fillWidth: page.compact
-                Layout.preferredWidth: Kirigami.Units.gridUnit * 19
+                Layout.preferredWidth: Math.max(Kirigami.Units.gridUnit * 19, headstock.implicitWidth + Kirigami.Units.largeSpacing * 2 + 2)
                 Layout.minimumHeight: sideColumn.implicitHeight + Kirigami.Units.largeSpacing * 2
 
                 ColumnLayout {
@@ -216,6 +216,7 @@ Kirigami.Page {
                     }
 
                     Headstock {
+                        id: headstock
                         visible: page.hasHeadstock
                         Layout.alignment: Qt.AlignHCenter
                         leftCount: TunerController.headLeft

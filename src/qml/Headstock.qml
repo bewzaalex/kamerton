@@ -23,8 +23,20 @@ Item {
     readonly property int totalHeight: top0 + rows * rowHeight + 60
     readonly property int nutY: totalHeight - 44
     readonly property int stringCount: strings.length
-    readonly property int artWidth: 304
-    readonly property int pegWidth: 96
+    // The art is drawn for 96 px pegs; wider fonts get wider pegs, and the pegs move outwards.
+    readonly property int shapeWidth: 304
+    readonly property int basePegWidth: 96
+    readonly property int pegWidth: {
+        let widest = basePegWidth;
+        for (let i = 0; i < pegRepeater.count; ++i) {
+            const peg = pegRepeater.itemAt(i);
+            if (peg) {
+                widest = Math.max(widest, peg.implicitWidth);
+            }
+        }
+        return Math.ceil(widest);
+    }
+    readonly property int artWidth: shapeWidth + 2 * (pegWidth - basePegWidth)
 
     // Every color is derived from the KDE color scheme.
     readonly property color woodColor: Kirigami.ColorUtils.linearInterpolation(Kirigami.Theme.backgroundColor, Kirigami.Theme.textColor, 0.12)
@@ -63,7 +75,7 @@ Item {
     implicitHeight: totalHeight
 
     Shape {
-        width: root.artWidth
+        width: root.shapeWidth
         height: root.totalHeight
         anchors.horizontalCenter: parent.horizontalCenter
         preferredRendererType: Shape.CurveRenderer
@@ -77,8 +89,8 @@ Item {
             PathSvg {
                 path: root.pegs.map(p => {
                     const y = root.pegY(p.row);
-                    return p.left ? `M ${root.pegWidth} ${y} L ${root.postX(true) - 6} ${y}`
-                                  : `M ${root.postX(false) + 6} ${y} L ${root.artWidth - root.pegWidth} ${y}`;
+                    return p.left ? `M ${root.basePegWidth} ${y} L ${root.postX(true) - 6} ${y}`
+                                  : `M ${root.postX(false) + 6} ${y} L ${root.shapeWidth - root.basePegWidth} ${y}`;
                 }).join(" ")
             }
         }
@@ -144,6 +156,7 @@ Item {
     }
 
     Repeater {
+        id: pegRepeater
         model: root.pegs
         delegate: StringButton {
             required property var modelData

@@ -17,6 +17,8 @@ QQC2.AbstractButton {
     property int letterSize: 20
     /// The pegs are narrow: string number and frequency use a fixed small size that fits them.
     readonly property int detailSize: Math.round(letterSize * 0.56)
+    /// Keeps the text clear of the rounded ends.
+    readonly property int sidePadding: Math.round(height * 0.3)
 
     readonly property string noteName: (info.letter ?? "") + (info.octave ?? "")
     readonly property string frequencyText: Number(info.frequency ?? 0).toFixed(2)
@@ -49,7 +51,7 @@ QQC2.AbstractButton {
         spacing: Kirigami.Units.smallSpacing
 
         Row {
-            Layout.leftMargin: Kirigami.Units.largeSpacing
+            Layout.leftMargin: root.sidePadding
             QQC2.Label {
                 id: letter
                 text: root.info.letter ?? ""
@@ -69,7 +71,7 @@ QQC2.AbstractButton {
         }
 
         ColumnLayout {
-            Layout.rightMargin: Kirigami.Units.largeSpacing
+            Layout.rightMargin: root.sidePadding
             spacing: 0
             QQC2.Label {
                 Layout.alignment: Qt.AlignRight
