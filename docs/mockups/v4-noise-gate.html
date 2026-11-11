@@ -583,7 +583,8 @@ class Component extends DCLogic {
       lp.frequency.setValueAtTime(Math.min(f * 10, 12000), t);
       lp.frequency.exponentialRampToValueAtTime(f * 1.5, t + 1.6);
       o.connect(lp); lp.connect(g);
-      g.gain.setValueAtTime(vol * 1.5, t);
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(vol * 1.5, t + 0.06);
       g.gain.exponentialRampToValueAtTime(0.0001, t + 2.4);
     } else {
       if (tb === 'organ') {
@@ -593,7 +594,7 @@ class Component extends DCLogic {
       }
       o.connect(g);
       g.gain.setValueAtTime(0, t);
-      g.gain.linearRampToValueAtTime(vol, t + 0.05);
+      g.gain.linearRampToValueAtTime(vol, t + 0.06);
     }
     o.start();
     this.voice = { o, g };
@@ -610,9 +611,12 @@ class Component extends DCLogic {
     if (this.voice && this.ctx) {
       try {
         const t = this.ctx.currentTime;
-        this.voice.g.gain.cancelScheduledValues(t);
-        this.voice.g.gain.setTargetAtTime(0, t, 0.03);
-        this.voice.o.stop(t + 0.25);
+        // Fade out over 150 ms, like the app.
+        const gain = this.voice.g.gain;
+        gain.cancelScheduledValues(t);
+        gain.setValueAtTime(gain.value, t);
+        gain.linearRampToValueAtTime(0, t + 0.15);
+        this.voice.o.stop(t + 0.2);
       } catch (e) {}
     }
     this.voice = null;

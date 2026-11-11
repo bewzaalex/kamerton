@@ -21,6 +21,9 @@ public:
     };
 
     static constexpr int MaxHarmonics = 10;
+    /// Tones fade in and out instead of starting and stopping abruptly.
+    static constexpr double FadeInSeconds = 0.06;
+    static constexpr double FadeOutSeconds = 0.15;
 
     explicit ToneGenerator(double sampleRate = 48000.0);
 

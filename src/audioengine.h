@@ -5,6 +5,7 @@
 #include <QList>
 #include <QObject>
 #include <QString>
+#include <QTimer>
 
 #include <atomic>
 #include <map>
@@ -21,7 +22,7 @@
  * audio sources and sinks up to date.
  *
  * Streams only exist while they are enabled: the playback stream is
- * created when a reference tone starts and destroyed when it stops.
+ * created when a reference tone starts and destroyed once it has faded out.
  */
 class AudioEngine : public QObject
 {
@@ -106,6 +107,7 @@ private:
 
     StreamCtx m_capture;
     StreamCtx m_playback;
+    QTimer m_playbackStop; ///< destroys the playback stream once the fade-out has finished
     QString m_inputTarget;
     QString m_outputTarget;
 
