@@ -104,12 +104,12 @@ button:disabled{cursor:default}
               <span style="font-size: 18px; font-weight: 600">{{p.letter}}</span><span style="font-size: 11px; color: {{c.muted}}; align-self: flex-end; padding-bottom: 10px">{{p.oct}}</span>
               <sc-if value="{{p.playingHere}}" hint-placeholder-val="{{false}}">
                 <span style="position: absolute; left: -4px; top: -4px; width: 18px; height: 18px; border-radius: 9px; background: {{c.hl}}; display: flex; align-items: center; justify-content: center">
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="#ffffff" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"></path></svg>
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="{{c.hlText}}" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"></path></svg>
                 </span>
               </sc-if>
               <sc-if value="{{p.tuned}}" hint-placeholder-val="{{false}}">
                 <span style="position: absolute; right: -4px; top: -4px; width: 18px; height: 18px; border-radius: 9px; background: {{c.pos}}; display: flex; align-items: center; justify-content: center">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="{{c.hlText}}" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg>
                 </span>
               </sc-if>
             </button>
@@ -128,12 +128,12 @@ button:disabled{cursor:default}
               </span>
               <sc-if value="{{sItem.playingHere}}" hint-placeholder-val="{{false}}">
                 <span style="position: absolute; left: -4px; top: -4px; width: 18px; height: 18px; border-radius: 9px; background: {{c.hl}}; display: flex; align-items: center; justify-content: center">
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="#ffffff" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"></path></svg>
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="{{c.hlText}}" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"></path></svg>
                 </span>
               </sc-if>
               <sc-if value="{{sItem.tuned}}" hint-placeholder-val="{{false}}">
                 <span style="position: absolute; right: -4px; top: -4px; width: 18px; height: 18px; border-radius: 9px; background: {{c.pos}}; display: flex; align-items: center; justify-content: center">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="{{c.hlText}}" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg>
                 </span>
               </sc-if>
             </button>
@@ -298,8 +298,8 @@ button:disabled{cursor:default}
                 <button type="button" onClick="{{gateInc}}" aria-label="Raise noise gate by 1 dB" style="width: 26px; height: 26px; border: 0; background: transparent; color: {{c.text}}; cursor: pointer">+</button>
               </div>
               <button type="button" onClick="{{gateReset}}" title="Back to −55 dB" style="height: 28px; padding: 0 10px; border-radius: 5px; border: 1px solid {{c.border}}; background: {{c.button}}; color: {{c.text}}; cursor: pointer; font-size: 13px">Reset</button>
-              <span style="flex: 1; min-width: 0; text-align: right; font-size: 12px; color: {{c.pos}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{calShort}}</span>
-              <button type="button" onClick="{{calibrate}}" title="Stay quiet for 2 seconds; the gate is set 6 dB above the room noise" disabled="{{calBusy}}" style="height: 28px; padding: 0 12px; border-radius: 5px; border: 1px solid {{c.hl}}; background: {{c.sel}}; color: {{c.text}}; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-size: 13px">
+              <span style="flex: 1"></span>
+              <button type="button" onClick="{{calibrate}}" title="Stay quiet for 2 seconds; the gate is set 6 dB above the room noise" disabled="{{calBusy}}" style="height: 28px; min-width: 176px; justify-content: center; padding: 0 12px; border-radius: 5px; border: 1px solid {{calBtn.bd}}; background: {{calBtn.bg}}; color: {{calBtn.fg}}; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-size: 13px">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 12h3l3-7 4 14 3-7h5"></path></svg>
                 {{calLabel}}
               </button>
@@ -438,7 +438,7 @@ button:disabled{cursor:default}
   </div>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"gate":{"editor":"enum","options":["a","b","c","d"],"default":"d"},"room":{"editor":"enum","options":["quiet","noisy"],"default":"quiet"},"open":{"editor":"boolean","default":false},"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"startInstrument":{"editor":"enum","options":["guitar6","guitar7","bass4","bass5","ukulele","mandolin","banjo","violin","viola","cello","contrabass"],"default":"guitar6"},"startDisplay":{"editor":"enum","options":["needle","strobe","bar"],"default":"needle"},"startAuto":{"editor":"boolean","default":true},"$preview":{"width":1200,"height":800}}' >
+<script type="text/x-dc" data-dc-script data-props='{"gate":{"editor":"enum","options":["a","b","c","d"],"default":"d"},"room":{"editor":"enum","options":["quiet","noisy"],"default":"quiet"},"open":{"editor":"boolean","default":false},"theme":{"editor":"enum","options":["dark","light","layan"],"default":"dark"},"startInstrument":{"editor":"enum","options":["guitar6","guitar7","bass4","bass5","ukulele","mandolin","banjo","violin","viola","cello","contrabass"],"default":"guitar6"},"startDisplay":{"editor":"enum","options":["needle","strobe","bar"],"default":"needle"},"startAuto":{"editor":"boolean","default":true},"$preview":{"width":1200,"height":800}}' >
 class Component extends DCLogic {
   data() {
     if (this._data) return this._data;
@@ -523,11 +523,13 @@ class Component extends DCLogic {
       sim.hold = 0;
     }
     const upd = { cents: sim.disp, strobeX: sim.x, db: sim.db, peak: sim.peak, signal };
+    if (s.calFlash > 0) upd.calFlash = s.calFlash - 1;
     if (s.cal > 0) {
       upd.calMax = Math.max(s.calMax ?? -70, sim.db);
       upd.cal = s.cal - 1;
       if (upd.cal === 0) {
         upd.gate = this.clampGate(Math.round(upd.calMax + 6));
+        upd.calFlash = 30;
         upd.calDone = 'Set to ' + this.dbText(upd.gate) + ', 6 dB above the room noise (' + this.dbText(Math.round(upd.calMax)) + ').';
       }
     }
@@ -624,17 +626,27 @@ class Component extends DCLogic {
   renderVals() {
     const k = this.cfg();
     const s = k.s;
-    const light = (this.props.theme ?? 'dark') === 'light';
-    const c = light ? {
-      window: '#eff0f1', view: '#ffffff', header: '#dee0e2', button: '#fcfcfc', text: '#232629', muted: '#5b6670',
-      border: '#bcc1c6', hl: '#3daee9', sel: 'rgba(61,174,233,0.18)', pos: '#1d7a45', neu: '#b35400', neg: '#c0283f',
-      wood: '#cfc6bd', woodEdge: '#9b8f84', chrome: '#8d949b', stringCol: '#6e767e', nut: '#f6f2e8',
-      shade: 'rgba(179,84,0,0.35)', tip: '#232629', tipText: '#fcfcfc'
-    } : {
-      window: '#202326', view: '#1b1e20', header: '#2a2e32', button: '#31363b', text: '#fcfcfc', muted: '#a1a9b1',
-      border: '#3f454b', hl: '#3daee9', sel: 'rgba(61,174,233,0.22)', pos: '#3ccf7a', neu: '#f67400', neg: '#ee5d70',
-      wood: '#4a423c', woodEdge: '#5e564f', chrome: '#9aa1a8', stringCol: '#b9c0c6', nut: '#e8e2d4',
-      shade: 'rgba(246,116,0,0.35)', tip: '#fcfcfc', tipText: '#232629'
+    // Colors come only from KDE color scheme roles (kdeglobals), like Kirigami.Theme in the app.
+    const schemes = {
+      // Breeze Dark / Breeze Light
+      dark: { window: [32, 35, 38], view: [20, 22, 24], header: [41, 44, 48], button: [41, 44, 48], text: [252, 252, 252], inactive: [161, 169, 177],
+        positive: [39, 174, 96], neutral: [246, 116, 0], negative: [218, 68, 83], accent: [61, 174, 233], tooltip: [41, 44, 48], tooltipText: [252, 252, 252] },
+      light: { window: [239, 240, 241], view: [255, 255, 255], header: [222, 224, 226], button: [252, 252, 252], text: [35, 38, 41], inactive: [112, 125, 138],
+        positive: [39, 174, 96], neutral: [246, 116, 0], negative: [218, 68, 83], accent: [61, 174, 233], tooltip: [247, 247, 247], tooltipText: [35, 38, 41] },
+      // Layan (dark), as set in Plasma System Settings
+      layan: { window: [49, 49, 58], view: [49, 49, 58], header: [49, 49, 58], button: [68, 69, 75], text: [234, 234, 234], inactive: [153, 153, 153],
+        positive: [0, 110, 40], neutral: [176, 128, 0], negative: [191, 3, 3], accent: [86, 87, 245], tooltip: [33, 35, 41], tooltipText: [221, 221, 221] }
+    };
+    const K = schemes[this.props.theme] || schemes.dark;
+    const rgb = (v, a) => a === undefined ? 'rgb(' + v.join(',') + ')' : 'rgba(' + v.join(',') + ',' + a + ')';
+    const mix = (a, b, t) => rgb(a.map((x, i) => Math.round(x + (b[i] - x) * t)));
+    const c = {
+      window: rgb(K.window), view: rgb(K.view), header: rgb(K.header), button: rgb(K.button), text: rgb(K.text), muted: rgb(K.inactive),
+      border: mix(K.window, K.text, 0.2), hl: rgb(K.accent), hlText: 'rgb(255,255,255)', sel: rgb(K.accent, 0.22),
+      pos: rgb(K.positive), neu: rgb(K.neutral), neg: rgb(K.negative), shade: rgb(K.neutral, 0.4),
+      tip: rgb(K.tooltip), tipText: rgb(K.tooltipText),
+      wood: mix(K.window, K.text, 0.12), woodEdge: mix(K.window, K.text, 0.3), chrome: mix(K.window, K.text, 0.55),
+      stringCol: mix(K.view, K.text, 0.6), nut: mix(K.view, K.text, 0.85)
     };
     const layout = 'c2';
     const display = s.display ?? this.props.startDisplay ?? 'needle';
@@ -781,7 +793,7 @@ class Component extends DCLogic {
       stringsHighFirst: strings.slice().reverse(),
       ref: { disabled: auto, op: auto ? 0.42 : 1, ring: auto ? c.border : c.hl },
       showRefHint: auto && layout !== 'c2',
-      sw: { track: auto ? c.hl : c.button, border: auto ? c.hl : c.border, knob: auto ? '#ffffff' : c.muted, knobX: auto ? 17 : 1 },
+      sw: { track: auto ? c.hl : c.button, border: auto ? c.hl : c.border, knob: auto ? c.hlText : c.muted, knobX: auto ? 17 : 1 },
       prog: tunedCount === N
         ? { bd: c.pos, bg: 'transparent', fg: c.pos }
         : { bd: c.border, bg: c.button, fg: c.text },
@@ -791,11 +803,11 @@ class Component extends DCLogic {
       varA: variant === 'a', varB: variant === 'b', varC: variant === 'c', varD: variant === 'd',
       meterInCard: variant === 'c' || variant === 'd',
       meterTitle: variant === 'd' ? 'Input level' : 'Input level · drag the orange marker to set the noise gate',
-      calShort: (s.cal ?? 0) > 0 ? '' : s.calDone ? '✓ ' + s.calDone.split(',')[0] : '',
       sigOp: signal ? 1 : 0.35,
       popOpen: !!s.pop, popBd: s.pop ? c.hl : 'transparent', popBg: s.pop ? c.sel : 'transparent',
       calBusy: (s.cal ?? 0) > 0,
-      calLabel: (s.cal ?? 0) > 0 ? 'Listening… ' + Math.ceil(s.cal / 20) + ' s' : 'Set from room noise',
+      calLabel: (s.cal ?? 0) > 0 ? 'Listening… ' + Math.ceil(s.cal / 20) + ' s' : (s.calFlash ?? 0) > 0 ? '✓ Done' : 'Set from room noise',
+      calBtn: (s.calFlash ?? 0) > 0 ? { bd: c.pos, bg: 'transparent', fg: c.pos } : { bd: c.hl, bg: c.sel, fg: c.text },
       calText: (s.cal ?? 0) > 0 ? 'Keep the strings quiet for a moment.'
         : s.calDone || 'Sounds left of the orange marker are ignored. Drag it just above the noise of the room, or let Kamerton measure it.',
       togglePop: () => this.setState({ pop: !s.pop }),

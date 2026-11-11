@@ -120,7 +120,7 @@ GridLayout {
             width: 12
             height: 12
             source: parent.icon
-            color: "white"
+            color: Kirigami.Theme.highlightedTextColor
             isMask: true
         }
     }

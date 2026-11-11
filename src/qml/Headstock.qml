@@ -24,8 +24,8 @@ Item {
     readonly property int nutY: totalHeight - 44
     readonly property int stringCount: strings.length
 
-    readonly property color woodColor: Kirigami.ColorUtils.tintWithAlpha(
-        Kirigami.ColorUtils.linearInterpolation(Kirigami.Theme.backgroundColor, Kirigami.Theme.textColor, 0.12), "#8a6a4a", 0.25)
+    // Every color is derived from the KDE color scheme.
+    readonly property color woodColor: Kirigami.ColorUtils.linearInterpolation(Kirigami.Theme.backgroundColor, Kirigami.Theme.textColor, 0.12)
     readonly property color edgeColor: Kirigami.ColorUtils.linearInterpolation(woodColor, Kirigami.Theme.textColor, 0.2)
     readonly property color chromeColor: Kirigami.ColorUtils.linearInterpolation(Kirigami.Theme.backgroundColor, Kirigami.Theme.textColor, 0.55)
     readonly property color stringColor: Kirigami.ColorUtils.linearInterpolation(Kirigami.Theme.backgroundColor, Kirigami.Theme.textColor, 0.7)
@@ -115,7 +115,7 @@ Item {
 
         // Nut.
         ShapePath {
-            fillColor: Kirigami.ColorUtils.linearInterpolation("#f6f2e8", Kirigami.Theme.backgroundColor, 0.1)
+            fillColor: Kirigami.ColorUtils.linearInterpolation(Kirigami.Theme.backgroundColor, Kirigami.Theme.textColor, 0.85)
             strokeColor: "transparent"
             PathRectangle {
                 x: 110
@@ -223,7 +223,7 @@ Item {
             width: 12
             height: 12
             source: parent.icon
-            color: "white"
+            color: Kirigami.Theme.highlightedTextColor
             isMask: true
         }
     }
