@@ -352,6 +352,7 @@ button:disabled{cursor:default}
     </div>
   </div>
 
+  <sc-if value="{{hasFooter}}" hint-placeholder-val="{{false}}">
   <div style="position: relative; display: flex; flex-wrap: wrap; align-items: center; gap: 16px; min-height: 34px; box-sizing: border-box; padding: 4px 14px; border-top: 1px solid {{c.border}}; background: {{c.header}}; font-size: 12px; color: {{c.muted}}">
     <span style="display: inline-flex; align-items: center; gap: 6px">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"></rect><path d="M5 11a7 7 0 0 0 14 0M12 18v3"></path></svg>
@@ -436,6 +437,7 @@ button:disabled{cursor:default}
       <span style="font-variant-numeric: tabular-nums">Noise gate {{gate.text}}</span>
     </sc-if>
   </div>
+  </sc-if>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"gate":{"editor":"enum","options":["a","b","c","d"],"default":"d"},"room":{"editor":"enum","options":["quiet","noisy"],"default":"quiet"},"open":{"editor":"boolean","default":false},"theme":{"editor":"enum","options":["dark","light","layan"],"default":"dark"},"startInstrument":{"editor":"enum","options":["guitar6","guitar7","bass4","bass5","ukulele","mandolin","banjo","violin","viola","cello","contrabass"],"default":"guitar6"},"startDisplay":{"editor":"enum","options":["needle","strobe","bar"],"default":"needle"},"startAuto":{"editor":"boolean","default":true},"$preview":{"width":1200,"height":800}}' >
@@ -802,6 +804,7 @@ class Component extends DCLogic {
       cur, g, st, bar, hs, lvl, gate, gateTicks,
       varA: variant === 'a', varB: variant === 'b', varC: variant === 'c', varD: variant === 'd',
       meterInCard: variant === 'c' || variant === 'd',
+      hasFooter: variant === 'a' || variant === 'b',
       meterTitle: variant === 'd' ? 'Input level' : 'Input level · drag the orange marker to set the noise gate',
       sigOp: signal ? 1 : 0.35,
       popOpen: !!s.pop, popBd: s.pop ? c.hl : 'transparent', popBg: s.pop ? c.sel : 'transparent',
