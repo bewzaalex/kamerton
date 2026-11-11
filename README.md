@@ -235,6 +235,12 @@ Bug reports, ideas and pull requests are welcome. For anything bigger than a sma
 - Title pull requests with [Conventional Commits](https://www.conventionalcommits.org/): `feat:`, `fix:`, `docs:`, …
 - In bug reports, mention the instrument and display you used, your distribution, and your Qt and KDE Frameworks versions.
 
+## How Kamerton is made
+
+Kamerton is built with the help of AI. The design mockups, the code and this documentation were written with [Claude Code](https://claude.com/claude-code), Anthropic's AI coding assistant, working from the author's ideas, feedback and decisions. The author decides what Kamerton does and how it looks, tries the changes on a real Plasma desktop and instrument, and is responsible for what is published here.
+
+Commits written with the assistant say so in a `Co-Authored-By: Claude` line.
+
 ## License
 
 Kamerton is free software: you can redistribute it and/or modify it under the terms of the [GNU General Public License v3.0 or later](LICENSE).
