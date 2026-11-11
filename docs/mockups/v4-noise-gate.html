@@ -267,6 +267,40 @@ button:disabled{cursor:default}
 
       <div style="flex: 1"></div>
 
+      <sc-if value="{{varE}}" hint-placeholder-val="{{false}}">
+        <div style="width: 100%; max-width: 620px; display: flex; flex-direction: column; gap: 6px">
+          <div style="display: flex; align-items: flex-start; gap: 4px">
+            <span style="padding-top: 20px; font-size: 12px; color: {{c.muted}}; white-space: nowrap">Noise gate adjust</span>
+            <div style="flex: 1; min-width: 0">
+          <div class="gm" role="slider" tabindex="0" aria-label="Noise gate" aria-valuemin="-70" aria-valuemax="-10" aria-valuenow="{{gate.db}}" aria-valuetext="{{gate.text}}" onPointerdown="{{gateDown}}" onPointermove="{{gateMove}}" onPointerup="{{gateUp}}" onPointercancel="{{gateUp}}" onKeydown="{{gateKey}}" onWheel="{{gateWheel}}" onDblclick="{{gateReset}}" onBlur="{{gateBlur}}" style="position: relative; height: 58px; margin: 0 8px; cursor: ew-resize; touch-action: none; outline: none; border-radius: 4px">
+            <div style="position: absolute; left: {{gate.pct}}%; top: 0; transform: translateX({{gate.flagShift}}%); white-space: nowrap; font-size: 12px; font-weight: 600; color: {{c.neu}}; font-variant-numeric: tabular-nums; pointer-events: none">{{gate.text}}</div>
+            <div style="position: absolute; left: 0; right: 0; top: 22px; height: 12px; border-radius: 6px; background: {{c.border}}; overflow: hidden">
+              <div style="position: absolute; left: 0; top: 0; bottom: 0; width: {{lvl.pct}}%; background: {{lvl.color}}"></div>
+              <div style="position: absolute; left: 0; top: 0; bottom: 0; width: {{gate.pct}}%; background-image: repeating-linear-gradient(135deg, {{c.shade}} 0px, {{c.shade}} 2px, transparent 2px, transparent 6px)"></div>
+              <div style="position: absolute; left: {{lvl.peakPct}}%; top: 0; width: 2px; height: 12px; background: {{c.text}}; opacity: 0.7"></div>
+            </div>
+            <div class="knob" style="position: absolute; left: {{gate.pct}}%; top: 17px; width: 10px; height: 22px; margin-left: -5px; box-sizing: border-box; border-radius: 3px; background: {{gate.knobBg}}; border: 2px solid {{c.neu}}; pointer-events: none"></div>
+            <sc-for list="{{gateTicks}}" as="tk" hint-placeholder-count="8">
+              <span style="position: absolute; left: {{tk.pct}}%; top: 38px; width: 1px; height: 4px; background: {{c.muted}}; pointer-events: none"></span>
+              <span style="position: absolute; left: {{tk.pct}}%; top: 42px; transform: translateX(-50%); font-size: 11px; color: {{c.muted}}; font-variant-numeric: tabular-nums; pointer-events: none">{{tk.label}}</span>
+            </sc-for>
+          </div>
+            </div>
+            <span style="padding-top: 20px; min-width: 58px; text-align: right; font-size: 12px; font-variant-numeric: tabular-nums; color: {{lvl.textColor}}; white-space: nowrap">{{lvl.text}}</span>
+          </div>
+          <div style="display: flex; justify-content: center; gap: 8px">
+            <button type="button" onClick="{{gateReset}}" title="Back to −55 dB" disabled="{{gateIsDefault}}" style="height: 30px; width: 200px; box-sizing: border-box; border-radius: 5px; border: 1px solid {{c.border}}; background: {{c.button}}; color: {{c.text}}; opacity: {{resetOp}}; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-size: 13px">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"></path><path d="M4 4v4h4"></path></svg>
+              Reset
+            </button>
+            <button type="button" onClick="{{calibrate}}" disabled="{{calBusy}}" title="Stay quiet for 2 seconds; the gate is set 6 dB above the room noise" style="height: 30px; width: 200px; box-sizing: border-box; border-radius: 5px; border: 1px solid {{calBtn.bd}}; background: {{calBtn.bg}}; color: {{calBtn.fg}}; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-size: 13px">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"></rect><path d="M5 11a7 7 0 0 0 14 0M12 18v3"></path></svg>
+              {{calLabel}}
+            </button>
+          </div>
+        </div>
+      </sc-if>
+
       <sc-if value="{{meterInCard}}" hint-placeholder-val="{{false}}">
         <div style="width: 100%; max-width: 560px; display: flex; flex-direction: column; gap: 2px">
           <div style="display: flex; justify-content: space-between; align-items: baseline; font-size: 12px; color: {{c.muted}}">
@@ -437,7 +471,7 @@ button:disabled{cursor:default}
   </sc-if>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"gate":{"editor":"enum","options":["a","b","c","d"],"default":"d"},"room":{"editor":"enum","options":["quiet","noisy"],"default":"quiet"},"open":{"editor":"boolean","default":false},"theme":{"editor":"enum","options":["dark","light","layan"],"default":"dark"},"startInstrument":{"editor":"enum","options":["guitar6","guitar7","bass4","bass5","ukulele","mandolin","banjo","violin","viola","cello","contrabass"],"default":"guitar6"},"startDisplay":{"editor":"enum","options":["needle","strobe","bar"],"default":"needle"},"startAuto":{"editor":"boolean","default":true},"$preview":{"width":1200,"height":800}}' >
+<script type="text/x-dc" data-dc-script data-props='{"gate":{"editor":"enum","options":["a","b","c","d","e"],"default":"e"},"room":{"editor":"enum","options":["quiet","noisy"],"default":"quiet"},"open":{"editor":"boolean","default":false},"theme":{"editor":"enum","options":["dark","light","layan"],"default":"dark"},"startInstrument":{"editor":"enum","options":["guitar6","guitar7","bass4","bass5","ukulele","mandolin","banjo","violin","viola","cello","contrabass"],"default":"guitar6"},"startDisplay":{"editor":"enum","options":["needle","strobe","bar"],"default":"needle"},"startAuto":{"editor":"boolean","default":true},"$preview":{"width":1200,"height":800}}' >
 class Component extends DCLogic {
   data() {
     if (this._data) return this._data;
@@ -657,7 +691,7 @@ class Component extends DCLogic {
     const c = {
       window: rgb(K.window), view: rgb(K.view), header: rgb(K.header), button: rgb(K.button), text: rgb(K.text), muted: rgb(K.inactive),
       border: mix(K.window, K.text, 0.2), hl: rgb(K.accent), hlText: 'rgb(255,255,255)', sel: rgb(K.accent, 0.22),
-      pos: rgb(K.positive), neu: rgb(K.neutral), neg: rgb(K.negative), shade: rgb(K.neutral, 0.4),
+      pos: rgb(K.positive), neu: rgb(K.neutral), neg: rgb(K.negative), shade: rgb(K.view, 0.6),
       tip: rgb(K.tooltip), tipText: rgb(K.tooltipText),
       wood: mix(K.window, K.text, 0.12), woodEdge: mix(K.window, K.text, 0.3), chrome: mix(K.window, K.text, 0.55),
       stringCol: mix(K.view, K.text, 0.6), nut: mix(K.view, K.text, 0.85)
@@ -824,6 +858,8 @@ class Component extends DCLogic {
       cur, g, st, bar, hs, lvl, gate, gateTicks,
       varA: variant === 'a', varB: variant === 'b', varC: variant === 'c', varD: variant === 'd',
       meterInCard: variant === 'c' || variant === 'd',
+      varE: variant === 'e',
+      gateIsDefault: gateDb === -55, resetOp: gateDb === -55 ? 0.5 : 1,
       hasFooter: variant === 'a' || variant === 'b',
       meterTitle: variant === 'd' ? 'Input level' : 'Input level · drag the orange marker to set the noise gate',
       sigOp: signal ? 1 : 0.35,
