@@ -13,18 +13,10 @@ ColumnLayout {
     spacing: Kirigami.Units.largeSpacing
     opacity: enabled ? 1 : 0.45
 
-    RowLayout {
+    Kirigami.Heading {
+        level: 4
+        text: i18nc("@title", "Reference tone")
         Layout.fillWidth: true
-        Kirigami.Heading {
-            level: 4
-            text: i18nc("@title", "Reference tone")
-            Layout.fillWidth: true
-        }
-        QQC2.Label {
-            text: i18nc("keyboard shortcut", "Space")
-            font: Kirigami.Theme.smallFont
-            color: Kirigami.Theme.disabledTextColor
-        }
     }
 
     RowLayout {
