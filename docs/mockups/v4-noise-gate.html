@@ -74,7 +74,7 @@ button:disabled{cursor:default}
 
   <div style="flex: 1; display: flex; flex-wrap: wrap; gap: 16px; padding: 16px; align-items: stretch">
 
-    <div style="flex: 1 0 300px; max-width: 340px; background: {{c.view}}; border: 1px solid {{c.border}}; border-radius: 8px; padding: 16px; box-sizing: border-box; display: flex; flex-direction: column; gap: 12px">
+    <div style="flex: 1 0 340px; max-width: 340px; background: {{c.view}}; border: 1px solid {{c.border}}; border-radius: 8px; padding: 16px; box-sizing: border-box; display: flex; flex-direction: column; gap: 12px">
       <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; min-height: 28px">
         <span style="font-weight: 600">Strings</span>
         <span style="flex: 1"></span>
@@ -90,18 +90,22 @@ button:disabled{cursor:default}
       </div>
 
       <sc-if value="{{hasHead}}" hint-placeholder-val="{{true}}">
-        <div style="position: relative; width: 280px; height: {{hs.h}}px; flex: none; align-self: center">
-          <svg width="280" height="{{hs.h}}" viewBox="0 0 280 {{hs.h}}" style="position: absolute; left: 0; top: 0" aria-hidden="true">
+        <div style="position: relative; width: {{hs.w}}px; height: {{hs.h}}px; flex: none; align-self: center">
+          <svg width="{{hs.w}}" height="{{hs.h}}" viewBox="0 0 {{hs.w}} {{hs.h}}" style="position: absolute; left: 0; top: 0" aria-hidden="true">
             <path d="{{hs.shafts}}" stroke="{{c.chrome}}" stroke-width="4" stroke-linecap="round" fill="none"></path>
             <path d="{{hs.body}}" fill="{{c.wood}}" stroke="{{c.woodEdge}}" stroke-width="1.5"></path>
             <path d="{{hs.strings}}" stroke="{{c.stringCol}}" stroke-width="1.4" fill="none"></path>
             <path d="{{hs.selString}}" stroke="{{c.hl}}" stroke-width="2.4" fill="none"></path>
-            <rect x="110" y="{{hs.nutY}}" width="60" height="6" rx="1" fill="{{c.nut}}"></rect>
+            <rect x="{{hs.nutX}}" y="{{hs.nutY}}" width="{{hs.nutW}}" height="6" rx="1" fill="{{c.nut}}"></rect>
             <path d="{{hs.posts}}" fill="{{c.chrome}}" stroke="{{c.woodEdge}}" stroke-width="1"></path>
           </svg>
           <sc-for list="{{hs.pegs}}" as="p" hint-placeholder-count="6">
-            <button type="button" onClick="{{p.pick}}" aria-pressed="{{p.selected}}" aria-label="{{p.aria}}" style="position: absolute; left: {{p.left}}px; top: {{p.top}}px; width: 56px; height: 44px; border-radius: 22px; border: 1.5px solid {{p.bd}}; background: {{p.bg}}; color: {{c.text}}; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 1px; padding: 0">
-              <span style="font-size: 18px; font-weight: 600">{{p.letter}}</span><span style="font-size: 11px; color: {{c.muted}}; align-self: flex-end; padding-bottom: 10px">{{p.oct}}</span>
+            <button type="button" onClick="{{p.pick}}" aria-pressed="{{p.selected}}" aria-label="{{p.aria}}" style="position: absolute; left: {{p.left}}px; top: {{p.top}}px; width: {{hs.pegW}}px; height: 44px; box-sizing: border-box; border-radius: 22px; border: 1.5px solid {{p.bd}}; background: {{p.bg}}; color: {{c.text}}; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 4px; padding: 0 9px 0 11px">
+              <span style="font-size: 18px; font-weight: 600; line-height: 1">{{p.letter}}<span style="font-size: 11px; color: {{c.muted}}; font-weight: 400">{{p.oct}}</span></span>
+              <span style="display: flex; flex-direction: column; align-items: flex-end; line-height: 1.15">
+                <span style="font-size: 10px; color: {{c.muted}}">string {{p.num}}</span>
+                <span style="font-size: 10px; color: {{c.muted}}; font-variant-numeric: tabular-nums; white-space: nowrap">{{p.hz}} Hz</span>
+              </span>
               <sc-if value="{{p.playingHere}}" hint-placeholder-val="{{false}}">
                 <span style="position: absolute; left: -4px; top: -4px; width: 18px; height: 18px; border-radius: 9px; background: {{c.hl}}; display: flex; align-items: center; justify-content: center">
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="{{c.hlText}}" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"></path></svg>
@@ -182,7 +186,6 @@ button:disabled{cursor:default}
           </button>
           <div style="display: flex; flex-direction: column; gap: 2px">
             <span style="font-size: 26px; font-weight: 300; line-height: 1">{{cur.letter}}<span style="font-size: 14px; color: {{c.muted}}">{{cur.oct}}</span></span>
-            <span style="font-size: 13px; color: {{c.muted}}; font-variant-numeric: tabular-nums">{{cur.hz}} Hz · string {{cur.num}}</span>
           </div>
         </div>
         <div role="group" aria-label="Sound" style="display: flex; border: 1px solid {{c.border}}; border-radius: 5px; overflow: hidden; background: {{c.button}}">
@@ -707,26 +710,26 @@ class Component extends DCLogic {
     let hs = { h: 0, pegs: [] };
     if (k.inst.head) {
       const L = k.inst.head[0], R = k.inst.head[1];
-      const n = Math.max(L, R), rowH = 64, top0 = 24;
+      const n = Math.max(L, R), rowH = 64, top0 = 24, W = 304, pegW = 96;
       const H = top0 + n * rowH + 60, nutY = H - 44;
       const pegs = [];
       let shafts = '', posts = '', strs = '', selStr = '';
-      const nutX = (i) => r1(116 + i * (48 / Math.max(1, N - 1)));
+      const nutX = (i) => r1(130 + i * (44 / Math.max(1, N - 1)));
       const addPeg = (idx, row, left) => {
         const y = top0 + row * rowH + 22;
-        const px = left ? 104 : 176;
-        pegs.push({ ...strings[idx], left: left ? 0 : 224, top: y - 22 });
-        shafts += left ? 'M 56 ' + y + ' L ' + (px - 6) + ' ' + y + ' ' : 'M ' + (px + 6) + ' ' + y + ' L 224 ' + y + ' ';
+        const px = left ? 124 : 180;
+        pegs.push({ ...strings[idx], left: left ? 0 : W - pegW, top: y - 22 });
+        shafts += left ? 'M ' + pegW + ' ' + y + ' L ' + (px - 6) + ' ' + y + ' ' : 'M ' + (px + 6) + ' ' + y + ' L ' + (W - pegW) + ' ' + y + ' ';
         posts += 'M ' + (px - 7) + ' ' + y + ' a 7 7 0 1 0 14 0 a 7 7 0 1 0 -14 0 ';
         const seg = 'M ' + px + ' ' + y + ' L ' + nutX(idx) + ' ' + nutY + ' L ' + nutX(idx) + ' ' + H + ' ';
         if (idx === k.sel) selStr = seg; else strs += seg;
       };
       for (let i = 0; i < L; i++) addPeg(L - 1 - i, i, true);
       for (let j = 0; j < R; j++) addPeg(L + j, j, false);
-      const body = 'M 112 ' + H + ' L 112 ' + (nutY - 6) + ' C 96 ' + (nutY - 30) + ' 84 ' + (nutY - 50) + ' 84 ' + (nutY - 80) +
-        ' L 84 ' + top0 + ' Q 84 6 104 6 L 176 6 Q 196 6 196 ' + top0 + ' L 196 ' + (nutY - 80) +
-        ' C 196 ' + (nutY - 50) + ' 184 ' + (nutY - 30) + ' 168 ' + (nutY - 6) + ' L 168 ' + H + ' Z';
-      hs = { h: H, nutY: nutY - 3, pegs, shafts, posts, strings: strs, selString: selStr, body };
+      const body = 'M 126 ' + H + ' L 126 ' + (nutY - 6) + ' C 114 ' + (nutY - 30) + ' 108 ' + (nutY - 50) + ' 108 ' + (nutY - 80) +
+        ' L 108 ' + top0 + ' Q 108 6 124 6 L 180 6 Q 196 6 196 ' + top0 + ' L 196 ' + (nutY - 80) +
+        ' C 196 ' + (nutY - 50) + ' 190 ' + (nutY - 30) + ' 178 ' + (nutY - 6) + ' L 178 ' + H + ' Z';
+      hs = { w: W, pegW, nutX: 126, nutW: 52, h: H, nutY: nutY - 3, pegs, shafts, posts, strings: strs, selString: selStr, body };
     }
 
     const D = this.data();
