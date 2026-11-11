@@ -1,6 +1,18 @@
 # Kamerton — TODO
 
-Mockups: [mockups/index.html](mockups/index.html) (open in a browser; v3 "C2" is the implemented layout)
+Mockups: [mockups/index.html](mockups/index.html) (open in a browser; v3 "C2" plus v4 "D" is the implemented layout)
+
+## Done: noise gate on the level meter (v4, variant D)
+
+- [x] Input level meter in the tuner card with a dB scale and a draggable noise gate marker; hatched zone for ignored sounds
+- [x] Mouse wheel, arrow keys, Page Up/Down and double-click reset on the meter; screen reader name and value
+- [x] Noise gate −/+ box, Reset, and "Set from room noise" (listens 2 s, gate 6 dB above the noise; feedback only on the button)
+- [x] Gate limited to −70…−10 dB so the marker always stays on the meter
+- [x] Status bar removed
+- [x] String number and frequency on the headstock pegs; tuned and play / stop badges on the top edge of every string button
+- [x] With auto-detect off, clicking a string plays its reference tone and clicking it again stops it; the panel keeps only the sound settings
+- [x] Reference tones fade in (60 ms) and out (150 ms)
+- [x] All colors from the KDE color scheme
 
 ## Done: v2 single screen (layout C2)
 
@@ -9,7 +21,7 @@ Mockups: [mockups/index.html](mockups/index.html) (open in a browser; v3 "C2" is
 - [x] "Auto-detect string" switch centered under the strings
 - [x] Start over status button "↺ 2 of 6 tuned" in the Strings header, green when all are tuned
 - [x] Reference tone controls in the side panel, disabled while auto-detect is on; Space plays / stops
-- [x] Speaker badge on the playing string; "Playing D4 on …" in the status bar
+- [x] Speaker badge on the playing string; "Playing D4 on …" in the status bar (both replaced in v4)
 - [x] A4 next to the tuning menu; small equal-width Needle / Strobe / Bar buttons centered under the display
 - [x] Level meter in dB with peak hold, color zones and noise gate marker
 
@@ -20,9 +32,6 @@ Mockups: [mockups/index.html](mockups/index.html) (open in a browser; v3 "C2" is
 
 ## Later
 
-- [ ] **Live noise gate adjustment while tuning**: drag the gate marker on the level meter
-      (and mouse wheel / arrow keys on it), show the value in a tooltip while dragging,
-      apply immediately and save to settings. Must be keyboard and screen reader accessible.
 - [ ] Compact always-on-top mini tuner window (needs its own mockup first)
 - [ ] Share tunings as files (import / export)
 

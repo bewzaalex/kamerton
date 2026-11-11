@@ -51,13 +51,13 @@ FormCard.FormCardPage {
 
         FormCard.FormSpinBoxDelegate {
             label: i18nc("@label:spinbox", "Noise gate")
-            description: i18nc("@info", "Sounds quieter than this are ignored. Lower it for a quiet instrument or a distant microphone.")
-            from: -90
-            to: -10
+            description: i18nc("@info", "Sounds quieter than this are ignored. Lower it for a quiet instrument or a distant microphone. You can also drag the marker on the input level meter.")
+            from: TunerController.minNoiseGate
+            to: TunerController.maxNoiseGate
             stepSize: 1
             value: TunerController.noiseGate
             textFromValue: (value, locale) => i18nc("decibels", "%1 dB", value)
-            valueFromText: (text, locale) => parseInt(text.replace(/[^0-9-]/g, "")) || -55
+            valueFromText: (text, locale) => parseInt(text.replace(/[^0-9-]/g, "")) || TunerController.defaultNoiseGate
             onValueChanged: TunerController.noiseGate = value
         }
     }

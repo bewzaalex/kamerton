@@ -57,6 +57,13 @@ TunerController::TunerController(QObject *parent)
     connect(&m_analysisTimer, &QTimer::timeout, this, &TunerController::analyse);
     m_referenceTimer.setInterval(ReferenceIntervalMs);
     connect(&m_referenceTimer, &QTimer::timeout, this, &TunerController::onReferenceTick);
+    m_noiseMeasure.setSingleShot(true);
+    m_noiseMeasure.setInterval(NoiseMeasureMs);
+    connect(&m_noiseMeasure, &QTimer::timeout, this, [this] {
+        setNoiseGate(int(std::ceil(m_noiseMax)) + NoiseGateMargin);
+        Q_EMIT measuringNoiseChanged();
+        Q_EMIT noiseGateMeasured();
+    });
 
     m_engine->setInputTarget(m_inputDevice);
     m_engine->setOutputTarget(m_outputDevice);
@@ -107,7 +114,7 @@ void TunerController::loadSettings()
     m_displayStyle = DisplayStyle(std::clamp(g.readEntry("DisplayStyle", int(Needle)), int(Needle), int(Bar)));
     m_a4 = std::clamp(g.readEntry("A4", 440), 400, 480);
     m_inTuneThreshold = std::clamp(g.readEntry("InTuneThreshold", 3.0), 0.5, 10.0);
-    m_noiseGate = std::clamp(g.readEntry("NoiseGate", -55), -90, -10);
+    m_noiseGate = std::clamp(g.readEntry("NoiseGate", int(DefaultNoiseGate)), int(MinNoiseGate), int(MaxNoiseGate));
     m_timbre = Timbre(std::clamp(g.readEntry("Timbre", int(Pluck)), int(Pluck), int(Organ)));
     m_volume = std::clamp(g.readEntry("Volume", 60), 0, 100);
     m_cycleStrings = g.readEntry("CycleStrings", false);
@@ -420,6 +427,9 @@ void TunerController::analyse()
         m_peakDb = peak;
         Q_EMIT levelChanged();
     }
+    if (m_noiseMeasure.isActive()) {
+        m_noiseMax = std::max(m_noiseMax, db);
+    }
 
     const bool valid = r.frequency > 0.0 && db > m_noiseGate && r.clarity >= MinClarity;
     if (!valid) {
@@ -543,9 +553,21 @@ void TunerController::setInTuneThreshold(double cents)
     Q_EMIT inTuneThresholdChanged();
 }
 
+void TunerController::measureNoiseGate()
+{
+    if (m_noiseMeasure.isActive()) {
+        return;
+    }
+    // The reference tone would be measured as room noise.
+    setPlaying(false);
+    m_noiseMax = MinDb;
+    m_noiseMeasure.start();
+    Q_EMIT measuringNoiseChanged();
+}
+
 void TunerController::setNoiseGate(int db)
 {
-    db = std::clamp(db, -90, -10);
+    db = std::clamp(db, int(MinNoiseGate), int(MaxNoiseGate));
     if (m_noiseGate == db) {
         return;
     }

@@ -56,7 +56,7 @@ a { color: var(--accent); }
   <h2>v3 — layout B refined</h2>
   <p>Strings panel for every instrument, A4 next to the tuning menu, display style buttons under the tuner.</p>
   <div class="grid" data-pages='[
-    ["v3-refined.html?layout=c2", "C2 · Auto-detect switch, Start over status button", "This is the layout implemented in the app.", true],
+    ["v3-refined.html?layout=c2", "C2 · Auto-detect switch, Start over status button", "The base of the app layout; v4 D below adds the noise gate meter.", true],
     ["v3-refined.html", "C1 · Switch and Start over under the headstock", ""],
     ["v3-refined.html?theme=light&startInstrument=violin&startDisplay=strobe&startAuto=true", "C1 · Violin, light, auto-detect on", ""]
   ]'></div>
@@ -65,7 +65,7 @@ a { color: var(--accent); }
   <p>Adjust the noise gate while tuning. Plucks ring out and decay into the room noise; the tuner dims while the input is below the gate.
      Try dragging the orange marker, the arrow keys and the mouse wheel on it. Add <code>&amp;room=noisy</code> for a louder room. All colors come from KDE color scheme roles: <code>theme=dark</code>, <code>light</code> (Breeze) or <code>layan</code>.</p>
   <div class="grid" data-pages='[
-    ["v4-noise-gate.html?gate=d&theme=layan", "D · Your Layan colors", "Big meter in the tuner card, plus −/+, Reset and Set from room noise under it. No status bar."],
+    ["v4-noise-gate.html?gate=d&theme=layan", "D · Your Layan colors", "Big meter in the tuner card, plus −/+, Reset and Set from room noise under it. No status bar. This is the layout implemented in the app.", true],
     ["v4-noise-gate.html?gate=d&theme=light&room=noisy", "D · Light theme, noisy room", "Press Set from room noise: the gate jumps above the noise and the tuner calms down."],
     ["v4-noise-gate.html?gate=a", "A · Drag the marker on the status bar meter", "Wider meter, a handle you can grab, hatched zone for ignored sounds, tooltip while dragging. Double-click resets."],
     ["v4-noise-gate.html?gate=b&open=true", "B · Click the meter for a noise gate popup", "Large meter with a scale, −/+ buttons, Reset, and Set from room noise (listens 2 s, sets the gate 6 dB above it)."],
