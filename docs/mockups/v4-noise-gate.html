@@ -1,0 +1,926 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Kamerton v4, noise gate on the level meter</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="dc-lite.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#3daee9}a:hover{color:#1d99d8}
+button{font:inherit}
+button:disabled{cursor:default}
+.gm:focus-visible{box-shadow:0 0 0 2px #3daee9}
+.gm:hover .knob,.gm:focus-visible .knob{transform:scaleY(1.15)}
+.gm .knob{transition:transform .12s}
+</style>
+</helmet>
+<div style="width: 100%; min-height: 800px; box-sizing: border-box; display: flex; flex-direction: column; background: {{c.window}}; color: {{c.text}}; font-family: 'Noto Sans', system-ui, sans-serif; font-size: 14px; position: relative">
+
+  <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 8px 12px; background: {{c.header}}; border-bottom: 1px solid {{c.border}}; position: relative">
+    <button type="button" onClick="{{toggleInstMenu}}" aria-haspopup="menu" style="height: 36px; padding: 0 10px 0 12px; border-radius: 5px; border: 1px solid transparent; background: transparent; color: {{c.text}}; display: inline-flex; align-items: center; gap: 8px; cursor: pointer">
+      <span style="font-weight: 500">{{inst.label}}</span><span style="color: {{c.muted}}">{{inst.sub}}</span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
+    </button>
+    <button type="button" onClick="{{toggleTunMenu}}" aria-haspopup="menu" style="height: 36px; padding: 0 10px 0 12px; border-radius: 5px; border: 1px solid transparent; background: transparent; color: {{c.text}}; display: inline-flex; align-items: center; gap: 8px; cursor: pointer">
+      <span style="font-weight: 500">{{tun.name}}</span><span style="color: {{c.muted}}">{{tun.notes}}</span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
+    </button>
+
+    <div style="width: 1px; height: 24px; background: {{c.border}}; margin: 0 4px"></div>
+
+    <div role="group" aria-label="Concert pitch" title="Concert pitch" style="display: inline-flex; align-items: center; border: 1px solid {{c.border}}; border-radius: 5px; background: {{c.button}}; height: 36px; box-sizing: border-box">
+      <button type="button" onClick="{{a4Down}}" aria-label="Lower A4 by 1 Hz" style="width: 30px; height: 34px; border: 0; background: transparent; color: {{c.text}}; cursor: pointer">−</button>
+      <span style="padding: 0 4px; font-variant-numeric: tabular-nums; white-space: nowrap"><span style="color: {{c.muted}}">A4</span> {{a4}} Hz</span>
+      <button type="button" onClick="{{a4Up}}" aria-label="Raise A4 by 1 Hz" style="width: 30px; height: 34px; border: 0; background: transparent; color: {{c.text}}; cursor: pointer">+</button>
+    </div>
+
+    <div style="flex: 1 1 20px"></div>
+
+    <button type="button" aria-label="Main menu" style="width: 36px; height: 36px; border-radius: 18px; border: 1px solid transparent; background: transparent; color: {{c.text}}; display: inline-flex; align-items: center; justify-content: center; cursor: pointer">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><circle cx="8" cy="12" r="0.8" fill="currentColor"></circle><circle cx="12" cy="12" r="0.8" fill="currentColor"></circle><circle cx="16" cy="12" r="0.8" fill="currentColor"></circle></svg>
+    </button>
+
+    <sc-if value="{{menuInst}}" hint-placeholder-val="{{false}}">
+      <div role="menu" aria-label="Instrument" style="position: absolute; top: 50px; left: 12px; z-index: 20; width: 300px; padding: 6px; background: {{c.view}}; border: 1px solid {{c.border}}; border-radius: 6px; box-shadow: 0 8px 24px rgba(0,0,0,0.35); display: flex; flex-direction: column; gap: 2px">
+        <sc-for list="{{instItems}}" as="it" hint-placeholder-count="6">
+          <sc-if value="{{it.groupStart}}" hint-placeholder-val="{{false}}">
+            <div style="padding: 8px 10px 4px; font-size: 12px; font-weight: 600; color: {{c.muted}}">{{it.group}}</div>
+          </sc-if>
+          <button type="button" role="menuitemradio" aria-checked="{{it.on}}" onClick="{{it.pick}}" style="display: flex; justify-content: space-between; align-items: center; height: 36px; padding: 0 10px; border: 0; border-radius: 4px; background: {{it.bg}}; color: {{c.text}}; text-align: left; cursor: pointer">
+            <span>{{it.label}} <span style="color: {{c.muted}}">{{it.sub}}</span></span>
+            <span style="color: {{c.muted}}; font-size: 12px">{{it.count}}</span>
+          </button>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{menuTun}}" hint-placeholder-val="{{false}}">
+      <div role="menu" aria-label="Tuning" style="position: absolute; top: 50px; left: 170px; z-index: 20; width: 320px; padding: 6px; background: {{c.view}}; border: 1px solid {{c.border}}; border-radius: 6px; box-shadow: 0 8px 24px rgba(0,0,0,0.35); display: flex; flex-direction: column; gap: 2px">
+        <sc-for list="{{tunItems}}" as="t" hint-placeholder-count="4">
+          <button type="button" role="menuitemradio" aria-checked="{{t.on}}" onClick="{{t.pick}}" style="display: flex; justify-content: space-between; align-items: center; gap: 12px; height: 36px; padding: 0 10px; border: 0; border-radius: 4px; background: {{t.bg}}; color: {{c.text}}; text-align: left; cursor: pointer">
+            <span>{{t.name}}</span>
+            <span style="color: {{c.muted}}; font-size: 12px">{{t.notes}}</span>
+          </button>
+        </sc-for>
+      </div>
+    </sc-if>
+  </div>
+
+  <div style="flex: 1; display: flex; flex-wrap: wrap; gap: 16px; padding: 16px; align-items: stretch">
+
+    <div style="flex: 1 0 340px; max-width: 340px; background: {{c.view}}; border: 1px solid {{c.border}}; border-radius: 8px; padding: 16px; box-sizing: border-box; display: flex; flex-direction: column; gap: 12px">
+      <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; min-height: 28px">
+        <span style="font-weight: 600">Strings</span>
+        <span style="flex: 1"></span>
+        <sc-if value="{{isC1}}" hint-placeholder-val="{{true}}">
+          <span style="color: {{c.muted}}; font-size: 13px">{{progress}}</span>
+        </sc-if>
+        <sc-if value="{{isC2}}" hint-placeholder-val="{{false}}">
+          <button type="button" onClick="{{resetTuned}}" aria-label="{{progressAria}}" title="Start over" style="height: 28px; padding: 0 10px 0 8px; border-radius: 14px; border: 1px solid {{prog.bd}}; background: {{prog.bg}}; color: {{prog.fg}}; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-variant-numeric: tabular-nums">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"></path><path d="M4 4v4h4"></path></svg>
+            {{progress}}
+          </button>
+        </sc-if>
+      </div>
+
+      <sc-if value="{{hasHead}}" hint-placeholder-val="{{true}}">
+        <div style="position: relative; width: {{hs.w}}px; height: {{hs.h}}px; flex: none; align-self: center">
+          <svg width="{{hs.w}}" height="{{hs.h}}" viewBox="0 0 {{hs.w}} {{hs.h}}" style="position: absolute; left: 0; top: 0" aria-hidden="true">
+            <path d="{{hs.shafts}}" stroke="{{c.chrome}}" stroke-width="4" stroke-linecap="round" fill="none"></path>
+            <path d="{{hs.body}}" fill="{{c.wood}}" stroke="{{c.woodEdge}}" stroke-width="1.5"></path>
+            <path d="{{hs.strings}}" stroke="{{c.stringCol}}" stroke-width="1.4" fill="none"></path>
+            <path d="{{hs.selString}}" stroke="{{c.hl}}" stroke-width="2.4" fill="none"></path>
+            <rect x="{{hs.nutX}}" y="{{hs.nutY}}" width="{{hs.nutW}}" height="6" rx="1" fill="{{c.nut}}"></rect>
+            <path d="{{hs.posts}}" fill="{{c.chrome}}" stroke="{{c.woodEdge}}" stroke-width="1"></path>
+          </svg>
+          <sc-for list="{{hs.pegs}}" as="p" hint-placeholder-count="6">
+            <button type="button" onClick="{{p.pick}}" aria-pressed="{{p.selected}}" aria-label="{{p.aria}}" style="position: absolute; left: {{p.left}}px; top: {{p.top}}px; width: {{hs.pegW}}px; height: 44px; box-sizing: border-box; border-radius: 22px; border: 1.5px solid {{p.bd}}; background: {{p.bg}}; color: {{c.text}}; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 4px; padding: 0 9px 0 11px">
+              <span style="font-size: 18px; font-weight: 600; line-height: 1">{{p.letter}}<span style="font-size: 11px; color: {{c.muted}}; font-weight: 400">{{p.oct}}</span></span>
+              <span style="display: flex; flex-direction: column; align-items: flex-end; line-height: 1.15">
+                <span style="font-size: 10px; color: {{c.muted}}">string {{p.num}}</span>
+                <span style="font-size: 10px; color: {{c.muted}}; font-variant-numeric: tabular-nums; white-space: nowrap">{{p.hz}} Hz</span>
+              </span>
+              <sc-if value="{{p.showPlay}}" hint-placeholder-val="{{false}}">
+                <span style="position: absolute; right: 8px; top: -9px; width: 18px; height: 18px; box-sizing: border-box; border-radius: 9px; box-shadow: 0 0 0 2px {{c.view}}; border: 1px solid {{p.pb.bd}}; background: {{p.pb.bg}}; color: {{p.pb.fg}}; display: flex; align-items: center; justify-content: center">
+                  <sc-if value="{{p.playingHere}}" hint-placeholder-val="{{false}}">
+                    <svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"></rect></svg>
+                  </sc-if>
+                  <sc-if value="{{p.idle}}" hint-placeholder-val="{{true}}">
+                    <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 3.5v17l15-8.5z"></path></svg>
+                  </sc-if>
+                </span>
+              </sc-if>
+              <sc-if value="{{p.tuned}}" hint-placeholder-val="{{false}}">
+                <span style="position: absolute; left: {{p.tunedX}}px; top: -9px; width: 18px; height: 18px; border-radius: 9px; box-shadow: 0 0 0 2px {{c.view}}; background: {{c.pos}}; display: flex; align-items: center; justify-content: center">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="{{c.hlText}}" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg>
+                </span>
+              </sc-if>
+            </button>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{noHead}}" hint-placeholder-val="{{false}}">
+        <div role="group" aria-label="Strings" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; padding: 4px 0">
+          <sc-for list="{{stringsHighFirst}}" as="sItem" hint-placeholder-count="4">
+            <button type="button" onClick="{{sItem.pick}}" aria-pressed="{{sItem.selected}}" aria-label="{{sItem.aria}}" style="position: relative; height: 56px; padding: 0 14px; border-radius: 28px; border: 1.5px solid {{sItem.bd}}; background: {{sItem.bg}}; color: {{c.text}}; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 8px">
+              <span style="font-size: 20px; font-weight: 600">{{sItem.letter}}<span style="font-size: 12px; color: {{c.muted}}; font-weight: 400">{{sItem.oct}}</span></span>
+              <span style="display: flex; flex-direction: column; align-items: flex-end; line-height: 1.2">
+                <span style="font-size: 11px; color: {{c.muted}}">string {{sItem.num}}</span>
+                <span style="font-size: 12px; color: {{c.muted}}; font-variant-numeric: tabular-nums">{{sItem.hz}} Hz</span>
+              </span>
+              <sc-if value="{{sItem.showPlay}}" hint-placeholder-val="{{false}}">
+                <span style="position: absolute; right: 8px; top: -9px; width: 18px; height: 18px; box-sizing: border-box; border-radius: 9px; box-shadow: 0 0 0 2px {{c.view}}; border: 1px solid {{sItem.pb.bd}}; background: {{sItem.pb.bg}}; color: {{sItem.pb.fg}}; display: flex; align-items: center; justify-content: center">
+                  <sc-if value="{{sItem.playingHere}}" hint-placeholder-val="{{false}}">
+                    <svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"></rect></svg>
+                  </sc-if>
+                  <sc-if value="{{sItem.idle}}" hint-placeholder-val="{{true}}">
+                    <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 3.5v17l15-8.5z"></path></svg>
+                  </sc-if>
+                </span>
+              </sc-if>
+              <sc-if value="{{sItem.tuned}}" hint-placeholder-val="{{false}}">
+                <span style="position: absolute; left: {{sItem.tunedX}}px; top: -9px; width: 18px; height: 18px; border-radius: 9px; box-shadow: 0 0 0 2px {{c.view}}; background: {{c.pos}}; display: flex; align-items: center; justify-content: center">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="{{c.hlText}}" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg>
+                </span>
+              </sc-if>
+            </button>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{isC1}}" hint-placeholder-val="{{true}}">
+        <div style="display: flex; align-items: center; gap: 8px; padding-top: 4px">
+          <label style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer; flex: 1">
+            <input type="checkbox" role="switch" checked="{{auto}}" onChange="{{toggleAuto}}" style="width: 16px; height: 16px; accent-color: {{c.hl}}">
+            <span>Detect string automatically</span>
+          </label>
+          <button type="button" onClick="{{resetTuned}}" style="height: 30px; padding: 0 10px; border-radius: 5px; border: 1px solid {{c.border}}; background: {{c.button}}; color: {{c.text}}; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-size: 13px">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"></path><path d="M4 4v4h4"></path></svg>Start over
+          </button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{isC2}}" hint-placeholder-val="{{false}}">
+        <div style="display: flex; justify-content: center">
+          <button type="button" role="switch" aria-checked="{{auto}}" onClick="{{toggleAuto}}" style="height: 36px; padding: 0 8px; border: 0; border-radius: 5px; background: transparent; color: {{c.text}}; cursor: pointer; display: inline-flex; align-items: center; gap: 10px">
+            <span style="position: relative; display: inline-block; width: 36px; height: 20px; border-radius: 10px; box-sizing: border-box; background: {{sw.track}}; border: 1px solid {{sw.border}}">
+              <span style="position: absolute; top: 1px; left: {{sw.knobX}}px; width: 16px; height: 16px; border-radius: 8px; background: {{sw.knob}}; box-shadow: 0 1px 2px rgba(0,0,0,0.35)"></span>
+            </span>
+            <span>Auto-detect string</span>
+          </button>
+        </div>
+      </sc-if>
+
+      <div style="flex: 1"></div>
+
+      <div style="border-top: 1px solid {{c.border}}; padding-top: 14px; display: flex; flex-direction: column; gap: 12px; opacity: {{ref.op}}">
+        <span style="font-weight: 600">Reference tone</span>
+        <div role="group" aria-label="Sound" style="display: flex; border: 1px solid {{c.border}}; border-radius: 5px; overflow: hidden; background: {{c.button}}">
+          <sc-for list="{{timbres}}" as="tb" hint-placeholder-count="3">
+            <button type="button" onClick="{{tb.pick}}" disabled="{{ref.disabled}}" aria-pressed="{{tb.on}}" style="flex: 1; height: 32px; border: 0; background: {{tb.bg}}; color: {{c.text}}; cursor: pointer; box-shadow: inset 0 -2px 0 {{tb.bar}}">{{tb.label}}</button>
+          </sc-for>
+        </div>
+        <label style="display: flex; align-items: center; gap: 8px">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"></path></svg>
+          <span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Volume</span>
+          <input type="range" min="0" max="100" value="{{vol}}" onChange="{{setVol}}" disabled="{{ref.disabled}}" style="flex: 1; accent-color: {{c.hl}}">
+          <span style="width: 36px; text-align: right; font-size: 12px; color: {{c.muted}}; font-variant-numeric: tabular-nums">{{vol}}%</span>
+        </label>
+        <label style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer">
+          <input type="checkbox" checked="{{loop}}" onChange="{{toggleLoop}}" disabled="{{ref.disabled}}" style="width: 16px; height: 16px; accent-color: {{c.hl}}">
+          <span>Cycle through all strings</span>
+        </label>
+      </div>
+      <sc-if value="{{showRefHint}}" hint-placeholder-val="{{false}}">
+        <span style="font-size: 12px; color: {{c.muted}}">Turn off “Detect string automatically” to pick a string and play its tone.</span>
+      </sc-if>
+    </div>
+
+    <div style="flex: 999 1 560px; min-width: 0; background: {{c.view}}; border: 1px solid {{c.border}}; border-radius: 8px; padding: 20px 24px 16px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 12px">
+     <div style="width: 100%; display: flex; flex-direction: column; align-items: center; gap: 16px; opacity: {{sigOp}}; transition: opacity .25s">
+
+      <sc-if value="{{isNeedle}}" hint-placeholder-val="{{true}}">
+        <svg viewBox="0 0 400 230" style="width: 100%; max-width: 560px; height: auto" role="img" aria-label="Tuning needle, {{centsText}}">
+          <path d="{{g.track}}" stroke="{{c.border}}" stroke-width="2" fill="none"></path>
+          <path d="{{g.warnL}}" stroke="{{c.neu}}" stroke-opacity="0.45" stroke-width="10" fill="none"></path>
+          <path d="{{g.warnR}}" stroke="{{c.neu}}" stroke-opacity="0.45" stroke-width="10" fill="none"></path>
+          <path d="{{g.ok}}" stroke="{{c.pos}}" stroke-width="10" fill="none"></path>
+          <path d="{{g.ticks}}" stroke="{{c.muted}}" stroke-width="1.5" fill="none"></path>
+          <text x="{{g.l0.x}}" y="{{g.l0.y}}" fill="{{c.muted}}" font-size="12" text-anchor="middle">−50</text>
+          <text x="{{g.l1.x}}" y="{{g.l1.y}}" fill="{{c.muted}}" font-size="12" text-anchor="middle">−25</text>
+          <text x="{{g.l2.x}}" y="{{g.l2.y}}" fill="{{c.muted}}" font-size="12" text-anchor="middle">0</text>
+          <text x="{{g.l3.x}}" y="{{g.l3.y}}" fill="{{c.muted}}" font-size="12" text-anchor="middle">+25</text>
+          <text x="{{g.l4.x}}" y="{{g.l4.y}}" fill="{{c.muted}}" font-size="12" text-anchor="middle">+50</text>
+          <text x="40" y="222" fill="{{c.muted}}" font-size="22" text-anchor="middle">♭</text>
+          <text x="360" y="222" fill="{{c.muted}}" font-size="22" text-anchor="middle">♯</text>
+          <line x1="200" y1="210" x2="{{g.nx}}" y2="{{g.ny}}" stroke="{{tone}}" stroke-width="3.5" stroke-linecap="round"></line>
+          <circle cx="200" cy="210" r="10" fill="{{tone}}"></circle>
+          <circle cx="200" cy="210" r="4" fill="{{c.view}}"></circle>
+        </svg>
+      </sc-if>
+
+      <sc-if value="{{isStrobe}}" hint-placeholder-val="{{false}}">
+        <div role="img" aria-label="Strobe display, {{centsText}}" style="width: 100%; max-width: 560px; display: flex; flex-direction: column; gap: 6px; padding: 48px 0 8px; position: relative">
+          <div style="height: 34px; border-radius: 4px; background-color: {{c.window}}; background-image: repeating-linear-gradient(90deg, {{tone}} 0px, {{tone}} 12px, transparent 12px, transparent 24px); background-position: {{st.x1}}px 0px"></div>
+          <div style="height: 34px; border-radius: 4px; background-color: {{c.window}}; background-image: repeating-linear-gradient(90deg, {{tone}} 0px, {{tone}} 24px, transparent 24px, transparent 48px); background-position: {{st.x2}}px 0px; opacity: 0.8"></div>
+          <div style="height: 34px; border-radius: 4px; background-color: {{c.window}}; background-image: repeating-linear-gradient(90deg, {{tone}} 0px, {{tone}} 6px, transparent 6px, transparent 12px); background-position: {{st.x3}}px 0px; opacity: 0.6"></div>
+          <div style="position: absolute; left: 50%; top: 38px; bottom: 0; width: 2px; margin-left: -1px; background: {{c.text}}; opacity: 0.6"></div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{isBar}}" hint-placeholder-val="{{false}}">
+        <div role="img" aria-label="LED bar display, {{centsText}}" style="width: 100%; max-width: 560px; padding: 56px 0 8px; display: flex; flex-direction: column; gap: 8px">
+          <div style="display: flex; align-items: center; gap: 5px; height: 64px">
+            <sc-for list="{{bar}}" as="s" hint-placeholder-count="21">
+              <div style="flex: 1; height: {{s.h}}px; border-radius: 3px; background: {{s.bg}}; opacity: {{s.op}}"></div>
+            </sc-for>
+          </div>
+          <div style="display: flex; justify-content: space-between; color: {{c.muted}}; font-size: 12px">
+            <span>−50 ¢</span><span>0</span><span>+50 ¢</span>
+          </div>
+        </div>
+      </sc-if>
+
+      <div style="display: flex; align-items: flex-end; gap: 24px; flex-wrap: wrap; justify-content: center">
+        <div style="display: flex; align-items: flex-start; line-height: 1">
+          <span style="font-size: 88px; font-weight: 300; color: {{tone}}">{{cur.letter}}</span>
+          <span style="font-size: 26px; color: {{c.muted}}; align-self: flex-end; padding-bottom: 8px">{{cur.oct}}</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px; padding-bottom: 10px; min-width: 190px">
+          <span style="font-size: 22px; font-variant-numeric: tabular-nums">{{detHz}} <span style="font-size: 14px; color: {{c.muted}}">Hz</span></span>
+          <span style="font-size: 13px; color: {{c.muted}}; font-variant-numeric: tabular-nums">target {{cur.hz}} Hz · string {{cur.num}}</span>
+          <span style="display: inline-flex; align-items: center; gap: 8px">
+            <span style="padding: 2px 10px; border-radius: 11px; border: 1.5px solid {{tone}}; color: {{tone}}; font-weight: 600; font-variant-numeric: tabular-nums">{{centsText}}</span>
+            <span style="font-weight: 500">{{statusText}}</span>
+          </span>
+        </div>
+      </div>
+
+     </div>
+
+      <div style="flex: 1"></div>
+
+      <sc-if value="{{varE}}" hint-placeholder-val="{{false}}">
+        <div style="width: 100%; max-width: 620px; display: flex; flex-direction: column; gap: 6px">
+          <div style="display: flex; align-items: flex-start; gap: 4px">
+            <span style="padding-top: 20px; font-size: 12px; color: {{c.muted}}; white-space: nowrap">Noise gate adjust</span>
+            <div style="flex: 1; min-width: 0">
+          <div class="gm" role="slider" tabindex="0" aria-label="Noise gate" aria-valuemin="-70" aria-valuemax="-10" aria-valuenow="{{gate.db}}" aria-valuetext="{{gate.text}}" onPointerdown="{{gateDown}}" onPointermove="{{gateMove}}" onPointerup="{{gateUp}}" onPointercancel="{{gateUp}}" onKeydown="{{gateKey}}" onWheel="{{gateWheel}}" onDblclick="{{gateReset}}" onBlur="{{gateBlur}}" style="position: relative; height: 58px; margin: 0 8px; cursor: ew-resize; touch-action: none; outline: none; border-radius: 4px">
+            <div style="position: absolute; left: {{gate.pct}}%; top: 0; transform: translateX({{gate.flagShift}}%); white-space: nowrap; font-size: 12px; font-weight: 600; color: {{c.neu}}; font-variant-numeric: tabular-nums; pointer-events: none">{{gate.text}}</div>
+            <div style="position: absolute; left: 0; right: 0; top: 22px; height: 12px; border-radius: 6px; background: {{c.border}}; overflow: hidden">
+              <div style="position: absolute; left: 0; top: 0; bottom: 0; width: {{lvl.pct}}%; background: {{lvl.color}}"></div>
+              <div style="position: absolute; left: 0; top: 0; bottom: 0; width: {{gate.pct}}%; background-image: repeating-linear-gradient(135deg, {{c.shade}} 0px, {{c.shade}} 2px, transparent 2px, transparent 6px)"></div>
+              <div style="position: absolute; left: {{lvl.peakPct}}%; top: 0; width: 2px; height: 12px; background: {{c.text}}; opacity: 0.7"></div>
+            </div>
+            <div class="knob" style="position: absolute; left: {{gate.pct}}%; top: 17px; width: 10px; height: 22px; margin-left: -5px; box-sizing: border-box; border-radius: 3px; background: {{gate.knobBg}}; border: 2px solid {{c.neu}}; pointer-events: none"></div>
+            <sc-for list="{{gateTicks}}" as="tk" hint-placeholder-count="8">
+              <span style="position: absolute; left: {{tk.pct}}%; top: 38px; width: 1px; height: 4px; background: {{c.muted}}; pointer-events: none"></span>
+              <span style="position: absolute; left: {{tk.pct}}%; top: 42px; transform: translateX(-50%); font-size: 11px; color: {{c.muted}}; font-variant-numeric: tabular-nums; pointer-events: none">{{tk.label}}</span>
+            </sc-for>
+          </div>
+            </div>
+            <span style="padding-top: 20px; min-width: 58px; text-align: right; font-size: 12px; font-variant-numeric: tabular-nums; color: {{lvl.textColor}}; white-space: nowrap">{{lvl.text}}</span>
+          </div>
+          <div style="display: flex; justify-content: center; gap: 8px">
+            <button type="button" onClick="{{gateReset}}" title="Back to −55 dB" disabled="{{gateIsDefault}}" style="height: 30px; width: 200px; box-sizing: border-box; border-radius: 5px; border: 1px solid {{c.border}}; background: {{c.button}}; color: {{c.text}}; opacity: {{resetOp}}; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-size: 13px">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"></path><path d="M4 4v4h4"></path></svg>
+              Reset
+            </button>
+            <button type="button" onClick="{{calibrate}}" disabled="{{calBusy}}" title="Stay quiet for 2 seconds; the gate is set 6 dB above the room noise" style="height: 30px; width: 200px; box-sizing: border-box; border-radius: 5px; border: 1px solid {{calBtn.bd}}; background: {{calBtn.bg}}; color: {{calBtn.fg}}; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-size: 13px">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"></rect><path d="M5 11a7 7 0 0 0 14 0M12 18v3"></path></svg>
+              {{calLabel}}
+            </button>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{meterInCard}}" hint-placeholder-val="{{false}}">
+        <div style="width: 100%; max-width: 560px; display: flex; flex-direction: column; gap: 2px">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; font-size: 12px; color: {{c.muted}}">
+            <span>{{meterTitle}}</span>
+            <span style="font-variant-numeric: tabular-nums; color: {{lvl.textColor}}; font-weight: 500">{{lvl.text}}</span>
+          </div>
+          <div class="gm" role="slider" tabindex="0" aria-label="Noise gate" aria-valuemin="-70" aria-valuemax="-10" aria-valuenow="{{gate.db}}" aria-valuetext="{{gate.text}}" onPointerdown="{{gateDown}}" onPointermove="{{gateMove}}" onPointerup="{{gateUp}}" onPointercancel="{{gateUp}}" onKeydown="{{gateKey}}" onWheel="{{gateWheel}}" onDblclick="{{gateReset}}" onBlur="{{gateBlur}}" style="position: relative; height: 58px; margin: 0 8px; cursor: ew-resize; touch-action: none; outline: none; border-radius: 4px">
+            <div style="position: absolute; left: {{gate.pct}}%; top: 0; transform: translateX({{gate.flagShift}}%); white-space: nowrap; font-size: 12px; font-weight: 600; color: {{c.neu}}; font-variant-numeric: tabular-nums; pointer-events: none">{{gate.text}}</div>
+            <div style="position: absolute; left: 0; right: 0; top: 22px; height: 12px; border-radius: 6px; background: {{c.border}}; overflow: hidden">
+              <div style="position: absolute; left: 0; top: 0; bottom: 0; width: {{lvl.pct}}%; background: {{lvl.color}}"></div>
+              <div style="position: absolute; left: 0; top: 0; bottom: 0; width: {{gate.pct}}%; background-image: repeating-linear-gradient(135deg, {{c.shade}} 0px, {{c.shade}} 2px, transparent 2px, transparent 6px)"></div>
+              <div style="position: absolute; left: {{lvl.peakPct}}%; top: 0; width: 2px; height: 12px; background: {{c.text}}; opacity: 0.7"></div>
+            </div>
+            <div class="knob" style="position: absolute; left: {{gate.pct}}%; top: 17px; width: 10px; height: 22px; margin-left: -5px; box-sizing: border-box; border-radius: 3px; background: {{gate.knobBg}}; border: 2px solid {{c.neu}}; pointer-events: none"></div>
+            <sc-for list="{{gateTicks}}" as="tk" hint-placeholder-count="8">
+              <span style="position: absolute; left: {{tk.pct}}%; top: 38px; width: 1px; height: 4px; background: {{c.muted}}; pointer-events: none"></span>
+              <span style="position: absolute; left: {{tk.pct}}%; top: 42px; transform: translateX(-50%); font-size: 11px; color: {{c.muted}}; font-variant-numeric: tabular-nums; pointer-events: none">{{tk.label}}</span>
+            </sc-for>
+          </div>
+          <sc-if value="{{varD}}" hint-placeholder-val="{{false}}">
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 2px 8px 0">
+              <span style="font-size: 13px">Noise gate</span>
+              <div role="group" aria-label="Noise gate" style="display: inline-flex; align-items: center; border: 1px solid {{c.border}}; border-radius: 5px; background: {{c.button}}; height: 28px; box-sizing: border-box">
+                <button type="button" onClick="{{gateDec}}" aria-label="Lower noise gate by 1 dB" style="width: 26px; height: 26px; border: 0; background: transparent; color: {{c.text}}; cursor: pointer">−</button>
+                <span style="min-width: 54px; text-align: center; font-size: 13px; font-variant-numeric: tabular-nums">{{gate.text}}</span>
+                <button type="button" onClick="{{gateInc}}" aria-label="Raise noise gate by 1 dB" style="width: 26px; height: 26px; border: 0; background: transparent; color: {{c.text}}; cursor: pointer">+</button>
+              </div>
+              <button type="button" onClick="{{gateReset}}" title="Back to −55 dB" style="height: 28px; padding: 0 10px; border-radius: 5px; border: 1px solid {{c.border}}; background: {{c.button}}; color: {{c.text}}; cursor: pointer; font-size: 13px">Reset</button>
+              <span style="flex: 1"></span>
+              <button type="button" onClick="{{calibrate}}" title="Stay quiet for 2 seconds; the gate is set 6 dB above the room noise" disabled="{{calBusy}}" style="height: 28px; min-width: 176px; justify-content: center; padding: 0 12px; border-radius: 5px; border: 1px solid {{calBtn.bd}}; background: {{calBtn.bg}}; color: {{calBtn.fg}}; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-size: 13px">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 12h3l3-7 4 14 3-7h5"></path></svg>
+                {{calLabel}}
+              </button>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{isC1}}" hint-placeholder-val="{{true}}">
+        <div style="align-self: stretch; display: flex; justify-content: center; padding-top: 12px; border-top: 1px solid {{c.border}}">
+          <div role="radiogroup" aria-label="Display style" style="display: inline-flex; gap: 4px; padding: 3px; border-radius: 7px; background: {{c.window}}">
+            <sc-for list="{{displays}}" as="d" hint-placeholder-count="3">
+              <button type="button" role="radio" aria-checked="{{d.on}}" onClick="{{d.pick}}" style="height: 34px; padding: 0 16px; border-radius: 5px; border: 1px solid {{d.bd}}; background: {{d.bg}}; color: {{c.text}}; cursor: pointer; display: inline-flex; align-items: center; gap: 8px">
+                <sc-if value="{{d.isNeedle}}" hint-placeholder-val="{{false}}">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 17a9 9 0 0 1 18 0"></path><path d="M12 17l4-6"></path></svg>
+                </sc-if>
+                <sc-if value="{{d.isStrobe}}" hint-placeholder-val="{{false}}">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 5v14M9 5v14M13 5v14M17 5v14M21 5v14"></path></svg>
+                </sc-if>
+                <sc-if value="{{d.isBar}}" hint-placeholder-val="{{false}}">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 14v-4M8 15v-6M12 17V7M16 15V9M20 14v-4"></path></svg>
+                </sc-if>
+                {{d.label}}
+              </button>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{isC2}}" hint-placeholder-val="{{false}}">
+        <div style="align-self: stretch; display: flex; justify-content: center; padding-top: 12px; border-top: 1px solid {{c.border}}">
+         <div role="radiogroup" aria-label="Display style" style="display: inline-grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 3px; border-radius: 7px; background: {{c.window}}">
+          <sc-for list="{{displays}}" as="d" hint-placeholder-count="3">
+            <button type="button" role="radio" aria-checked="{{d.on}}" onClick="{{d.pick}}" style="height: 32px; padding: 0 14px; border-radius: 5px; border: 1px solid {{d.bd}}; background: {{d.bg}}; color: {{c.text}}; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px">
+              <sc-if value="{{d.isNeedle}}" hint-placeholder-val="{{false}}">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 17a9 9 0 0 1 18 0"></path><path d="M12 17l4-6"></path></svg>
+              </sc-if>
+              <sc-if value="{{d.isStrobe}}" hint-placeholder-val="{{false}}">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 5v14M9 5v14M13 5v14M17 5v14M21 5v14"></path></svg>
+              </sc-if>
+              <sc-if value="{{d.isBar}}" hint-placeholder-val="{{false}}">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 14v-4M8 15v-6M12 17V7M16 15V9M20 14v-4"></path></svg>
+              </sc-if>
+              {{d.label}}
+            </button>
+          </sc-for>
+         </div>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+
+  <sc-if value="{{hasFooter}}" hint-placeholder-val="{{false}}">
+  <div style="position: relative; display: flex; flex-wrap: wrap; align-items: center; gap: 16px; min-height: 34px; box-sizing: border-box; padding: 4px 14px; border-top: 1px solid {{c.border}}; background: {{c.header}}; font-size: 12px; color: {{c.muted}}">
+    <span style="display: inline-flex; align-items: center; gap: 6px">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"></rect><path d="M5 11a7 7 0 0 0 14 0M12 18v3"></path></svg>
+      System default · PipeWire
+    </span>
+    <sc-if value="{{playing}}" hint-placeholder-val="{{false}}">
+      <span style="display: inline-flex; align-items: center; gap: 6px; color: {{c.text}}">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"></path></svg>
+        Playing {{cur.letter}}{{cur.oct}} on Speakers
+      </span>
+    </sc-if>
+    <span style="flex: 1"></span>
+
+    <sc-if value="{{varA}}" hint-placeholder-val="{{true}}">
+      <span>Level</span>
+      <div class="gm" role="slider" tabindex="0" aria-label="Noise gate" aria-valuemin="-70" aria-valuemax="-10" aria-valuenow="{{gate.db}}" aria-valuetext="{{gate.text}}" title="Noise gate {{gate.text}}. Drag to change, double-click to reset" onPointerdown="{{gateDown}}" onPointermove="{{gateMove}}" onPointerup="{{gateUp}}" onPointercancel="{{gateUp}}" onKeydown="{{gateKey}}" onWheel="{{gateWheel}}" onDblclick="{{gateReset}}" onBlur="{{gateBlur}}" style="position: relative; width: 240px; height: 24px; cursor: ew-resize; touch-action: none; outline: none; border-radius: 4px">
+        <div style="position: absolute; left: 0; right: 0; top: 8px; height: 8px; border-radius: 4px; background: {{c.border}}; overflow: hidden">
+          <div style="position: absolute; left: 0; top: 0; bottom: 0; width: {{lvl.pct}}%; background: {{lvl.color}}"></div>
+          <div style="position: absolute; left: 0; top: 0; bottom: 0; width: {{gate.pct}}%; background-image: repeating-linear-gradient(135deg, {{c.shade}} 0px, {{c.shade}} 2px, transparent 2px, transparent 5px)"></div>
+          <div style="position: absolute; left: {{lvl.peakPct}}%; top: 0; width: 2px; height: 8px; background: {{c.text}}; opacity: 0.7"></div>
+        </div>
+        <div class="knob" style="position: absolute; left: {{gate.pct}}%; top: 3px; width: 8px; height: 18px; margin-left: -4px; box-sizing: border-box; border-radius: 3px; background: {{gate.knobBg}}; border: 2px solid {{c.neu}}; pointer-events: none"></div>
+        <sc-if value="{{gate.tip}}" hint-placeholder-val="{{false}}">
+          <div style="position: absolute; left: {{gate.pct}}%; bottom: 32px; transform: translateX(-50%); white-space: nowrap; padding: 4px 8px; border-radius: 4px; background: {{c.tip}}; color: {{c.tipText}}; font-size: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.3); pointer-events: none; font-variant-numeric: tabular-nums">Noise gate {{gate.text}}</div>
+        </sc-if>
+      </div>
+      <span style="min-width: 64px; text-align: right; font-variant-numeric: tabular-nums; color: {{lvl.textColor}}; font-weight: 500">{{lvl.text}}</span>
+    </sc-if>
+
+    <sc-if value="{{varB}}" hint-placeholder-val="{{false}}">
+      <button type="button" onClick="{{togglePop}}" aria-expanded="{{popOpen}}" aria-haspopup="dialog" title="Input level and noise gate" style="height: 26px; padding: 0 8px; border-radius: 5px; border: 1px solid {{popBd}}; background: {{popBg}}; color: {{c.muted}}; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; font-size: 12px">
+        <span>Level</span>
+        <span style="position: relative; width: 160px; height: 8px; border-radius: 4px; background: {{c.border}}">
+          <span style="position: absolute; left: 0; top: 0; height: 8px; width: {{lvl.pct}}%; border-radius: 4px; background: {{lvl.color}}"></span>
+          <span style="position: absolute; left: {{lvl.peakPct}}%; top: 0; width: 2px; height: 8px; background: {{c.text}}; opacity: 0.7"></span>
+          <span style="position: absolute; left: {{gate.pct}}%; top: -3px; width: 2px; height: 14px; border-radius: 1px; background: {{c.neu}}"></span>
+        </span>
+        <span style="min-width: 60px; text-align: right; font-variant-numeric: tabular-nums; color: {{lvl.textColor}}; font-weight: 500">{{lvl.text}}</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 15l6-6 6 6"></path></svg>
+      </button>
+      <sc-if value="{{popOpen}}" hint-placeholder-val="{{false}}">
+        <div role="dialog" aria-label="Input level and noise gate" style="position: absolute; right: 12px; bottom: calc(100% + 8px); z-index: 30; width: 420px; box-sizing: border-box; padding: 14px 16px 16px; background: {{c.view}}; border: 1px solid {{c.border}}; border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.35); display: flex; flex-direction: column; gap: 10px; color: {{c.text}}; font-size: 13px">
+          <div style="display: flex; align-items: center; gap: 8px">
+            <span style="font-weight: 600">Noise gate</span>
+            <span style="color: {{c.muted}}; font-size: 12px">System default · PipeWire</span>
+            <span style="flex: 1"></span>
+            <span style="font-variant-numeric: tabular-nums; color: {{lvl.textColor}}; font-weight: 500; font-size: 12px">{{lvl.text}}</span>
+            <button type="button" onClick="{{togglePop}}" aria-label="Close" style="width: 26px; height: 26px; border: 0; border-radius: 13px; background: transparent; color: {{c.muted}}; cursor: pointer; font-size: 16px; line-height: 1">×</button>
+          </div>
+          <div class="gm" role="slider" tabindex="0" aria-label="Noise gate" aria-valuemin="-70" aria-valuemax="-10" aria-valuenow="{{gate.db}}" aria-valuetext="{{gate.text}}" onPointerdown="{{gateDown}}" onPointermove="{{gateMove}}" onPointerup="{{gateUp}}" onPointercancel="{{gateUp}}" onKeydown="{{gateKey}}" onWheel="{{gateWheel}}" onDblclick="{{gateReset}}" onBlur="{{gateBlur}}" style="position: relative; height: 58px; margin: 0 8px; cursor: ew-resize; touch-action: none; outline: none; border-radius: 4px">
+            <div style="position: absolute; left: {{gate.pct}}%; top: 0; transform: translateX({{gate.flagShift}}%); white-space: nowrap; font-size: 12px; font-weight: 600; color: {{c.neu}}; font-variant-numeric: tabular-nums; pointer-events: none">{{gate.text}}</div>
+            <div style="position: absolute; left: 0; right: 0; top: 22px; height: 12px; border-radius: 6px; background: {{c.border}}; overflow: hidden">
+              <div style="position: absolute; left: 0; top: 0; bottom: 0; width: {{lvl.pct}}%; background: {{lvl.color}}"></div>
+              <div style="position: absolute; left: 0; top: 0; bottom: 0; width: {{gate.pct}}%; background-image: repeating-linear-gradient(135deg, {{c.shade}} 0px, {{c.shade}} 2px, transparent 2px, transparent 6px)"></div>
+              <div style="position: absolute; left: {{lvl.peakPct}}%; top: 0; width: 2px; height: 12px; background: {{c.text}}; opacity: 0.7"></div>
+            </div>
+            <div class="knob" style="position: absolute; left: {{gate.pct}}%; top: 17px; width: 10px; height: 22px; margin-left: -5px; box-sizing: border-box; border-radius: 3px; background: {{gate.knobBg}}; border: 2px solid {{c.neu}}; pointer-events: none"></div>
+            <sc-for list="{{gateTicks}}" as="tk" hint-placeholder-count="8">
+              <span style="position: absolute; left: {{tk.pct}}%; top: 38px; width: 1px; height: 4px; background: {{c.muted}}; pointer-events: none"></span>
+              <span style="position: absolute; left: {{tk.pct}}%; top: 42px; transform: translateX(-50%); font-size: 11px; color: {{c.muted}}; font-variant-numeric: tabular-nums; pointer-events: none">{{tk.label}}</span>
+            </sc-for>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap">
+            <div role="group" aria-label="Noise gate" style="display: inline-flex; align-items: center; border: 1px solid {{c.border}}; border-radius: 5px; background: {{c.button}}; height: 30px; box-sizing: border-box">
+              <button type="button" onClick="{{gateDec}}" aria-label="Lower noise gate by 1 dB" style="width: 28px; height: 28px; border: 0; background: transparent; color: {{c.text}}; cursor: pointer">−</button>
+              <span style="min-width: 58px; text-align: center; font-variant-numeric: tabular-nums">{{gate.text}}</span>
+              <button type="button" onClick="{{gateInc}}" aria-label="Raise noise gate by 1 dB" style="width: 28px; height: 28px; border: 0; background: transparent; color: {{c.text}}; cursor: pointer">+</button>
+            </div>
+            <button type="button" onClick="{{gateReset}}" style="height: 30px; padding: 0 10px; border-radius: 5px; border: 1px solid {{c.border}}; background: {{c.button}}; color: {{c.text}}; cursor: pointer">Reset</button>
+            <span style="flex: 1"></span>
+            <button type="button" onClick="{{calibrate}}" disabled="{{calBusy}}" style="height: 30px; padding: 0 12px; border-radius: 5px; border: 1px solid {{c.hl}}; background: {{c.sel}}; color: {{c.text}}; cursor: pointer; display: inline-flex; align-items: center; gap: 6px">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 12h3l3-7 4 14 3-7h5"></path></svg>
+              {{calLabel}}
+            </button>
+          </div>
+          <span style="font-size: 12px; color: {{c.muted}}">{{calText}}</span>
+        </div>
+      </sc-if>
+    </sc-if>
+
+    <sc-if value="{{varC}}" hint-placeholder-val="{{false}}">
+      <span style="font-variant-numeric: tabular-nums">Noise gate {{gate.text}}</span>
+    </sc-if>
+  </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"gate":{"editor":"enum","options":["a","b","c","d","e"],"default":"e"},"room":{"editor":"enum","options":["quiet","noisy"],"default":"quiet"},"open":{"editor":"boolean","default":false},"theme":{"editor":"enum","options":["dark","light","layan"],"default":"dark"},"startInstrument":{"editor":"enum","options":["guitar6","guitar7","bass4","bass5","ukulele","mandolin","banjo","violin","viola","cello","contrabass"],"default":"guitar6"},"startDisplay":{"editor":"enum","options":["needle","strobe","bar"],"default":"needle"},"startAuto":{"editor":"boolean","default":true},"$preview":{"width":1200,"height":800}}' >
+class Component extends DCLogic {
+  data() {
+    if (this._data) return this._data;
+    this._data = {
+      guitar6: { group: 'Guitar', label: 'Guitar', sub: '6-string', head: [3, 3], tunings: [
+        ['Standard', 'E2 A2 D3 G3 B3 E4'], ['Drop D', 'D2 A2 D3 G3 B3 E4'], ['Drop C', 'C2 G2 C3 F3 A3 D4'],
+        ['DADGAD', 'D2 A2 D3 G3 A3 D4'], ['Open G', 'D2 G2 D3 G3 B3 D4']] },
+      guitar7: { group: 'Guitar', label: 'Guitar', sub: '7-string', head: [4, 3], tunings: [['Standard', 'B1 E2 A2 D3 G3 B3 E4']] },
+      bass4: { group: 'Bass', label: 'Bass', sub: '4-string', head: [2, 2], tunings: [['Standard', 'E1 A1 D2 G2'], ['Drop D', 'D1 A1 D2 G2']] },
+      bass5: { group: 'Bass', label: 'Bass', sub: '5-string', head: [3, 2], tunings: [['Standard', 'B0 E1 A1 D2 G2']] },
+      ukulele: { group: 'Folk', label: 'Ukulele', sub: 'soprano / concert', head: [2, 2], tunings: [['Standard (high G)', 'G4 C4 E4 A4'], ['Low G', 'G3 C4 E4 A4']] },
+      mandolin: { group: 'Folk', label: 'Mandolin', sub: '4 courses', head: null, tunings: [['Standard', 'G3 D4 A4 E5']] },
+      banjo: { group: 'Folk', label: 'Banjo', sub: '5-string', head: null, tunings: [['Open G', 'G4 D3 G3 B3 D4']] },
+      violin: { group: 'Violin family', label: 'Violin', sub: '', head: null, tunings: [['Standard', 'G3 D4 A4 E5']] },
+      viola: { group: 'Violin family', label: 'Viola', sub: '', head: null, tunings: [['Standard', 'C3 G3 D4 A4']] },
+      cello: { group: 'Violin family', label: 'Cello', sub: '', head: null, tunings: [['Standard', 'C2 G2 D3 A3']] },
+      contrabass: { group: 'Violin family', label: 'Double bass', sub: '', head: null, tunings: [['Orchestral', 'E1 A1 D2 G2']] }
+    };
+    return this._data;
+  }
+
+  parseNote(n) {
+    const pcs = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
+    const sharp = n[1] === '#';
+    const oct = parseInt(n.slice(sharp ? 2 : 1), 10);
+    return { letter: n[0] + (sharp ? '♯' : ''), oct: String(oct), midi: 12 * (oct + 1) + pcs[n[0]] + (sharp ? 1 : 0) };
+  }
+
+  cfg() {
+    const s = this.state || {};
+    const instKey = s.inst ?? this.props.startInstrument ?? 'guitar6';
+    const inst = this.data()[instKey] || this.data().guitar6;
+    const tIdx = Math.min(s.tuning ?? 0, inst.tunings.length - 1);
+    const a4 = s.a4 ?? 440;
+    const notes = inst.tunings[tIdx][1].split(' ').map((n) => {
+      const p = this.parseNote(n);
+      return { ...p, freq: a4 * Math.pow(2, (p.midi - 69) / 12) };
+    });
+    const auto = s.auto ?? this.props.startAuto ?? false;
+    return { s, instKey, inst, tIdx, a4, notes, auto, sel: Math.min(s.str ?? 0, notes.length - 1) };
+  }
+
+  componentDidMount() {
+    this.sim = { c: -26, disp: -26, x: 0, hold: 0, db: -14, peak: -14, t: 0 };
+    if (this.props.open) this.setState({ pop: true });
+    if (this.props.startPlaying && !(this.props.startAuto ?? true)) this.setState({ playing: true, str: Number(this.props.startPlaying) });
+    // Space plays / stops the selected string, as in the app
+    this.onKey = (e) => {
+      if (e.code !== 'Space' || (this.cfg().auto) || e.target.closest('input, [role=slider]')) return;
+      e.preventDefault();
+      if ((this.state || {}).playing) { this.stopTone(); this.setState({ playing: false }); }
+      else this.setState({ playing: true }, () => this.startTone());
+    };
+    window.addEventListener('keydown', this.onKey);
+    if (this.props.tuned) this.setState({ tuned: Object.fromEntries(String(this.props.tuned).split(',').map((i) => [Number(i), true])) });
+    this.timer = setInterval(() => this.tick(), 50);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timer);
+    window.removeEventListener('keydown', this.onKey);
+    this.stopTone();
+  }
+
+  kick() {
+    if (!this.sim) return;
+    this.sim.c = (Math.random() < 0.5 ? -1 : 1) * (14 + Math.random() * 30);
+    this.sim.hold = 0;
+  }
+
+  tick() {
+    if (!this.sim) return;
+    const k = this.cfg();
+    const s = k.s;
+    const sim = this.sim;
+    const floor = this.props.room === 'noisy' ? -47 : -63;
+    sim.t++;
+    if (s.cal > 0) {
+      sim.db = floor + Math.random() * 3;
+    } else if (sim.t % 110 === 0) {
+      sim.db = -10 - Math.random() * 5;
+    } else {
+      sim.db = Math.max(floor + Math.random() * 3, sim.db - 0.5);
+    }
+    sim.peak = Math.max(sim.db, sim.peak - 0.6);
+    const signal = sim.db > this.gate();
+    if (signal) {
+      sim.c += (0 - sim.c) * 0.03 + (Math.random() - 0.5) * 1.4;
+      sim.disp += (sim.c - sim.disp) * 0.3;
+      sim.x += sim.disp * 0.18;
+      sim.hold = Math.abs(sim.disp) < 3 ? sim.hold + 1 : 0;
+    } else {
+      sim.hold = 0;
+    }
+    const upd = { cents: sim.disp, strobeX: sim.x, db: sim.db, peak: sim.peak, signal };
+    if (s.calFlash > 0) upd.calFlash = s.calFlash - 1;
+    if (s.cal > 0) {
+      upd.calMax = Math.max(s.calMax ?? -70, sim.db);
+      upd.cal = s.cal - 1;
+      if (upd.cal === 0) {
+        upd.gate = this.clampGate(Math.round(upd.calMax + 6));
+        upd.calFlash = 30;
+        upd.calDone = 'Set to ' + this.dbText(upd.gate) + ', 6 dB above the room noise (' + this.dbText(Math.round(upd.calMax)) + ').';
+      }
+    }
+    if (sim.hold === 25) upd.tuned = { ...(s.tuned || {}), [k.sel]: true };
+    if (sim.hold > 55 && k.auto) {
+      const tuned = upd.tuned || s.tuned || {};
+      let next = -1;
+      for (let i = 1; i <= k.notes.length; i++) {
+        const j = (k.sel + i) % k.notes.length;
+        if (!tuned[j]) { next = j; break; }
+      }
+      if (next >= 0) { upd.str = next; this.kick(); } else sim.hold = 0;
+    }
+    this.setState(upd);
+  }
+
+  startTone() {
+    const k = this.cfg();
+    const s = k.s;
+    try {
+      if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+      if (this.ctx.resume) this.ctx.resume();
+    } catch (e) { return; }
+    this.stopTone();
+    const ctx = this.ctx;
+    const t = ctx.currentTime;
+    const f = k.notes[k.sel].freq;
+    const tb = s.timbre ?? 'pluck';
+    const vol = ((s.vol ?? 60) / 100) * 0.3;
+    const g = ctx.createGain();
+    g.connect(ctx.destination);
+    const o = ctx.createOscillator();
+    o.frequency.value = f;
+    if (tb === 'pluck') {
+      o.type = 'sawtooth';
+      const lp = ctx.createBiquadFilter();
+      lp.type = 'lowpass';
+      lp.frequency.setValueAtTime(Math.min(f * 10, 12000), t);
+      lp.frequency.exponentialRampToValueAtTime(f * 1.5, t + 1.6);
+      o.connect(lp); lp.connect(g);
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(vol * 1.5, t + 0.06);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 2.4);
+    } else {
+      if (tb === 'organ') {
+        o.setPeriodicWave(ctx.createPeriodicWave(new Float32Array([0, 0, 0, 0, 0, 0]), new Float32Array([0, 1, 0.5, 0.3, 0.15, 0.08])));
+      } else {
+        o.type = 'sine';
+      }
+      o.connect(g);
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(vol, t + 0.06);
+    }
+    o.start();
+    this.voice = { o, g };
+    this.retrig = setTimeout(() => {
+      const cur = this.cfg();
+      if (!cur.s.playing) return;
+      if (cur.s.loop) this.setState({ str: (cur.sel + 1) % cur.notes.length }, () => this.startTone());
+      else if ((cur.s.timbre ?? 'pluck') === 'pluck') this.startTone();
+    }, 2500);
+  }
+
+  stopTone() {
+    clearTimeout(this.retrig);
+    if (this.voice && this.ctx) {
+      try {
+        const t = this.ctx.currentTime;
+        // Fade out over 150 ms, like the app.
+        const gain = this.voice.g.gain;
+        gain.cancelScheduledValues(t);
+        gain.setValueAtTime(gain.value, t);
+        gain.linearRampToValueAtTime(0, t + 0.15);
+        this.voice.o.stop(t + 0.2);
+      } catch (e) {}
+    }
+    this.voice = null;
+  }
+
+  restartIfPlaying() {
+    if ((this.state || {}).playing) this.startTone();
+  }
+
+  gate() { return (this.state || {}).gate ?? -55; }
+  clampGate(v) { return Math.max(-70, Math.min(-10, Math.round(v))); }
+  dbText(v) { return (v < 0 ? '−' : '') + Math.abs(v) + ' dB'; }
+  setGate(v) { this.setState({ gate: this.clampGate(v), calDone: null }); }
+  gateFromX(e, el) {
+    const r = el.getBoundingClientRect();
+    this.setGate(-70 + 70 * Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)));
+  }
+
+  setAuto(on) {
+    if (on) { this.stopTone(); this.setState({ auto: true, playing: false }); }
+    else this.setState({ auto: false });
+  }
+
+  renderVals() {
+    const k = this.cfg();
+    const s = k.s;
+    // Colors come only from KDE color scheme roles (kdeglobals), like Kirigami.Theme in the app.
+    const schemes = {
+      // Breeze Dark / Breeze Light
+      dark: { window: [32, 35, 38], view: [20, 22, 24], header: [41, 44, 48], button: [41, 44, 48], text: [252, 252, 252], inactive: [161, 169, 177],
+        positive: [39, 174, 96], neutral: [246, 116, 0], negative: [218, 68, 83], accent: [61, 174, 233], tooltip: [41, 44, 48], tooltipText: [252, 252, 252] },
+      light: { window: [239, 240, 241], view: [255, 255, 255], header: [222, 224, 226], button: [252, 252, 252], text: [35, 38, 41], inactive: [112, 125, 138],
+        positive: [39, 174, 96], neutral: [246, 116, 0], negative: [218, 68, 83], accent: [61, 174, 233], tooltip: [247, 247, 247], tooltipText: [35, 38, 41] },
+      // Layan (dark), as set in Plasma System Settings
+      layan: { window: [49, 49, 58], view: [49, 49, 58], header: [49, 49, 58], button: [68, 69, 75], text: [234, 234, 234], inactive: [153, 153, 153],
+        positive: [0, 110, 40], neutral: [176, 128, 0], negative: [191, 3, 3], accent: [86, 87, 245], tooltip: [33, 35, 41], tooltipText: [221, 221, 221] }
+    };
+    const K = schemes[this.props.theme] || schemes.dark;
+    const rgb = (v, a) => a === undefined ? 'rgb(' + v.join(',') + ')' : 'rgba(' + v.join(',') + ',' + a + ')';
+    const mix = (a, b, t) => rgb(a.map((x, i) => Math.round(x + (b[i] - x) * t)));
+    const c = {
+      window: rgb(K.window), view: rgb(K.view), header: rgb(K.header), button: rgb(K.button), text: rgb(K.text), muted: rgb(K.inactive),
+      border: mix(K.window, K.text, 0.2), hl: rgb(K.accent), hlText: 'rgb(255,255,255)', sel: rgb(K.accent, 0.22),
+      pos: rgb(K.positive), neu: rgb(K.neutral), neg: rgb(K.negative), shade: rgb(K.view, 0.6),
+      tip: rgb(K.tooltip), tipText: rgb(K.tooltipText),
+      wood: mix(K.window, K.text, 0.12), woodEdge: mix(K.window, K.text, 0.3), chrome: mix(K.window, K.text, 0.55),
+      stringCol: mix(K.view, K.text, 0.6), nut: mix(K.view, K.text, 0.85)
+    };
+    const layout = 'c2';
+    const display = s.display ?? this.props.startDisplay ?? 'needle';
+    const tuned = s.tuned || {};
+    const N = k.notes.length;
+    const cents = Math.max(-50, Math.min(50, s.cents ?? -18));
+    const ac = Math.abs(cents);
+    const tone = ac <= 3 ? c.pos : ac <= 15 ? c.neu : c.neg;
+    const r1 = (v) => Math.round(v * 10) / 10;
+    const playing = !!s.playing;
+    const auto = k.auto;
+
+    const pickStr = (i) => () => {
+      if (!auto && playing && i === k.sel) {
+        this.stopTone();
+        this.setState({ playing: false });
+        return;
+      }
+      if (!auto) this.setState({ str: i, playing: true }, () => this.startTone());
+      else this.setState({ str: i });
+      this.kick();
+    };
+    const strings = k.notes.map((n, i) => {
+      const selected = i === k.sel;
+      return {
+        letter: n.letter, oct: n.oct, hz: n.freq.toFixed(2), num: N - i, selected, tuned: !!tuned[i], playingHere: playing && selected,
+        tunedX: 8, showPlay: !auto, idle: !(playing && selected),
+        pb: playing && selected ? { bd: c.hl, bg: c.hl, fg: c.hlText } : { bd: c.border, bg: c.button, fg: c.text },
+        aria: 'String ' + (N - i) + ', ' + n.letter + n.oct + ', ' + n.freq.toFixed(2) + ' Hz' + (auto ? '' : playing && selected ? '. Stop the reference tone' : '. Play the reference tone'),
+        bg: selected ? c.sel : c.button, bd: selected ? c.hl : c.border, pick: pickStr(i)
+      };
+    });
+    const curN = k.notes[k.sel];
+    const cur = { letter: curN.letter, oct: curN.oct, hz: curN.freq.toFixed(2), num: N - k.sel };
+
+    const P = (cv, r) => {
+      const a = (cv * 1.2) * Math.PI / 180;
+      return { x: r1(200 + r * Math.sin(a)), y: r1(210 - r * Math.cos(a)) };
+    };
+    const arc = (a, b, r) => {
+      const p = P(a, r), q = P(b, r);
+      return 'M ' + p.x + ' ' + p.y + ' A ' + r + ' ' + r + ' 0 0 1 ' + q.x + ' ' + q.y;
+    };
+    let ticks = '';
+    for (let v = -50; v <= 50; v += 5) {
+      const p = P(v, v % 25 === 0 ? 146 : 156), q = P(v, 166);
+      ticks += 'M ' + p.x + ' ' + p.y + ' L ' + q.x + ' ' + q.y + ' ';
+    }
+    const np = P(cents, 158);
+    const g = {
+      track: arc(-50, 50, 170), ok: arc(-3, 3, 178), warnL: arc(-15, -3, 178), warnR: arc(3, 15, 178), ticks,
+      l0: P(-50, 128), l1: P(-25, 128), l2: P(0, 128), l3: P(25, 128), l4: P(50, 128), nx: np.x, ny: np.y
+    };
+    const mod = (v, m) => r1(((v % m) + m) % m);
+    const sx = s.strobeX ?? 0;
+    const st = { x1: mod(sx, 24), x2: mod(sx * 2, 48), x3: mod(sx * 0.5, 12) };
+    const bar = [];
+    for (let v = -50; v <= 50; v += 5) {
+      const d = Math.abs(v - cents);
+      const zc = Math.abs(v) <= 3 ? c.pos : Math.abs(v) <= 15 ? c.neu : c.neg;
+      bar.push({ h: Math.round(64 - Math.abs(v) * 0.5), bg: d <= 7.5 ? zc : c.border, op: d <= 2.5 ? 1 : d <= 7.5 ? 0.4 : 1 });
+    }
+
+    let hs = { h: 0, pegs: [] };
+    if (k.inst.head) {
+      const L = k.inst.head[0], R = k.inst.head[1];
+      const n = Math.max(L, R), rowH = 64, top0 = 24, W = 304, pegW = 96;
+      const H = top0 + n * rowH + 60, nutY = H - 44;
+      const pegs = [];
+      let shafts = '', posts = '', strs = '', selStr = '';
+      const nutX = (i) => r1(130 + i * (44 / Math.max(1, N - 1)));
+      const addPeg = (idx, row, left) => {
+        const y = top0 + row * rowH + 22;
+        const px = left ? 124 : 180;
+        pegs.push({ ...strings[idx], left: left ? 0 : W - pegW, top: y - 22 });
+        shafts += left ? 'M ' + pegW + ' ' + y + ' L ' + (px - 6) + ' ' + y + ' ' : 'M ' + (px + 6) + ' ' + y + ' L ' + (W - pegW) + ' ' + y + ' ';
+        posts += 'M ' + (px - 7) + ' ' + y + ' a 7 7 0 1 0 14 0 a 7 7 0 1 0 -14 0 ';
+        const seg = 'M ' + px + ' ' + y + ' L ' + nutX(idx) + ' ' + nutY + ' L ' + nutX(idx) + ' ' + H + ' ';
+        if (idx === k.sel) selStr = seg; else strs += seg;
+      };
+      for (let i = 0; i < L; i++) addPeg(L - 1 - i, i, true);
+      for (let j = 0; j < R; j++) addPeg(L + j, j, false);
+      const body = 'M 126 ' + H + ' L 126 ' + (nutY - 6) + ' C 114 ' + (nutY - 30) + ' 108 ' + (nutY - 50) + ' 108 ' + (nutY - 80) +
+        ' L 108 ' + top0 + ' Q 108 6 124 6 L 180 6 Q 196 6 196 ' + top0 + ' L 196 ' + (nutY - 80) +
+        ' C 196 ' + (nutY - 50) + ' 190 ' + (nutY - 30) + ' 178 ' + (nutY - 6) + ' L 178 ' + H + ' Z';
+      hs = { w: W, pegW, nutX: 126, nutW: 52, h: H, nutY: nutY - 3, pegs, shafts, posts, strings: strs, selString: selStr, body };
+    }
+
+    const D = this.data();
+    let lastGroup = '';
+    const instItems = Object.keys(D).map((key) => {
+      const it = D[key];
+      const groupStart = it.group !== lastGroup;
+      lastGroup = it.group;
+      const on = key === k.instKey;
+      return {
+        group: it.group, groupStart, label: it.label, sub: it.sub, on, bg: on ? c.sel : 'transparent',
+        count: it.tunings[0][1].split(' ').length + ' strings',
+        pick: () => { this.setState({ inst: key, tuning: 0, str: 0, tuned: {}, menu: null }, () => this.restartIfPlaying()); this.kick(); }
+      };
+    });
+    const tunItems = k.inst.tunings.map((t, i) => ({
+      name: t[0], notes: t[1].replace(/#/g, '♯'), on: i === k.tIdx, bg: i === k.tIdx ? c.sel : 'transparent',
+      pick: () => { this.setState({ tuning: i, tuned: {}, menu: null }, () => this.restartIfPlaying()); this.kick(); }
+    }));
+
+    const segOf = (on) => ({ on, bg: on ? c.sel : 'transparent', bar: on ? c.hl : 'transparent', bd: on ? c.border : 'transparent' });
+    const displays = [['needle', 'Needle'], ['strobe', 'Strobe'], ['bar', 'Bar']].map(([id, label]) => {
+      const on = display === id;
+      return {
+        label, ...segOf(on), isNeedle: id === 'needle', isStrobe: id === 'strobe', isBar: id === 'bar',
+        tabBg: on ? c.view : c.header, tabFg: on ? c.text : c.muted,
+        pick: () => this.setState({ display: id })
+      };
+    });
+    const timbre = s.timbre ?? 'pluck';
+    const timbres = [['pluck', 'Pluck'], ['sine', 'Sine'], ['organ', 'Organ']].map(([id, label]) => ({
+      label, ...segOf(timbre === id),
+      pick: () => this.setState({ timbre: id }, () => this.restartIfPlaying())
+    }));
+    const tunedCount = Object.keys(tuned).filter((i) => tuned[i] && i < N).length;
+    const sign = cents > 0.05 ? '+' : cents < -0.05 ? '−' : '±';
+
+    const variant = this.props.gate ?? 'a';
+    const gateDb = this.gate();
+    const db = s.db ?? -14;
+    const peak = s.peak ?? db;
+    const signal = s.signal ?? true;
+    const pctOf = (v) => r1(Math.max(0, Math.min(100, (v + 70) / 70 * 100)));
+    const lvl = {
+      db: Math.round(db), pct: pctOf(db), peakPct: pctOf(peak),
+      color: db <= gateDb ? c.muted : db > -6 ? c.neg : db > -18 ? c.neu : c.pos,
+      text: db.toFixed(1).replace('-', '−') + ' dB',
+      textColor: db <= gateDb ? c.muted : c.text
+    };
+    const gp = pctOf(gateDb);
+    const gate = {
+      db: gateDb, pct: gp, text: this.dbText(gateDb), tip: !!(s.dragging || s.kbd),
+      knobBg: s.dragging ? c.neu : c.view,
+      flagShift: gp < 8 ? 0 : gp > 92 ? -100 : -50
+    };
+    const gateTicks = [-70, -60, -50, -40, -30, -20, -10, 0].map((v) => ({ pct: pctOf(v), label: v === 0 ? '0' : '−' + Math.abs(v) }));
+    const keyStep = { ArrowLeft: -1, ArrowDown: -1, ArrowRight: 1, ArrowUp: 1, PageDown: -5, PageUp: 5 };
+
+    return {
+      c, tone, inst: k.inst, a4: k.a4,
+      tun: { name: k.inst.tunings[k.tIdx][0], notes: k.notes.map((n) => n.letter).join(' ') },
+      isC1: layout !== 'c2', isC2: layout === 'c2',
+      displays,
+      isNeedle: display === 'needle', isStrobe: display === 'strobe', isBar: display === 'bar',
+      hasHead: !!k.inst.head, noHead: !k.inst.head,
+      stringsHighFirst: strings.slice().reverse(),
+      ref: { disabled: auto, op: auto ? 0.42 : 1, ring: auto ? c.border : c.hl },
+      showRefHint: auto && layout !== 'c2',
+      sw: { track: auto ? c.hl : c.button, border: auto ? c.hl : c.border, knob: auto ? c.hlText : c.muted, knobX: auto ? 17 : 1 },
+      prog: tunedCount === N
+        ? { bd: c.pos, bg: 'transparent', fg: c.pos }
+        : { bd: c.border, bg: c.button, fg: c.text },
+      progressAria: 'Start over. ' + tunedCount + ' of ' + N + ' strings tuned',
+      menuInst: s.menu === 'inst', menuTun: s.menu === 'tun', instItems, tunItems,
+      cur, g, st, bar, hs, lvl, gate, gateTicks,
+      varA: variant === 'a', varB: variant === 'b', varC: variant === 'c', varD: variant === 'd',
+      meterInCard: variant === 'c' || variant === 'd',
+      varE: variant === 'e',
+      gateIsDefault: gateDb === -55, resetOp: gateDb === -55 ? 0.5 : 1,
+      hasFooter: variant === 'a' || variant === 'b',
+      meterTitle: variant === 'd' ? 'Input level' : 'Input level · drag the orange marker to set the noise gate',
+      sigOp: signal ? 1 : 0.35,
+      popOpen: !!s.pop, popBd: s.pop ? c.hl : 'transparent', popBg: s.pop ? c.sel : 'transparent',
+      calBusy: (s.cal ?? 0) > 0,
+      calLabel: (s.cal ?? 0) > 0 ? 'Listening… ' + Math.ceil(s.cal / 20) + ' s' : (s.calFlash ?? 0) > 0 ? '✓ Done' : 'Set from room noise',
+      calBtn: (s.calFlash ?? 0) > 0 ? { bd: c.pos, bg: 'transparent', fg: c.pos } : { bd: c.hl, bg: c.sel, fg: c.text },
+      calText: (s.cal ?? 0) > 0 ? 'Keep the strings quiet for a moment.'
+        : s.calDone || 'Sounds left of the orange marker are ignored. Drag it just above the noise of the room, or let Kamerton measure it.',
+      togglePop: () => this.setState({ pop: !s.pop }),
+      gateDown: (e) => {
+        const el = e.currentTarget;
+        el.setPointerCapture(e.pointerId);
+        el.focus();
+        e.preventDefault();
+        this.dragEl = el;
+        this.gateFromX(e, el);
+        this.setState({ dragging: true, kbd: false });
+      },
+      gateMove: (e) => { if (this.dragEl) this.gateFromX(e, this.dragEl); },
+      gateUp: () => { if (this.dragEl) { this.dragEl = null; this.setState({ dragging: false }); } },
+      gateKey: (e) => {
+        let v = null;
+        if (e.key in keyStep) v = gateDb + keyStep[e.key];
+        else if (e.key === 'Home') v = -70;
+        else if (e.key === 'End') v = -10;
+        if (v === null) return;
+        e.preventDefault();
+        this.setGate(v);
+        this.setState({ kbd: true });
+      },
+      gateWheel: (e) => { e.preventDefault(); this.setGate(gateDb + (e.deltaY < 0 ? 1 : -1)); },
+      gateBlur: () => this.setState({ kbd: false }),
+      gateReset: () => this.setGate(-55),
+      gateDec: () => this.setGate(gateDb - 1),
+      gateInc: () => this.setGate(gateDb + 1),
+      calibrate: () => this.setState({ cal: 40, calMax: -70, calDone: null }),
+      detHz: (curN.freq * Math.pow(2, cents / 1200)).toFixed(2),
+      centsText: signal ? sign + Math.abs(cents).toFixed(1) + ' ¢' : '—',
+      statusText: !signal ? 'Waiting for a sound…' : ac <= 3 ? 'In tune' : cents < 0 ? 'Too low · tighten' : 'Too high · loosen',
+      progress: tunedCount + ' of ' + N + ' tuned',
+      auto, loop: !!s.loop, vol: s.vol ?? 60, timbres,
+      playing, notPlaying: !playing, playBg: playing ? c.sel : c.button, playLabel: playing ? 'Stop reference tone' : 'Play reference tone',
+      toggleInstMenu: () => this.setState({ menu: s.menu === 'inst' ? null : 'inst' }),
+      toggleTunMenu: () => this.setState({ menu: s.menu === 'tun' ? null : 'tun' }),
+      a4Down: () => this.setState({ a4: Math.max(415, k.a4 - 1) }, () => this.restartIfPlaying()),
+      a4Up: () => this.setState({ a4: Math.min(466, k.a4 + 1) }, () => this.restartIfPlaying()),
+      toggleAuto: () => this.setAuto(!auto),
+      setAutoOn: () => this.setAuto(true),
+      setAutoOff: () => this.setAuto(false),
+      toggleLoop: () => this.setState({ loop: !s.loop }),
+      setVol: (e) => this.setState({ vol: Number(e.target.value) }),
+      resetTuned: () => { this.setState({ tuned: {}, str: 0 }); this.kick(); },
+      togglePlay: () => {
+        if (auto) return;
+        if (playing) { this.stopTone(); this.setState({ playing: false }); }
+        else this.setState({ playing: true }, () => this.startTone());
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

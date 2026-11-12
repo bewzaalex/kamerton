@@ -33,10 +33,10 @@
     by listening through the microphone, or plays reference tones when a microphone is not available.</p>
     <ul>
       <li>Needle, strobe and LED bar displays</li>
-      <li>Automatic string detection, or pick a string and play its reference tone</li>
+      <li>Automatic string detection, or click a string to play its reference tone</li>
       <li>Built-in and custom tunings</li>
       <li>Adjustable concert pitch</li>
-      <li>Input level meter in dB with a noise gate</li>
+      <li>Input level meter with a noise gate you can drag while tuning, or set from the noise of the room</li>
     </ul>
   </description>
   <releases>

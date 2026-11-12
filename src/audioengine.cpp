@@ -34,6 +34,17 @@ AudioEngine::AudioEngine(QObject *parent)
     m_capture.engine = this;
     m_playback.engine = this;
 
+    m_playbackStop.setSingleShot(true);
+    m_playbackStop.setInterval(int(ToneGenerator::FadeOutSeconds * 1000) + 50);
+    connect(&m_playbackStop, &QTimer::timeout, this, [this] {
+        if (!m_core) {
+            return;
+        }
+        pw_thread_loop_lock(m_loop);
+        destroyStream(m_playback);
+        pw_thread_loop_unlock(m_loop);
+    });
+
     m_loop = pw_thread_loop_new("kamerton-audio", nullptr);
     if (!m_loop) {
         return;
@@ -102,14 +113,18 @@ void AudioEngine::setCaptureEnabled(bool enabled)
 void AudioEngine::setPlaybackEnabled(bool enabled)
 {
     m_generator.setActive(enabled);
+    if (!enabled) {
+        // Keep the stream until the tone has faded out.
+        m_playbackStop.start();
+        return;
+    }
+    m_playbackStop.stop();
     if (!m_core) {
         return;
     }
     pw_thread_loop_lock(m_loop);
-    if (enabled && !m_playback.stream) {
+    if (!m_playback.stream) {
         createPlayback();
-    } else if (!enabled) {
-        destroyStream(m_playback);
     }
     pw_thread_loop_unlock(m_loop);
 }

@@ -6,28 +6,22 @@ import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 import io.github.bewzaalex.kamerton
 
-/// Compact reference tone controls for the side panel.
+/// Reference tone settings for the side panel. Strings are played by clicking them;
+/// only the chromatic tuner, which has no strings, gets its own play button and note picker.
 ColumnLayout {
     id: root
 
     spacing: Kirigami.Units.largeSpacing
     opacity: enabled ? 1 : 0.45
 
-    RowLayout {
+    Kirigami.Heading {
+        level: 4
+        text: i18nc("@title", "Reference tone")
         Layout.fillWidth: true
-        Kirigami.Heading {
-            level: 4
-            text: i18nc("@title", "Reference tone")
-            Layout.fillWidth: true
-        }
-        QQC2.Label {
-            text: i18nc("keyboard shortcut", "Space")
-            font: Kirigami.Theme.smallFont
-            color: Kirigami.Theme.disabledTextColor
-        }
     }
 
     RowLayout {
+        visible: TunerController.chromatic
         Layout.fillWidth: true
         spacing: Kirigami.Units.largeSpacing
 
@@ -64,15 +58,11 @@ ColumnLayout {
             }
         }
 
-        RowLayout {
-            spacing: Kirigami.Units.smallSpacing
-            visible: TunerController.chromatic
-            QQC2.ToolButton {
-                icon.name: "go-previous"
-                text: i18nc("@action:button", "Semitone down")
-                display: QQC2.AbstractButton.IconOnly
-                onClicked: TunerController.shiftReference(-1)
-            }
+        QQC2.ToolButton {
+            icon.name: "go-previous"
+            text: i18nc("@action:button", "Semitone down")
+            display: QQC2.AbstractButton.IconOnly
+            onClicked: TunerController.shiftReference(-1)
         }
 
         ColumnLayout {
@@ -93,10 +83,7 @@ ColumnLayout {
                 }
             }
             QQC2.Label {
-                text: TunerController.chromatic
-                    ? i18nc("frequency", "%1 Hz", TunerController.referenceFrequency.toFixed(2))
-                    : i18nc("frequency · string number", "%1 Hz · string %2", TunerController.referenceFrequency.toFixed(2),
-                            TunerController.strings[TunerController.selectedString]?.number ?? "")
+                text: i18nc("frequency", "%1 Hz", TunerController.referenceFrequency.toFixed(2))
                 font.pointSize: Kirigami.Theme.smallFont.pointSize
                 font.features: { "tnum": 1 }
                 color: Kirigami.Theme.disabledTextColor
@@ -104,7 +91,6 @@ ColumnLayout {
         }
 
         QQC2.ToolButton {
-            visible: TunerController.chromatic
             icon.name: "go-next"
             text: i18nc("@action:button", "Semitone up")
             display: QQC2.AbstractButton.IconOnly

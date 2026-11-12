@@ -156,79 +156,16 @@ Kirigami.Page {
         }
     }
 
-    footer: QQC2.ToolBar {
-        position: QQC2.ToolBar.Footer
-        contentItem: RowLayout {
-            spacing: Kirigami.Units.largeSpacing
-
-            Kirigami.Icon {
-                source: "audio-input-microphone"
-                Layout.preferredWidth: Kirigami.Units.iconSizes.small
-                Layout.preferredHeight: Kirigami.Units.iconSizes.small
-            }
-            QQC2.Label {
-                text: i18nc("device · sound server", "%1 · PipeWire", page.deviceLabel(TunerController.inputDevices, TunerController.inputDevice))
-                elide: Text.ElideRight
-                Layout.fillWidth: !TunerController.playing
-                Layout.maximumWidth: implicitWidth
-                font: Kirigami.Theme.smallFont
-                color: Kirigami.Theme.disabledTextColor
-            }
-
-            RowLayout {
-                visible: TunerController.playing
-                spacing: Kirigami.Units.smallSpacing
-                Layout.fillWidth: true
-                Kirigami.Icon {
-                    source: "audio-volume-high"
-                    Layout.preferredWidth: Kirigami.Units.iconSizes.small
-                    Layout.preferredHeight: Kirigami.Units.iconSizes.small
-                }
-                QQC2.Label {
-                    Layout.fillWidth: true
-                    elide: Text.ElideRight
-                    text: i18nc("note, output device", "Playing %1%2 on %3", TunerController.referenceLetter, TunerController.referenceOctave,
-                                page.deviceLabel(TunerController.outputDevices, TunerController.outputDevice))
-                    font: Kirigami.Theme.smallFont
-                }
-            }
-
-            Item {
-                Layout.fillWidth: !TunerController.playing
-                visible: !TunerController.playing
-            }
-
-            QQC2.Label {
-                text: i18nc("@label input level meter", "Level")
-                font: Kirigami.Theme.smallFont
-                color: Kirigami.Theme.disabledTextColor
-            }
-            LevelMeter {
-                Layout.preferredWidth: Kirigami.Units.gridUnit * 9
-                db: TunerController.levelDb
-                peak: TunerController.peakDb
-                gate: TunerController.noiseGate
-                minimum: -70
-            }
-            QQC2.Label {
-                Layout.minimumWidth: Kirigami.Units.gridUnit * 4
-                horizontalAlignment: Text.AlignRight
-                text: i18nc("input level in decibels", "%1 dB", TunerController.levelDb.toFixed(1).replace("-", "−"))
-                font.pointSize: Kirigami.Theme.smallFont.pointSize
-                font.weight: Font.Medium
-                font.features: { "tnum": 1 }
-                color: TunerController.levelDb < TunerController.noiseGate ? Kirigami.Theme.disabledTextColor : Kirigami.Theme.textColor
-            }
+    /// With auto-detect off, clicking a string plays its reference tone and clicking it again stops it.
+    function pickString(index) {
+        if (TunerController.autoDetect) {
+            TunerController.selectedString = index;
+        } else if (TunerController.playing && TunerController.selectedString === index) {
+            TunerController.playing = false;
+        } else {
+            TunerController.selectedString = index;
+            TunerController.playing = true;
         }
-    }
-
-    function deviceLabel(devices, current) {
-        for (const d of devices) {
-            if (d.name === current) {
-                return d.description;
-            }
-        }
-        return i18nc("audio device", "System default");
     }
 
     ColumnLayout {
@@ -254,7 +191,7 @@ Kirigami.Page {
             Card {
                 Layout.fillHeight: !page.compact
                 Layout.fillWidth: page.compact
-                Layout.preferredWidth: Kirigami.Units.gridUnit * 19
+                Layout.preferredWidth: Math.max(Kirigami.Units.gridUnit * 19, headstock.implicitWidth + Kirigami.Units.largeSpacing * 2 + 2)
                 Layout.minimumHeight: sideColumn.implicitHeight + Kirigami.Units.largeSpacing * 2
 
                 ColumnLayout {
@@ -279,6 +216,7 @@ Kirigami.Page {
                     }
 
                     Headstock {
+                        id: headstock
                         visible: page.hasHeadstock
                         Layout.alignment: Qt.AlignHCenter
                         leftCount: TunerController.headLeft
@@ -286,7 +224,8 @@ Kirigami.Page {
                         strings: TunerController.strings
                         selected: TunerController.selectedString
                         playing: page.playingString
-                        onPicked: index => TunerController.selectedString = index
+                        playable: !TunerController.autoDetect
+                        onPicked: index => page.pickString(index)
                     }
 
                     StringChips {
@@ -295,7 +234,8 @@ Kirigami.Page {
                         strings: TunerController.strings
                         selected: TunerController.selectedString
                         playing: page.playingString
-                        onPicked: index => TunerController.selectedString = index
+                        playable: !TunerController.autoDetect
+                        onPicked: index => page.pickString(index)
                     }
 
                     QQC2.Switch {
@@ -345,6 +285,12 @@ Kirigami.Page {
                     NoteReadout {
                         Layout.alignment: Qt.AlignHCenter
                         toneColor: page.toneColor
+                    }
+
+                    NoiseGatePanel {
+                        Layout.alignment: Qt.AlignHCenter
+                        Layout.fillWidth: true
+                        Layout.maximumWidth: Kirigami.Units.gridUnit * 32
                     }
 
                     Kirigami.Separator {
@@ -444,6 +390,120 @@ Kirigami.Page {
                     font.features: { "tnum": 1 }
                     color: progress.complete ? Kirigami.Theme.positiveTextColor : Kirigami.Theme.textColor
                 }
+            }
+        }
+    }
+
+    /// Input level with the draggable noise gate, and the gate controls under it.
+    component NoiseGatePanel: ColumnLayout {
+        spacing: Kirigami.Units.smallSpacing
+
+        // Label and current level sit on the meter's line, centred on its track.
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: 0
+
+            QQC2.Label {
+                Layout.alignment: Qt.AlignTop
+                Layout.topMargin: gateMeter.trackCenter - height / 2
+                text: i18nc("@label", "Noise gate adjust")
+                font: Kirigami.Theme.smallFont
+                color: Kirigami.Theme.disabledTextColor
+            }
+            NoiseGateMeter {
+                id: gateMeter
+                Layout.fillWidth: true
+                db: TunerController.levelDb
+                peak: TunerController.peakDb
+                gate: TunerController.noiseGate
+                minimumGate: TunerController.minNoiseGate
+                maximumGate: TunerController.maxNoiseGate
+                defaultGate: TunerController.defaultNoiseGate
+                onGateMoved: value => TunerController.noiseGate = value
+            }
+            QQC2.Label {
+                Layout.alignment: Qt.AlignTop
+                Layout.topMargin: gateMeter.trackCenter - height / 2
+                Layout.minimumWidth: levelMetrics.width
+                horizontalAlignment: Text.AlignRight
+                text: i18nc("input level in decibels", "%1 dB", TunerController.levelDb.toFixed(1).replace("-", "−"))
+                font: Kirigami.Theme.smallFont
+                color: TunerController.levelDb <= TunerController.noiseGate ? Kirigami.Theme.disabledTextColor : Kirigami.Theme.textColor
+                // Wide enough for any level, so the meter doesn't shift while the value changes.
+                TextMetrics {
+                    id: levelMetrics
+                    font: Kirigami.Theme.smallFont
+                    text: i18nc("input level in decibels", "%1 dB", "−00.0")
+                }
+            }
+        }
+
+        // Two buttons of the same width, centred under the meter.
+        RowLayout {
+            readonly property real buttonWidth: Math.max(Kirigami.Units.gridUnit * 11, resetButton.implicitWidth, measureButton.implicitWidth)
+
+            Layout.alignment: Qt.AlignHCenter
+            spacing: Kirigami.Units.smallSpacing
+
+            QQC2.Button {
+                id: resetButton
+                Layout.preferredWidth: parent.buttonWidth
+                icon.name: "edit-reset"
+                text: i18nc("@action:button reset the noise gate", "Reset")
+                enabled: TunerController.noiseGate !== TunerController.defaultNoiseGate
+                onClicked: TunerController.noiseGate = TunerController.defaultNoiseGate
+                QQC2.ToolTip.text: i18nc("@info:tooltip", "Back to %1 dB", String(TunerController.defaultNoiseGate).replace("-", "−"))
+                QQC2.ToolTip.visible: hovered
+                QQC2.ToolTip.delay: Kirigami.Units.toolTipDelay
+            }
+            MeasureNoiseButton {
+                id: measureButton
+                Layout.preferredWidth: parent.buttonWidth
+            }
+        }
+    }
+
+    /// "Set from room noise": listens for two seconds, then answers with a short "Done" on the button itself.
+    component MeasureNoiseButton: QQC2.Button {
+        id: measure
+
+        property int secondsLeft: 0
+        property bool done: false
+
+        icon.name: done ? "checkmark" : "audio-input-microphone"
+        text: TunerController.measuringNoise ? i18nc("@action:button counting down seconds", "Listening… %1 s", secondsLeft)
+            : done ? i18nc("@action:button noise gate was set", "Done")
+            : i18nc("@action:button", "Set from room noise")
+        enabled: !TunerController.measuringNoise
+
+        QQC2.ToolTip.text: i18nc("@info:tooltip", "Keep quiet for two seconds: the noise gate is set just above the noise of the room.")
+        QQC2.ToolTip.visible: hovered
+        QQC2.ToolTip.delay: Kirigami.Units.toolTipDelay
+
+        onClicked: {
+            done = false;
+            secondsLeft = Math.round(TunerController.noiseMeasureMs / 1000);
+            countdown.start();
+            TunerController.measureNoiseGate();
+        }
+
+        Timer {
+            id: countdown
+            interval: 1000
+            repeat: true
+            onTriggered: measure.secondsLeft = Math.max(1, measure.secondsLeft - 1)
+        }
+        Timer {
+            id: doneTimer
+            interval: 1500
+            onTriggered: measure.done = false
+        }
+        Connections {
+            target: TunerController
+            function onNoiseGateMeasured() {
+                countdown.stop();
+                measure.done = true;
+                doneTimer.restart();
             }
         }
     }

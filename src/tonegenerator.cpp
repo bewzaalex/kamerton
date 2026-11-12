@@ -7,6 +7,7 @@
 
 namespace
 {
+constexpr double MaxGain = 0.35;
 // Relative harmonic amplitudes for each timbre.
 constexpr double PluckAmps[ToneGenerator::MaxHarmonics] = {1.0, 0.55, 0.38, 0.26, 0.18, 0.13, 0.09, 0.06, 0.04, 0.03};
 constexpr double OrganAmps[ToneGenerator::MaxHarmonics] = {1.0, 0.5, 0.3, 0.15, 0.08, 0.0, 0.0, 0.0, 0.0, 0.0};
@@ -62,7 +63,7 @@ void ToneGenerator::render(float *out, uint32_t frames, uint32_t channels)
     const double rate = m_rate.load();
     const double freq = m_frequency.load();
     const int timbre = m_timbre.load();
-    const double target = m_active.load() ? m_volume.load() * 0.35 : 0.0;
+    const double target = m_active.load() ? m_volume.load() * MaxGain : 0.0;
 
     const uint32_t trig = m_triggerCount.load();
     if (trig != m_seenTrigger) {
@@ -80,12 +81,13 @@ void ToneGenerator::render(float *out, uint32_t frames, uint32_t channels)
 
     const double dt = 1.0 / rate;
     const double phaseInc = freq * dt;
-    // ~5 ms smoothing on the master gain to avoid clicks.
-    const double gainCoef = 1.0 - std::exp(-dt / 0.005);
+    // Linear fades, timed for a full-volume tone; volume changes glide at the same rate.
+    const double fadeInStep = MaxGain * dt / FadeInSeconds;
+    const double fadeOutStep = MaxGain * dt / FadeOutSeconds;
     constexpr double twoPi = 2.0 * std::numbers::pi;
 
     for (uint32_t i = 0; i < frames; ++i) {
-        m_gain += (target - m_gain) * gainCoef;
+        m_gain = m_gain < target ? std::min(target, m_gain + fadeInStep) : std::max(target, m_gain - fadeOutStep);
 
         double v = 0.0;
         if (m_gain > 1e-6) {

@@ -62,6 +62,11 @@ class TunerController : public QObject
     Q_PROPERTY(int a4 READ a4 WRITE setA4 NOTIFY a4Changed)
     Q_PROPERTY(double inTuneThreshold READ inTuneThreshold WRITE setInTuneThreshold NOTIFY inTuneThresholdChanged)
     Q_PROPERTY(int noiseGate READ noiseGate WRITE setNoiseGate NOTIFY noiseGateChanged)
+    Q_PROPERTY(int minNoiseGate READ minNoiseGate CONSTANT)
+    Q_PROPERTY(int maxNoiseGate READ maxNoiseGate CONSTANT)
+    Q_PROPERTY(int defaultNoiseGate READ defaultNoiseGate CONSTANT)
+    Q_PROPERTY(int noiseMeasureMs READ noiseMeasureMs CONSTANT)
+    Q_PROPERTY(bool measuringNoise READ measuringNoise NOTIFY measuringNoiseChanged)
 
     // Reference tone, only available while autoDetect is off (or for the chromatic tuner)
     Q_PROPERTY(bool referenceAvailable READ referenceAvailable NOTIFY referenceAvailableChanged)
@@ -86,6 +91,13 @@ class TunerController : public QObject
 
 public:
     static constexpr double MinDb = -70.0;
+    // The gate stays inside the level meter's range, so its marker can always be dragged.
+    static constexpr int MinNoiseGate = -70;
+    static constexpr int MaxNoiseGate = -10;
+    static constexpr int DefaultNoiseGate = -55;
+    /// "Set from room noise" listens this long and puts the gate this far above the loudest noise.
+    static constexpr int NoiseMeasureMs = 2000;
+    static constexpr int NoiseGateMargin = 6;
 
     enum DisplayStyle {
         Needle,
@@ -187,6 +199,26 @@ public:
         return m_noiseGate;
     }
     void setNoiseGate(int db);
+    static int minNoiseGate()
+    {
+        return MinNoiseGate;
+    }
+    static int maxNoiseGate()
+    {
+        return MaxNoiseGate;
+    }
+    static int defaultNoiseGate()
+    {
+        return DefaultNoiseGate;
+    }
+    static int noiseMeasureMs()
+    {
+        return NoiseMeasureMs;
+    }
+    bool measuringNoise() const
+    {
+        return m_noiseMeasure.isActive();
+    }
 
     bool referenceAvailable() const;
     bool playing() const
@@ -234,6 +266,8 @@ public:
     QVariantList customTunings() const;
 
     Q_INVOKABLE void resetTuned();
+    /// Listens to the room for a moment and sets the noise gate just above its noise.
+    Q_INVOKABLE void measureNoiseGate();
     /// Moves the chromatic reference note by @p semitones.
     Q_INVOKABLE void shiftReference(int semitones);
     /// Returns an empty string when @p notes is valid, otherwise an error message.
@@ -256,6 +290,8 @@ Q_SIGNALS:
     void a4Changed();
     void inTuneThresholdChanged();
     void noiseGateChanged();
+    void measuringNoiseChanged();
+    void noiseGateMeasured();
     void referenceAvailableChanged();
     void playingChanged();
     void timbreChanged();
@@ -291,6 +327,8 @@ private:
     std::vector<float> m_window;
     QTimer m_analysisTimer;
     QTimer m_referenceTimer;
+    QTimer m_noiseMeasure;
+    double m_noiseMax = MinDb;
     QElapsedTimer m_sinceSignal;
     quint64 m_lastWritten = 0;
 
@@ -318,7 +356,7 @@ private:
     DisplayStyle m_displayStyle = Needle;
     int m_a4 = 440;
     double m_inTuneThreshold = 3.0;
-    int m_noiseGate = -55;
+    int m_noiseGate = DefaultNoiseGate;
 
     bool m_playing = false;
     Timbre m_timbre = Pluck;

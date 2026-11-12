@@ -23,7 +23,8 @@ qt_add_qml_module(kamerton
         qml/Headstock.qml
         qml/StringChips.qml
         qml/NoteReadout.qml
-        qml/LevelMeter.qml
+        qml/NoiseGateMeter.qml
+        qml/StringButton.qml
         qml/ReferencePanel.qml
         qml/SettingsPage.qml
         qml/TuningsPage.qml
