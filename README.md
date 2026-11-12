@@ -35,21 +35,21 @@ Listens through your microphone, or plays a reference tone to tune by ear.
 
 ## Installation
 
-Ready-made packages (Flatpak, deb, rpm) are planned. For now, Kamerton is built from source. That takes about a minute.
+Kamerton is built from source. That takes about a minute.
 
 ### Dependencies
 
-| Component | Version | Gentoo package |
-| --- | --- | --- |
-| CMake, Ninja and a C++20 compiler | CMake 3.22+ | `dev-build/cmake`, `dev-build/ninja` |
-| Extra CMake Modules | 6.8+ | `kde-frameworks/extra-cmake-modules` |
-| Qt: Core, Gui, Qml, Quick, QuickControls2, Widgets | 6.7+ | `dev-qt/qtbase`, `dev-qt/qtdeclarative` |
-| KDE Frameworks: Kirigami, CoreAddons, Config, I18n, IconThemes | 6.8+ | `kde-frameworks/kirigami`, `kcoreaddons`, `kconfig`, `ki18n`, `kiconthemes` |
-| Kirigami Addons and qqc2-desktop-style (needed at run time) | | `dev-libs/kirigami-addons`, `kde-frameworks/qqc2-desktop-style` |
-| PipeWire | 0.3+ | `media-video/pipewire` |
-| FFTW 3, single precision | | `sci-libs/fftw` |
+| Component | Version |
+| --- | --- |
+| CMake, Ninja and a C++20 compiler | CMake 3.22+ |
+| Extra CMake Modules | 6.8+ |
+| Qt: Core, Gui, Qml, Quick, QuickControls2, Widgets | 6.7+ |
+| KDE Frameworks: Kirigami, CoreAddons, Config, I18n, IconThemes | 6.8+ |
+| Kirigami Addons and qqc2-desktop-style (needed at run time) | |
+| PipeWire (`libpipewire-0.3`) | 0.3+ |
+| FFTW 3, single precision (`fftw3f`) | |
 
-A Plasma 6 desktop already has almost all of these. On other distributions, install the development packages with similar names (`-dev` or `-devel`).
+A Plasma 6 desktop already has most of these at run time. To build, install your distribution's development packages for them, usually named with `-dev` or `-devel`.
 
 ### Build and run
 
