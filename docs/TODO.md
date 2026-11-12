@@ -60,6 +60,44 @@ Plan, in order:
 Not recommended: voice noise suppression (RNNoise, EasyEffects, PipeWire echo-cancel) in front of
 Kamerton; it is trained on speech and can remove a sustained string tone.
 
+### Testing
+
+Approach: a test pyramid. Many fast unit tests for logic and DSP, fewer QML component tests, and a
+manual checklist for real hardware.
+- DSP is measured, not eyeballed: known-pitch signals, numeric thresholds
+  (e.g. ±0.5 ¢ from 30 Hz to 1.3 kHz, ≥ 95 % correct notes at 10 dB of noise).
+- Every bug gets a failing test before the fix.
+- No sleeps in tests: fake clock and fake audio.
+- CI must pass before a pull request merges (with branch protection on `main`).
+
+Tools:
+- Qt Test via ECM `ecm_add_tests`, run by `ctest`; data-driven `_data()` tables; `QSignalSpy`.
+- Qt Quick Test (`TestCase`, offscreen) for QML components.
+- qmllint, clazy, clang-tidy; AddressSanitizer + UndefinedBehaviorSanitizer and ThreadSanitizer builds
+  (the real-time thread, the ring buffer, the atomics).
+- `appstreamcli validate`, `desktop-file-validate`, `flatpak-builder-lint`.
+- GitHub Actions: build with GCC and Clang in a recent KDE container (or the KDE Flatpak SDK),
+  `ctest` with `QT_QPA_PLATFORM=offscreen`, linters, validators, a sanitizer build.
+- CI saves offscreen screenshots for a human to look at; no pixel comparison (fonts and Qt versions differ).
+- Later, only if needed: end-to-end UI tests with KDE's selenium-webdriver-at-spi.
+
+Plan, in order:
+
+- [ ] **Unit tests that need no refactoring**: note parsing and frequencies (every built-in tuning,
+      `B0`, `F#3`, `Bb2`, bad input), pitch detector accuracy on synthetic signals, tone generator fades
+      (timings, no clicks).
+- [ ] **GitHub Actions** on every pull request, then branch protection on `main`.
+- [ ] **Audio source interface**: `TunerController` gets its samples through an interface instead of
+      creating the PipeWire engine itself, so tests can feed a fake source (WAV or synthetic string)
+      with a fake clock. Then controller tests (auto-detect switching, tuned marks, noise gate,
+      Set from room noise), and the screenshot harness moves into `tests/`.
+- [ ] **Test bench with real recordings and noise**: the author's own recordings under a free license,
+      mixed with street noise; this is also the first step of Street mode.
+- [ ] **QML component tests** (noise gate meter: clamping, keys, double-click reset; string button states),
+      plus the sanitizer and clazy builds.
+- [ ] **Manual checklist before each release**: real microphone, reference tones on speakers, dragging the
+      gate, light and dark themes, a wide UI font.
+
 ## Polish / ideas
 
 - [ ] Remember window size and position
