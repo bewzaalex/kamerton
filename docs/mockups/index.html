@@ -86,15 +86,21 @@ a { color: var(--accent); }
     ["v5-panels.html?panel=a&theme=light&room=noisy", "A · Light theme, noisy room", "Press Set from room noise: the gate jumps above the noise and the tuner calms down."]
   ]'></div>
   <h2>v6 — hardware-style needle</h2>
-  <p>The v5 D layout with the needle drawn like studio hardware. Every color is still a mix of the KDE color scheme roles:
-     the VU face is the scheme’s neutral color lit from behind, the hi-fi needle is the accent color.
+  <p>The v5 D layout with the needle drawn like studio hardware. A and C take every color from the KDE color scheme; B, the chosen one, uses KDE colors too,
+     except for what KDE has no role for: the lamp-lit face, its printed ink and the bright In tune lamp.
      The needle has some weight and drops to its stop when there is no sound. <code>gauge=flat</code> is the v5 needle for comparison.</p>
   <div class="grid" data-pages='[
     ["v6-gauges.html?gauge=a&theme=layan", "A · Round studio gauge", "Knurled bezel, ¢ scale over 240°, “In tune” lamp and an LCD readout."],
-    ["v6-gauges.html?gauge=b&theme=layan", "B · Backlit VU meter", "Wide window, needle pivot hidden under the shroud, red ends of the scale, LCD and lamp under the window."],
+    ["v6-gauges.html?gauge=b&theme=layan", "B · VU meter, chosen", "Fills the Detector panel and scales with the window. Face lit like an incandescent lamp; the note, frequencies, cents and a bright In tune lamp sit under the window. KDE colors everywhere else.", true],
     ["v6-gauges.html?gauge=c&theme=layan", "C · Hi-fi meter", "Dark brushed glass, warm light from below, glowing needle in the accent color over a chrome dome."],
     ["v6-gauges.html?gauge=a&theme=light", "A · Breeze Light", ""],
     ["v6-gauges.html?gauge=b&theme=light", "B · Breeze Light", ""],
+    ["v6-gauges.html?gauge=b&frame=a&theme=layan", "B frame a · KDE case", "The case in KDE colors, no bezel."],
+    ["v6-gauges.html?gauge=b&frame=b&theme=layan", "B frame b · Black bezel", "The KDE case with a black bezel around the window."],
+    ["v6-gauges.html?gauge=b&frame=c&theme=layan", "B frame c · Brushed plate, KDE tint", "Brushed metal in the scheme’s button color, black bezel, four screws."],
+    ["v6-gauges.html?gauge=b&frame=d&theme=layan", "B frame d · Aluminium plate", "Silver brushed aluminium, our own color, dark print."],
+    ["v6-gauges.html?gauge=b&frame=e&theme=layan", "B frame e · Champagne plate", "Gold-tinted plate like a studio leveling amplifier."],
+    ["v6-gauges.html?gauge=b&theme=layan&room=noisy", "B · Noisy room", ""],
     ["v6-gauges.html?gauge=c&theme=dark", "C · Breeze Dark", ""]
   ]'></div>
 </main>

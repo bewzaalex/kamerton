@@ -319,10 +319,10 @@ button:disabled{cursor:default}
           </button>
         </div>
       </sc-if>
-      <sc-if value="{{instPanel}}" hint-placeholder-val="{{false}}">
+      <sc-if value="{{centerSpacers}}" hint-placeholder-val="{{false}}">
         <div style="flex: 1"></div>
       </sc-if>
-     <div style="width: 100%; display: flex; flex-direction: column; align-items: center; gap: 16px; opacity: {{sigOp}}; transition: opacity .25s">
+     <div style="width: 100%; flex: {{fillFlex}}; min-height: 0; display: flex; flex-direction: column; align-items: center; gap: 16px; opacity: {{sigOp}}; transition: opacity .25s">
 
       <sc-if value="{{gaugeA}}" hint-placeholder-val="{{false}}">
         <svg viewBox="0 0 400 400" style="width: 100%; max-width: 380px; height: auto" role="img" aria-label="Tuning gauge, {{centsText}}">
@@ -368,55 +368,70 @@ button:disabled{cursor:default}
         </svg>
       </sc-if>
       <sc-if value="{{gaugeB}}" hint-placeholder-val="{{false}}">
-        <svg viewBox="0 0 560 330" style="width: 100%; max-width: 580px; height: auto" role="img" aria-label="Tuning meter, {{centsText}}">
-          <defs>
-            <linearGradient id="gB-case" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="{{gz.rimHi}}"></stop><stop offset="100%" stop-color="{{gz.bezelLo}}"></stop></linearGradient>
-            <radialGradient id="gB-glow" cx="50%" cy="100%" r="85%"><stop offset="0%" stop-color="{{gz.glowHi}}"></stop><stop offset="100%" stop-color="{{gz.glowLo}}"></stop></radialGradient>
-            <radialGradient id="gB-vig" cx="50%" cy="55%" r="70%"><stop offset="55%" stop-color="{{gz.clear}}"></stop><stop offset="100%" stop-color="{{gz.vignette}}"></stop></radialGradient>
-            <linearGradient id="gB-glass" x1="0" y1="0" x2="0.5" y2="1"><stop offset="0%" stop-color="{{gz.glassHi}}"></stop><stop offset="45%" stop-color="{{gz.clear}}"></stop></linearGradient>
-            <linearGradient id="gB-lamp" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="{{gz.lampHi}}"></stop><stop offset="100%" stop-color="{{gz.clear}}"></stop></linearGradient>
-            <linearGradient id="gB-shroud" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="{{gz.rimHi}}"></stop><stop offset="100%" stop-color="{{gz.bezelLo}}"></stop></linearGradient>
-            <radialGradient id="gB-cap" cx="38%" cy="32%" r="70%"><stop offset="0%" stop-color="{{gz.capHi}}"></stop><stop offset="100%" stop-color="{{gz.capLo}}"></stop></radialGradient>
-            <filter id="gB-glowf" x="-1" y="-1" width="3" height="3"><feGaussianBlur stdDeviation="3"></feGaussianBlur></filter>
-            <clipPath id="gB-win"><rect x="28" y="26" width="504" height="230" rx="10"></rect></clipPath>
-          </defs>
-          <rect x="0" y="4" width="560" height="326" rx="18" fill="{{gz.shadow}}"></rect>
-          <rect x="0" y="0" width="560" height="324" rx="18" fill="url(#gB-case)" stroke="{{gz.knurl}}" stroke-width="1"></rect>
-          <g clip-path="url(#gB-win)">
-            <rect x="28" y="26" width="504" height="230" fill="{{gz.vuFace}}"></rect>
-            <rect x="28" y="26" width="504" height="230" fill="url(#gB-glow)"></rect>
-            <rect x="28" y="26" width="504" height="230" fill="url(#gB-vig)"></rect>
-            <rect x="28" y="26" width="504" height="18" fill="url(#gB-lamp)"></rect>
-            <path d="{{gz.b.zoneInk}}" stroke="{{gz.vuInk}}" stroke-width="5" fill="none"></path>
-            <path d="{{gz.b.zoneRed}}" stroke="{{c.neg}}" stroke-width="10" fill="none"></path>
-            <path d="{{gz.b.ok}}" stroke="{{c.pos}}" stroke-width="6" fill="none"></path>
-            <path d="{{gz.b.major}}" stroke="{{gz.vuInk}}" stroke-width="3" fill="none"></path>
-            <path d="{{gz.b.majorRed}}" stroke="{{c.neg}}" stroke-width="3" fill="none"></path>
-            <path d="{{gz.b.minor}}" stroke="{{gz.vuInk}}" stroke-width="2" fill="none"></path>
-            <path d="{{gz.b.fine}}" stroke="{{gz.vuInk}}" stroke-width="1.2" fill="none"></path>
-            <sc-for list="{{gz.b.labels}}" as="l" hint-placeholder-count="9">
-              <text x="{{l.x}}" y="{{l.y}}" fill="{{l.fill}}" font-size="19" font-weight="600" text-anchor="middle" dominant-baseline="central">{{l.t}}</text>
-            </sc-for>
-            <text x="60" y="70" fill="{{gz.vuInk}}" font-size="26" text-anchor="middle">♭</text>
-            <text x="500" y="70" fill="{{gz.vuInk}}" font-size="26" text-anchor="middle">♯</text>
-            <text x="280" y="176" fill="{{gz.vuInk}}" font-size="18" text-anchor="middle" letter-spacing="1">CENTS</text>
-            <line x1="284" y1="424" x2="{{gz.b.sx}}" y2="{{gz.b.sy}}" stroke="{{gz.vignette}}" stroke-width="2.4"></line>
-            <line x1="280" y1="420" x2="{{gz.b.nx}}" y2="{{gz.b.ny}}" stroke="{{gz.vuInk}}" stroke-width="2.4"></line>
-            <path d="M 28 256 L 28 222 Q 280 186 532 222 L 532 256 Z" fill="url(#gB-shroud)"></path>
-            <path d="M 28 222 Q 280 186 532 222" stroke="{{gz.glassHi}}" stroke-width="1.5" fill="none"></path>
-            <rect x="28" y="26" width="504" height="230" fill="url(#gB-glass)"></rect>
-          </g>
-          <rect x="28" y="26" width="504" height="230" rx="10" fill="none" stroke="{{gz.shadow}}" stroke-width="3"></rect>
-          <rect x="62" y="226" width="110" height="26" rx="3" fill="{{gz.lcd}}" stroke="{{gz.shadow}}" stroke-width="1.5"></rect>
-          <text x="154" y="245" fill="{{gz.lcdInk}}" font-family="'DejaVu Sans Mono', monospace" font-size="17" text-anchor="end">{{gz.lcdText}}</text>
-          <text x="158" y="245" fill="{{gz.lcdInk}}" font-size="10">¢</text>
-          <circle cx="280" cy="236" r="7" fill="url(#gB-cap)"></circle>
-          <path d="M 276 238 L 284 234" stroke="{{gz.shadow}}" stroke-width="1.5"></path>
-          <circle cx="410" cy="239" r="9" fill="{{gz.ledGlow}}" filter="url(#gB-glowf)"></circle>
-          <circle cx="410" cy="239" r="5.5" fill="{{gz.led}}" stroke="{{gz.shadow}}" stroke-width="1"></circle>
-          <text x="422" y="239" fill="{{gz.inkSoft}}" font-size="12" letter-spacing="1.2" dominant-baseline="central">IN TUNE</text>
-          <text x="280" y="292" fill="{{gz.inkSoft}}" font-size="12" letter-spacing="3" text-anchor="middle">KAMERTON</text>
-        </svg>
+        <div role="img" aria-label="Tuning meter, {{cur.letter}}{{cur.oct}}, {{centsText}}" style="flex: 1; align-self: stretch; min-height: 0; container-type: size; display: flex; align-items: center; justify-content: center">
+          <div style="width: min(100cqw, calc(100cqh * 1.618)); aspect-ratio: 1.618 / 1; flex: none; container-type: inline-size">
+          <div style="position: relative; height: 100%; display: flex; flex-direction: column; gap: 1.8cqw; box-sizing: border-box; {{fr.plate}}">
+            <sc-if value="{{fr.screws}}" hint-placeholder-val="{{false}}">
+              <sc-for list="{{fr.screwList}}" as="sc" hint-placeholder-count="4">
+                <span style="position: absolute; left: {{sc.x}}; top: {{sc.y}}; width: 1.7cqw; height: 1.7cqw; margin: -0.85cqw 0 0 -0.85cqw; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #f4f4f2, #a9aaac 55%, #6d6e70); box-shadow: 0 1px 1px rgba(0,0,0,0.5), inset 0 0 0 0.5px rgba(0,0,0,0.4)">
+                  <span style="position: absolute; left: 15%; right: 15%; top: 50%; height: 0.22cqw; margin-top: -0.11cqw; background: rgba(40,40,40,0.75); transform: rotate({{sc.r}}deg)"></span>
+                </span>
+              </sc-for>
+            </sc-if>
+            <div style="flex: 1; min-height: 0; display: flex; {{fr.bezel}}">
+            <div style="flex: 1; min-height: 0; position: relative; overflow: hidden; border-radius: 8px; background: {{vu.face}}; box-shadow: {{vu.recess}}">
+              <svg viewBox="0 0 600 250" preserveAspectRatio="xMidYMid meet" style="position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible" aria-hidden="true">
+                <path d="{{gz.v.zoneInk}}" stroke="{{vu.ink}}" stroke-width="4" fill="none"></path>
+                <path d="{{gz.v.zoneRed}}" stroke="{{vu.red}}" stroke-width="7" fill="none"></path>
+                <path d="{{gz.v.ok}}" stroke="{{vu.green}}" stroke-width="5" fill="none"></path>
+                <path d="{{gz.v.major}}" stroke="{{vu.ink}}" stroke-width="2.6" fill="none"></path>
+                <path d="{{gz.v.majorRed}}" stroke="{{vu.red}}" stroke-width="2.6" fill="none"></path>
+                <path d="{{gz.v.minor}}" stroke="{{vu.ink}}" stroke-width="1.8" fill="none"></path>
+                <path d="{{gz.v.fine}}" stroke="{{vu.ink}}" stroke-width="1.1" fill="none"></path>
+                <sc-for list="{{gz.v.labels}}" as="l" hint-placeholder-count="9">
+                  <text x="{{l.x}}" y="{{l.y}}" fill="{{l.fill}}" font-size="19" font-weight="600" text-anchor="middle" dominant-baseline="central">{{l.t}}</text>
+                </sc-for>
+                <text x="74" y="214" fill="{{vu.ink}}" font-size="26" text-anchor="middle">♭</text>
+                <text x="526" y="214" fill="{{vu.ink}}" font-size="26" text-anchor="middle">♯</text>
+                <text x="300" y="156" fill="{{vu.ink}}" font-size="16" font-weight="700" letter-spacing="2" text-anchor="middle">CENTS</text>
+                <defs>
+                  <filter id="vu-soft" x="-0.2" y="-0.2" width="1.4" height="1.4"><feGaussianBlur stdDeviation="1.4"></feGaussianBlur></filter>
+                </defs>
+                <line x1="300" y1="400" x2="{{gz.v.nx}}" y2="{{gz.v.ny}}" transform="translate(6 4)" stroke="{{vu.needleShadow}}" stroke-width="2.6" filter="url(#vu-soft)"></line>
+                <line x1="300" y1="400" x2="{{gz.v.nx}}" y2="{{gz.v.ny}}" stroke="{{vu.ink}}" stroke-width="2.2"></line>
+              </svg>
+              <!-- In tune lamp: an LED in its socket, under the glass in the top right corner. -->
+              <div style="position: absolute; top: 2.8cqw; right: 3cqw; display: flex; align-items: center; gap: 0.9cqw; pointer-events: none">
+                <span style="font-size: max(12px, 2.5cqw); font-weight: 700; letter-spacing: 0.125em; color: {{vu.ink}}">IN TUNE</span>
+                <span style="position: relative; width: 2.1cqw; height: 2.1cqw; padding: 0.2cqw; box-sizing: border-box; border-radius: 50%; background: radial-gradient(circle at 50% 40%, rgba(60,34,10,0.18), rgba(60,34,10,0.45)); box-shadow: 0 0.12cqw 0 rgba(255,240,210,0.45)">
+                  <span style="display: block; width: 100%; height: 100%; border-radius: 50%; background: {{vu.led}}; box-shadow: {{vu.ledGlow}}; transition: background .15s, box-shadow .15s"></span>
+                  <!-- Reflection on the dome: the light is inside, the reflection is on its surface, so it shows whether the LED is on or off. -->
+                  <span style="position: absolute; left: 26%; top: 18%; width: 34%; height: 24%; border-radius: 50%; background: radial-gradient(ellipse, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.45) 40%, rgba(255,255,255,0) 75%); filter: blur(0.12cqw)"></span>
+                  <span style="position: absolute; left: 34%; bottom: 14%; width: 32%; height: 12%; border-radius: 50%; background: radial-gradient(ellipse, rgba(255,255,255,0.35), rgba(255,255,255,0) 70%); filter: blur(0.12cqw)"></span>
+                </span>
+              </div>
+              <!-- Glass: a barely visible glare across the front, and the clear acrylic edge catching the lamp. -->
+              <div style="position: absolute; inset: 0; pointer-events: none; background: linear-gradient(118deg, rgba(255,255,255,0.17) 0%, rgba(255,255,255,0.09) 38%, rgba(255,255,255,0) 38.5%, rgba(255,255,255,0) 100%), linear-gradient(180deg, rgba(255,255,255,0.1), rgba(255,255,255,0) 55%)"></div>
+              <div style="position: absolute; inset: 0; pointer-events: none; border-radius: inherit; border: 0.55cqw solid rgba(255,248,230,0.3); border-top-color: rgba(255,248,230,0.16); border-bottom-color: rgba(255,246,222,0.62); box-shadow: inset 0 0 0 1px rgba(70,40,12,0.35), inset 0 1px 3px rgba(255,255,255,0.25)"></div>
+            </div>
+            </div>
+            <div style="flex: none; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 2.2cqw; padding: 0 0.9cqw; color: {{fr.text}}">
+              <div style="display: flex; flex-direction: column; gap: 0.4cqw; min-width: 0; opacity: {{noteOp}}; transition: opacity .25s">
+                <span style="font-size: max(18px, 3.4cqw); line-height: 1.1; font-variant-numeric: tabular-nums; white-space: nowrap">{{detHz}} <span style="font-size: max(12px, 1.9cqw); color: {{fr.muted}}">Hz</span></span>
+                <span style="font-size: max(12px, 1.8cqw); color: {{fr.muted}}; font-variant-numeric: tabular-nums; white-space: nowrap">target {{cur.hz}} Hz · string {{cur.num}}</span>
+                <span style="font-size: max(12px, 1.9cqw); font-weight: 500; white-space: nowrap">{{vuHint}}</span>
+              </div>
+              <div style="display: flex; align-items: flex-start; line-height: 0.9; opacity: {{noteOp}}; transition: opacity .25s">
+                <span style="font-size: 12cqw; font-weight: 400; color: {{fr.text}}">{{cur.letter}}</span>
+                <span style="font-size: 4cqw; color: {{fr.muted}}; align-self: flex-end">{{cur.oct}}</span>
+              </div>
+              <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 1cqw">
+                <div style="min-width: 14cqw; box-sizing: border-box; padding: 0.4cqw 1cqw; border-radius: 4px; border: 1px solid {{c.border}}; background: {{c.view}}; box-shadow: inset 0 1px 4px {{vu.caseShadow}}; text-align: right; font-size: max(18px, 3.4cqw); font-variant-numeric: tabular-nums; white-space: nowrap">{{gz.lcdText}}<span style="font-size: max(12px, 1.9cqw); color: {{fr.muted}}"> ¢</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+          </div>
       </sc-if>
       <sc-if value="{{gaugeC}}" hint-placeholder-val="{{false}}">
         <svg viewBox="0 0 560 310" style="width: 100%; max-width: 600px; height: auto" role="img" aria-label="Tuning meter, {{centsText}}">
@@ -505,6 +520,7 @@ button:disabled{cursor:default}
         </div>
       </sc-if>
 
+      <sc-if value="{{noteRow}}" hint-placeholder-val="{{true}}">
       <div style="display: flex; align-items: flex-end; gap: 24px; flex-wrap: wrap; justify-content: center; opacity: {{noteOp}}; transition: opacity .25s">
         <div style="display: flex; align-items: flex-start; line-height: 1">
           <span style="font-size: 88px; font-weight: 300; color: {{tone}}">{{cur.letter}}</span>
@@ -520,9 +536,12 @@ button:disabled{cursor:default}
         </div>
       </div>
 
+      </sc-if>
      </div>
 
-      <div style="flex: 1"></div>
+      <sc-if value="{{bottomSpacer}}" hint-placeholder-val="{{true}}">
+        <div style="flex: 1"></div>
+      </sc-if>
 
 
       <sc-if value="{{displaysBottom}}" hint-placeholder-val="{{false}}">
@@ -617,7 +636,7 @@ button:disabled{cursor:default}
 
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"gauge":{"editor":"enum","options":["a","b","c","flat"],"default":"a"},"panel":{"editor":"enum","options":["a","b","c","d"],"default":"d"},"room":{"editor":"enum","options":["quiet","noisy"],"default":"quiet"},"theme":{"editor":"enum","options":["dark","light","layan"],"default":"dark"},"startInstrument":{"editor":"enum","options":["guitar6","guitar7","bass4","bass5","ukulele","mandolin","banjo","violin","viola","cello","contrabass"],"default":"guitar6"},"startDisplay":{"editor":"enum","options":["needle","strobe","bar"],"default":"needle"},"startAuto":{"editor":"boolean","default":true},"$preview":{"width":1200,"height":800}}' >
+<script type="text/x-dc" data-dc-script data-props='{"frame":{"editor":"enum","options":["a","b","c","d","e"],"default":"b"},"gauge":{"editor":"enum","options":["a","b","c","flat"],"default":"b"},"panel":{"editor":"enum","options":["a","b","c","d"],"default":"d"},"room":{"editor":"enum","options":["quiet","noisy"],"default":"quiet"},"theme":{"editor":"enum","options":["dark","light","layan"],"default":"dark"},"startInstrument":{"editor":"enum","options":["guitar6","guitar7","bass4","bass5","ukulele","mandolin","banjo","violin","viola","cello","contrabass"],"default":"guitar6"},"startDisplay":{"editor":"enum","options":["needle","strobe","bar"],"default":"needle"},"startAuto":{"editor":"boolean","default":true},"$preview":{"width":1200,"height":800}}' >
 class Component extends DCLogic {
   data() {
     if (this._data) return this._data;
@@ -924,6 +943,48 @@ class Component extends DCLogic {
         })
       };
     }
+    // Frames around the VU meter. KDE colors for a and b; brushed metal plates for c (KDE-tinted),
+    // d (aluminium) and e (champagne) are our own, like the lamp-lit face.
+    const frameKind = this.props.frame ?? 'b';
+    const brush = (a) => 'repeating-linear-gradient(0deg, rgba(255,255,255,' + a + ') 0 1px, rgba(0,0,0,' + a + ') 1px 2px, transparent 2px 3px)';
+    const plates = {
+      a: 'padding: 1.8cqw; border-radius: 12px; border: 1px solid ' + c.border + '; background: linear-gradient(' + mix(K.button, K.text, 0.06) + ', ' + rgb(K.button) + '); box-shadow: 0 2px 6px rgba(0,0,0,' + (darkTheme ? 0.4 : 0.15) + ')',
+      b: 'padding: 1.8cqw; border-radius: 12px; border: 1px solid ' + c.border + '; background: linear-gradient(' + mix(K.button, K.text, 0.06) + ', ' + rgb(K.button) + '); box-shadow: 0 2px 6px rgba(0,0,0,' + (darkTheme ? 0.4 : 0.15) + ')',
+      c: 'padding: 3cqw 3.2cqw 2.4cqw; border-radius: 6px; background: ' + brush(0.025) + ', linear-gradient(' + mix(K.button, K.text, 0.14) + ', ' + mix(K.button, K.text, 0.04) + '); box-shadow: 0 2px 8px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.12), inset 0 -1px 0 rgba(0,0,0,0.3)',
+      d: 'padding: 3cqw 3.2cqw 2.4cqw; border-radius: 6px; background: ' + brush(0.05) + ', linear-gradient(#dfe0e2, #b4b6b9); box-shadow: 0 2px 8px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.7), inset 0 -1px 0 rgba(0,0,0,0.25)',
+      e: 'padding: 3cqw 3.2cqw 2.4cqw; border-radius: 6px; background: ' + brush(0.05) + ', linear-gradient(#d8c79c, #a9966a); box-shadow: 0 2px 8px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,250,230,0.6), inset 0 -1px 0 rgba(0,0,0,0.25)'
+    };
+    const blackBezel = 'padding: 0.9cqw; border-radius: 5px; background: linear-gradient(#2b2b2c, #0d0d0e); box-shadow: 0 0 0 1px rgba(0,0,0,0.7), 0 1px 0 1px rgba(255,255,255,0.14), inset 0 1px 1px rgba(255,255,255,0.12)';
+    const lightPlate = frameKind === 'd' || frameKind === 'e';
+    const frameText = lightPlate ? '#1f1d1a' : rgb(K.text);
+    const frameMuted = lightPlate ? 'rgba(31,29,26,0.62)' : rgb(K.inactive);
+    const fr = {
+      plate: plates[frameKind] || plates.c,
+      bezel: frameKind === 'a' ? '' : blackBezel,
+      screws: frameKind === 'c' || frameKind === 'd' || frameKind === 'e',
+      screwList: [['1.6cqw', '1.5cqw', 30], ['calc(100% - 1.6cqw)', '1.5cqw', -60], ['1.6cqw', 'calc(100% - 1.3cqw)', 75], ['calc(100% - 1.6cqw)', 'calc(100% - 1.3cqw)', 10]].map(([x, y, r]) => ({ x, y, r })),
+      text: frameText, muted: frameMuted
+    };
+    // B: VU meter filling the panel; pivot below the window, ±50 ¢ over 80°
+    {
+      const k = 0.8, cx = 300, cy = 400, R = 300;
+      const n = pol(cx, cy, 345, nd * k), sh = pol(cx + 4, cy + 4, 345, nd * k);
+      const ink = '#2a1c10', red = '#b5281e';
+      gz.v = {
+        nx: n[0], ny: n[1], sx: sh[0], sy: sh[1],
+        zoneInk: arcOf(cx, cy, R, -30 * k, 30 * k),
+        zoneRed: arcOf(cx, cy, R + 1.5, -50 * k, -30 * k) + arcOf(cx, cy, R + 1.5, 30 * k, 50 * k),
+        ok: arcOf(cx, cy, R - 11, -3 * k, 3 * k),
+        major: ticksOf(cx, cy, k, [-20, -10, 0, 10, 20], R, R + 18),
+        majorRed: ticksOf(cx, cy, k, [-50, -40, -30, 30, 40, 50], R, R + 18),
+        minor: ticksOf(cx, cy, k, range(-45, 45, 10), R, R + 10),
+        fine: ticksOf(cx, cy, k, range(-38, 38, 2), R - 28, R - 20),
+        labels: [-50, -30, -20, -10, 0, 10, 20, 30, 50].map((v) => {
+          const p = pol(cx, cy, R + 34, v * k);
+          return { x: p[0], y: p[1], t: lab(v), fill: Math.abs(v) >= 30 ? red : ink };
+        })
+      };
+    }
     // C: hi-fi meter, pivot under a dome at the bottom edge, ±50 ¢ over 100°
     {
       const k = 1.0, cx = 280, cy = 262, R = 180;
@@ -1092,6 +1153,30 @@ class Component extends DCLogic {
       flatNeedle: display === 'needle' && gaugeKind === 'flat',
       gaugeA: display === 'needle' && gaugeKind === 'a',
       gaugeB: display === 'needle' && gaugeKind === 'b',
+      noteRow: !(display === 'needle' && gaugeKind === 'b'),
+      centerSpacers: panel === 'd' && !(display === 'needle' && gaugeKind === 'b'),
+      bottomSpacer: !(display === 'needle' && gaugeKind === 'b'),
+      fillFlex: display === 'needle' && gaugeKind === 'b' ? '1' : 'none',
+      vu: {
+        // Our own colors only where KDE has no role: a face lit by an incandescent lamp,
+        // printed ink, and a bright green lamp.
+        // A bulb behind the pivot: a hot spot at the bottom centre, warm amber falling off to brown corners.
+        face: 'radial-gradient(ellipse 30% 42% at 50% 100%, rgba(255,248,222,0.95) 0%, rgba(255,232,182,0.55) 45%, rgba(255,220,160,0) 100%), '
+          + 'radial-gradient(ellipse 80% 115% at 50% 100%, #ffd998 0%, #f5bb6a 32%, #df9748 60%, #b06a2e 84%, #7c4521 100%)',
+        // The window is recessed: the frame shades the top and sides of the face.
+        recess: 'inset 0 12px 16px -6px rgba(45,22,5,0.6), inset 10px 0 14px -8px rgba(45,22,5,0.45), inset -10px 0 14px -8px rgba(45,22,5,0.45), inset 0 0 0 1px rgba(0,0,0,0.35)',
+        ink: '#2a1c10', red: '#b5281e', green: '#2f7d3a', needleShadow: 'rgba(60,28,4,0.42)',
+        caseHi: mix(K.button, K.text, 0.06), caseLo: rgb(K.button), caseShadow: 'rgba(0,0,0,' + (darkTheme ? 0.4 : 0.15) + ')',
+        led: inTune
+          ? 'radial-gradient(circle at 50% 58%, #c8ffc8 0%, #5dff70 16%, #1ee63b 42%, #0c9e26 74%, #075f17 100%)'
+          // Off: unlit green glass, a little of the lamp behind the face still shines through.
+          : 'radial-gradient(circle at 38% 32%, #a3c286 0%, #5d874c 24%, #3b5f32 62%, #284424 100%)',
+        ledGlow: inTune
+          ? '0 0 1cqw 0.31cqw rgba(90,255,120,0.9), 0 0 4cqw 1.5cqw rgba(90,255,120,0.5), inset 0 -0.3cqw 0.5cqw rgba(0,70,15,0.45)'
+          : 'inset 0 -0.2cqw 0.35cqw rgba(70,60,20,0.35)',
+        ledText: inTune ? frameText : frameMuted
+      },
+      fr,
       gaugeC: display === 'needle' && gaugeKind === 'c',
       gz,
       isNeedle: display === 'needle', isStrobe: display === 'strobe', isBar: display === 'bar',
@@ -1144,6 +1229,8 @@ class Component extends DCLogic {
       calibrate: () => this.setState({ cal: 40, calMax: -70, calDone: null }),
       detHz: (curN.freq * Math.pow(2, cents / 1200)).toFixed(2),
       centsText: signal ? sign + Math.abs(cents).toFixed(1) + ' ¢' : '—',
+      // The lamp says “in tune”; the text only says what to do.
+      vuHint: !signal ? 'Waiting for a sound…' : ac <= 3 ? '\u00a0' : cents < 0 ? 'Too low · tighten' : 'Too high · loosen',
       statusText: !signal ? 'Waiting for a sound…' : ac <= 3 ? 'In tune' : cents < 0 ? 'Too low · tighten' : 'Too high · loosen',
       progress: tunedCount + ' of ' + N + ' tuned',
       auto, loop: !!s.loop, vol: s.vol ?? 60, timbres,
