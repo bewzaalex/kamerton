@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.22)
 
 project(kamerton VERSION 0.1.0 LANGUAGES CXX)
 
-set(QT_MIN_VERSION "6.7.0")
+set(QT_MIN_VERSION "6.8.0")
 set(KF_MIN_VERSION "6.8.0")
 
 find_package(ECM ${KF_MIN_VERSION} REQUIRED NO_MODULE)

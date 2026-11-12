@@ -14,7 +14,8 @@ Kirigami.ApplicationWindow {
     width: Kirigami.Units.gridUnit * 60
     height: Kirigami.Units.gridUnit * 40
     minimumWidth: Kirigami.Units.gridUnit * 24
-    minimumHeight: Kirigami.Units.gridUnit * 30
+    // As tall as the compact layout needs at the minimum width, so the smallest window has no empty space.
+    minimumHeight: tunerPage.minimumHeightFor(minimumWidth)
 
     function openSettings(): void {
         if (pageStack.layers.depth === 1) {
@@ -35,6 +36,7 @@ Kirigami.ApplicationWindow {
     }
 
     pageStack.initialPage: TunerPage {
+        id: tunerPage
         onSettingsRequested: root.openSettings()
         onTuningsRequested: root.openTunings()
         onAboutRequested: root.openAbout()

@@ -8,11 +8,11 @@
 Listens through your microphone, or plays a reference tone to tune by ear.
 
 [![License: GPL-3.0-or-later](https://img.shields.io/badge/license-GPL--3.0--or--later-blue)](LICENSE)
-![Qt 6.7+](https://img.shields.io/badge/Qt-6.7+-41cd52?logo=qt&logoColor=white)
+![Qt 6.8+](https://img.shields.io/badge/Qt-6.8+-41cd52?logo=qt&logoColor=white)
 ![KDE Frameworks 6.8+](https://img.shields.io/badge/KDE_Frameworks-6.8+-1d99f3?logo=kde&logoColor=white)
 ![PipeWire](https://img.shields.io/badge/audio-PipeWire-4a86cf)
 
-<img src="docs/screenshots/main-dark.png" alt="Kamerton tuning a guitar with the needle display, Breeze Dark">
+<img src="docs/screenshots/main-dark.png" alt="Kamerton tuning a guitar with the VU meter, Breeze Dark">
 
 </div>
 
@@ -22,12 +22,14 @@ Listens through your microphone, or plays a reference tone to tune by ear.
 
 - 🎸 **Many instruments**: guitar (6 and 7 strings), bass (4 and 5), ukulele, mandolin, banjo, violin, viola, cello, double bass, and a chromatic mode for anything else.
 - 🎯 **Accurate**: the YIN pitch detector is typically within ±0.5 cent, including on low strings.
-- 🧭 **Three displays**: a needle, a strobe and an LED bar. Switch between them at any time.
+- 🧭 **Three displays**: an analog VU meter lit like the meter of a studio amp, a strobe and an LED bar. Switch between them at any time.
+- 🎸 **Les Paul style headstock**: every string is a chrome tuner key showing its note, number and frequency.
+- 🪟 **Any window size**: in a small window, for example in a corner next to your DAW, the meter stays big and the Instrument and Noise gate panels shrink to one line each. Their full panels open in a floating window when you need them.
 - 🤖 **Auto-detect string**: just play. Kamerton works out which string you're tuning and marks each one ✓ once it's in tune.
 - 🔊 **Reference tones**: click a string to hear it as a plucked, sine or organ sound, for tuning by ear when a microphone can't be used.
 - 🎚️ **Live noise gate**: drag the gate on the input level meter while you tune, or let Kamerton set it from the noise of the room.
 - 🛠️ **Your own tunings**, adjustable concert pitch (A4) and in-tune tolerance.
-- 🎨 **Native look**: built with Kirigami, follows your Plasma color scheme, light or dark.
+- 🎨 **Native look**: built with Kirigami, follows your Plasma color scheme, light or dark. Only the hardware keeps its own colors: the VU meter’s lamp-lit face, its *In tune* lamp and the headstock’s lacquer, binding and chrome.
 
 <p align="center">
   <img src="docs/screenshots/violin-light.png" width="720" alt="Kamerton tuning a violin with the strobe display, Breeze Light">
@@ -43,7 +45,7 @@ Kamerton is built from source. That takes about a minute.
 | --- | --- |
 | CMake, Ninja and a C++20 compiler | CMake 3.22+ |
 | Extra CMake Modules | 6.8+ |
-| Qt: Core, Gui, Qml, Quick, QuickControls2, Widgets | 6.7+ |
+| Qt: Core, Gui, Qml, Quick, QuickControls2, Widgets | 6.8+ |
 | KDE Frameworks: Kirigami, CoreAddons, Config, I18n, IconThemes | 6.8+ |
 | Kirigami Addons and qqc2-desktop-style (needed at run time) | |
 | PipeWire (`libpipewire-0.3`) | 0.3+ |
@@ -72,14 +74,24 @@ To uninstall, remove the files listed in `build/install_manifest.txt`.
 
 ## How to tune
 
-1. **Choose the instrument and tuning** in the toolbar. Leave **A4** at 440 Hz unless the people you play with tune differently.
-2. **Play one string** and let it ring. The big note shows what Kamerton hears, with its octave, e.g. E2.
-3. **Turn the peg** until the needle sits in the green center.
+1. **Choose the instrument and tuning** at the top of the **Instrument** panel. Leave **A4** at 440 Hz unless the people you play with tune differently.
+2. **Play one string** and let it ring. The big note under the meter shows what Kamerton hears, with its octave, e.g. E2. The frequency is on its left, the offset in cents on its right.
+3. **Turn the peg** until the needle sits on the green mark and the **In tune** lamp lights.
    - Left of center means *flat* (too low): tighten the string.
    - Right of center means *sharp* (too high): loosen it.
-4. A string that stays in tune gets a ✓ on the headstock. The **x of N tuned** button counts them; click it to start over.
+   - The line under the cents says which way to turn.
+4. A string that stays in tune gets a ✓ on its tuner key. The **x of N tuned** button counts them and gets a ✓ of its own when every string is done; click it to start over.
 
-With **Auto-detect string** on, Kamerton follows whatever string you play. Turn it off to stay on one string, then click a string on the headstock to choose it. This helps when a string is far out of tune: after fitting new strings or switching to Drop D.
+With **Auto-detect string** on, Kamerton follows whatever string you play. Turn it off to stay on one string, then click a tuner key on the headstock to choose it. This helps when a string is far out of tune: after fitting new strings or switching to Drop D.
+
+### Small windows
+
+When the window is big enough, every panel is shown in full. When it isn't, the **Detector** keeps as much room as it can, and the other two panels shrink to one line each:
+
+- **Instrument**: the instrument, tuning and A4, the tuned count, and the strings as small chips. Click a chip to choose a string.
+- **Noise gate**: the gate and a small level bar.
+
+Click **Instrument ⌄** or **Noise gate ⌄** to open the full panel, with the headstock, the reference tone or the level meter, in a floating window next to the button. It may reach past the edges of a small tuner window. A click outside it or <kbd>Esc</kbd> closes it.
 
 ### Tuning by ear
 
@@ -95,13 +107,13 @@ Tones fade in and out gently, so starting and stopping them doesn't click.
 
 | Display | How to read it |
 | --- | --- |
-| **Needle** | A classic meter from −50 to +50 cents. The green zone is your in-tune tolerance. |
+| **Needle** | An analog VU meter from −50 to +50 cents, with the note, frequency and cents under the window. The **In tune** lamp lights within your in-tune tolerance. With no sound the needle sinks to the left. |
 | **Strobe** | The bands drift left when the note is flat and right when it's sharp, and stand still when it's exactly in tune. Best for the smallest differences. |
 | **LED bar** | A row of lights from flat to sharp. The easiest to read from a distance. |
 
 ### Setting the noise gate
 
-The **Noise gate adjust** meter under the note shows what the microphone hears, in dB, with the current level on its right: green is a healthy level, yellow is loud, red is close to clipping. The orange marker is the **noise gate**. Sounds left of it, in the hatched part, are ignored, and the tuner waits for a sound.
+The meter in the **Noise gate** panel, under the Instrument panel, shows what the microphone hears in dB, with the current level in the panel’s heading: green is a healthy level, yellow is loud, red is close to clipping. The orange marker is the **noise gate**. Sounds left of it, in the hatched part, are ignored, and the tuner waits for a sound.
 
 - **Drag the marker**, or click anywhere on the meter, while you tune. The change applies at once and is saved.
 - With the meter focused: the arrow keys move the gate by 1 dB, <kbd>Page Up</kbd>/<kbd>Page Down</kbd> by 5 dB. The mouse wheel works too.
@@ -112,16 +124,16 @@ Set it just above the noise of the room. If the tuner doesn't react while you pl
 
 ## Configuration
 
-Open **Configure Kamerton** from the ☰ menu or with <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>,</kbd>.
+Open **Configure Kamerton** from the ☰ menu in the top right corner of the **Detector** panel, or with <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>,</kbd>.
 
 | Setting | Default | What it does |
 | --- | --- | --- |
 | Microphone / input | System default | The input to listen to: a built-in mic, a USB audio interface, a webcam mic or any other PipeWire source. |
 | Speakers / output | System default | Where reference tones play. |
-| Noise gate | −55 dB | −70 to −10 dB. Sounds quieter than this are ignored. Easier to set on the Noise gate adjust meter while you tune, see [Setting the noise gate](#setting-the-noise-gate). |
-| Concert pitch (A4) | 440 Hz | 400–480 Hz. Some orchestras use 442 Hz, baroque music 415 Hz. Also in the toolbar. |
+| Noise gate | −55 dB | −70 to −10 dB. Sounds quieter than this are ignored. Easier to set in the Noise gate panel while you tune, see [Setting the noise gate](#setting-the-noise-gate). |
+| Concert pitch (A4) | 440 Hz | 400–480 Hz. Some orchestras use 442 Hz, baroque music 415 Hz. Also in the Instrument panel. |
 | In-tune tolerance | ±3 cents | How close a string must be to count as tuned: ±1–2 cents for recording, ±5 for a quick check. |
-| Display | Needle | The display to start with. You can also switch it under the tuner. |
+| Display | Needle | The display to start with. You can also switch it at the top of the Detector panel. |
 
 ### Custom tunings
 
@@ -160,7 +172,7 @@ All settings, including custom tunings, are stored in `~/.config/kamertonrc`. To
 | Key | Action |
 | --- | --- |
 | <kbd>Space</kbd> | Play or stop the selected string's reference tone (when Auto-detect string is off) |
-| <kbd>←</kbd> <kbd>→</kbd>, <kbd>Page Up</kbd>/<kbd>Page Down</kbd> | Move the noise gate by 1 or 5 dB (with the Noise gate adjust meter focused) |
+| <kbd>←</kbd> <kbd>→</kbd>, <kbd>Page Up</kbd>/<kbd>Page Down</kbd> | Move the noise gate by 1 or 5 dB (with the noise gate meter focused) |
 | <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>,</kbd> | Settings |
 | <kbd>Ctrl</kbd>+<kbd>Q</kbd> | Quit |
 
@@ -169,7 +181,7 @@ All settings, including custom tunings, are stored in `~/.config/kamertonrc`. To
 <details>
 <summary><b>The tuner doesn't react when I play</b></summary>
 
-Watch the Noise gate adjust meter under the note while you play.
+Watch the meter in the Noise gate panel while you play.
 - **It doesn't move:** Kamerton is listening to the wrong input. Choose the right one under *Microphone / input*, and check that the mic isn't muted in Plasma's audio settings.
 - **It moves but stays left of the orange noise gate marker:** drag the marker to the left, or move the mic closer.
 </details>
@@ -209,7 +221,7 @@ src/
   tonegenerator.*    additive synth for reference tones (real-time thread)
   instruments.*      built-in instruments, tunings and note helpers
   tunercontroller.*  QML singleton tying it all together, settings via KConfig
-  qml/               Kirigami UI
+  qml/               Kirigami UI; VuMeter.qml is the needle display
 data/                desktop entry, AppStream metainfo, app icon
 docs/
   TODO.md            roadmap, backlog and open questions

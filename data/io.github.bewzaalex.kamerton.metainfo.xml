@@ -24,7 +24,7 @@
   </supports>
   <screenshots>
     <screenshot type="default">
-      <caption>Tuning a guitar with the needle display</caption>
+      <caption>Tuning a guitar with the VU meter</caption>
       <image>https://raw.githubusercontent.com/bewzaalex/kamerton/main/docs/screenshots/main-dark.png</image>
     </screenshot>
   </screenshots>
@@ -32,8 +32,10 @@
     <p>Kamerton tunes guitars, basses, ukuleles, mandolins, banjos and the violin family
     by listening through the microphone, or plays reference tones when a microphone is not available.</p>
     <ul>
-      <li>Needle, strobe and LED bar displays</li>
+      <li>An analog VU meter with an “In tune” lamp, a strobe and an LED bar display</li>
+      <li>A Les Paul style headstock whose tuner keys show each string’s note and frequency</li>
       <li>Automatic string detection, or click a string to play its reference tone</li>
+      <li>Works in a small window next to your DAW: the full panels open in floating windows</li>
       <li>Built-in and custom tunings</li>
       <li>Adjustable concert pitch</li>
       <li>Input level meter with a noise gate you can drag while tuning, or set from the noise of the room</li>
