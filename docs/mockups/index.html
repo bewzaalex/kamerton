@@ -73,6 +73,18 @@ a { color: var(--accent); }
     ["v4-noise-gate.html?gate=c", "C · Big input meter in the tuner card", "Always visible under the note, full width, easiest to hit. The status bar only shows the gate value."],
     ["v4-noise-gate.html?gate=a&theme=light&room=noisy", "A · Light theme, noisy room", "With the default −55 dB gate the room noise keeps the tuner busy; drag the gate above it."]
   ]'></div>
+
+  <h2>v5 — noise gate in its own panel</h2>
+  <p>The noise gate leaves the tuner card and gets a panel of its own, with a “Noise gate” heading like Strings and Reference tone.
+     The meter, Reset and Set from room noise work as in v4 E. Try <code>&amp;room=noisy</code> and the three themes.</p>
+  <div class="grid" data-pages='[
+    ["v5-panels.html?panel=d&theme=layan", "D · Instrument, Noise gate and Detector panels, no toolbar", "Instrument, tuning and A4 move into the panel with the headstock, renamed “Instrument”. The toolbar is gone; the tuner card is “Detector”, with Needle / Strobe / Bar as one block and the menu in its top right corner."],
+    ["v5-panels.html?panel=d&theme=light&startInstrument=violin&startDisplay=bar", "D · Light theme, violin, LED bar", ""],
+    ["v5-panels.html?panel=a&theme=layan", "A · Panel under the tuner", "Heading and buttons on one row, the meter under them. The tuner card keeps only the display."],
+    ["v5-panels.html?panel=b&theme=layan", "B · Panel across the whole window", "Same panel, under both cards: the longest meter, easiest to set precisely."],
+    ["v5-panels.html?panel=c&theme=layan", "C · Panel in the side column", "Under Strings and Reference tone, with everything that is about sound on the left. Shorter meter."],
+    ["v5-panels.html?panel=a&theme=light&room=noisy", "A · Light theme, noisy room", "Press Set from room noise: the gate jumps above the noise and the tuner calms down."]
+  ]'></div>
 </main>
 <script>
 for (const grid of document.querySelectorAll('[data-pages]')) {
