@@ -1,0 +1,59 @@
+id: io.github.bewzaalex.kamerton
+runtime: org.kde.Platform
+runtime-version: '6.11'
+sdk: org.kde.Sdk
+command: kamerton
+finish-args:
+  - --share=ipc
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --device=dri
+  # Native PipeWire streams: microphone capture and reference tone playback
+  - --filesystem=xdg-run/pipewire-0
+
+cleanup:
+  - /include
+  - /lib/cmake
+  - /lib/pkgconfig
+  - '*.la'
+  - '*.a'
+  - /share/info
+  - /share/man
+
+modules:
+  # Single-precision FFTW for the pitch detector; the runtime only has double precision
+  - name: fftw3f
+    config-opts:
+      - --enable-float
+      - --enable-shared
+      - --disable-static
+      - --enable-threads
+    build-options:
+      arch:
+        x86_64:
+          config-opts:
+            - --enable-sse2
+            - --enable-avx
+            - --enable-avx2
+        aarch64:
+          config-opts:
+            - --enable-neon
+    cleanup:
+      - /bin
+    sources:
+      - type: archive
+        url: https://www.fftw.org/fftw-3.3.10.tar.gz
+        sha256: 56c932549852cddcfafdab3820b0200c7742675be92179e59e6215b340e26467
+
+  - name: kamerton
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
+    sources:
+      - type: git
+        url: https://github.com/bewzaalex/kamerton.git
+        tag: v0.1.0
+        commit: 06d865f69a43b7a674265d5e82573aaeef2d6f57
+        x-checker-data:
+          type: git
+          tag-pattern: ^v([\d.]+)$
