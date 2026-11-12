@@ -36,6 +36,30 @@ Mockups: [mockups/index.html](mockups/index.html) (open in a browser; v3 "C2" pl
 - [ ] Compact always-on-top mini tuner window (needs its own mockup first)
 - [ ] Share tunings as files (import / export)
 
+### Street mode: tuning in noisy places
+
+Goal: steady readings on a street or in a loud room. Normalisation / automatic gain does not help:
+it raises the noise as much as the string, and YIN ignores loudness anyway. Better input beats any
+software: a clip-on piezo pickup or a guitar cable into an audio interface already works today.
+
+Plan, in order:
+
+- [ ] **Test bench first**: mix string recordings with street-like noise at several loudness levels and
+      count how often each variant reads the right note within ±1 cent, so every step is measured.
+- [ ] **Listen only where the string is**: when the target string is known, band-pass around its note
+      and first overtones and narrow the YIN search range; fixed low cut below ~30 Hz (traffic, wind).
+      Auto-detect can only narrow to the instrument's range; chromatic mode can't narrow.
+- [ ] **React to the pluck**: start measuring on a pluck (sharp rise, smooth decay) and stay locked through
+      the decay; let the gate follow the noise floor automatically, a few dB above it.
+- [ ] **Learn the noise**: extend "Set from room noise" to record the noise spectrum and subtract it before
+      detection. Helps with steady noise (traffic, fans, crowd murmur), not with voices or horns.
+- [ ] **Noisy place option** (mockup first): longer averaging and a stricter clarity threshold, slower but steadier.
+- [ ] Later, if still needed: **harmonic check**, accept a reading only when the spectrum shows the target's
+      overtone series (f, 2f, 3f…) and agrees with YIN.
+
+Not recommended: voice noise suppression (RNNoise, EasyEffects, PipeWire echo-cancel) in front of
+Kamerton; it is trained on speech and can remove a sustained string tone.
+
 ## Polish / ideas
 
 - [ ] Remember window size and position
