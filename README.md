@@ -89,7 +89,7 @@ With **Auto-detect string** on, Kamerton follows whatever string you play. Turn 
 When the window is big enough, every panel is shown in full. When it isn't, the **Detector** keeps as much room as it can, and the other two panels shrink to one line each:
 
 - **Instrument**: the instrument, tuning and A4, the tuned count, and the strings as small chips. Click a chip to choose a string.
-- **Noise gate**: the gate and a small level bar.
+- **Noise gate**: the gate value and a small level bar, colored like the big meter.
 
 Click **Instrument ⌄** or **Noise gate ⌄** to open the full panel, with the headstock, the reference tone or the level meter, in a floating window next to the button. It may reach past the edges of a small tuner window. A click outside it or <kbd>Esc</kbd> closes it.
 

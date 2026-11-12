@@ -8,6 +8,7 @@ Mockups: [mockups/index.html](mockups/index.html) (open in a browser; v10 is the
 - [x] Side column or one column, whichever gives the bigger meter; the Detector always first; scrolling only as the last resort
 - [x] The small panels' buttons open the full panel in a popup window that may reach past the tuner window, closed by a click outside or Esc
 - [x] Floating Noise gate shows the level on the meter's top row
+- [x] Small Noise gate panel: gate value in grey like the other summaries, level bar colored like the big meter
 - [x] Narrow Detector panel: Needle / Strobe / Bar show icons only
 - [x] Les Paul style headstock (outline traced from a photo, smoothed): black face, cream binding, bell cover, chrome bushings; fixed proportions
 - [x] Tuner keys are wide chrome buttons with note, string number and frequency; the chosen one tinted with the selection color, a bigger ✓ badge when tuned

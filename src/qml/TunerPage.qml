@@ -252,7 +252,7 @@ Kirigami.Page {
                             }
                             QQC2.Label {
                                 text: i18nc("decibels", "%1 dB", String(TunerController.noiseGate).replace("-", "−"))
-                                color: Kirigami.Theme.neutralTextColor
+                                color: Kirigami.Theme.disabledTextColor
                             }
                             MiniLevel {
                                 Layout.fillWidth: true
