@@ -54,7 +54,7 @@ Mockups: [mockups/index.html](mockups/index.html) (open in a browser; v10 is the
 
 ## Later
 
-- [ ] Compact always-on-top mini tuner window (needs its own mockup first)
+- [x] Compact mini tuner: the smallest window shows the meter and the small Instrument and Noise gate panels (v9, v10); "Keep Above Others" comes from the Plasma window menu
 - [ ] Share tunings as files (import / export)
 
 ### Street mode: tuning in noisy places

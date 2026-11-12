@@ -93,6 +93,12 @@ When the window is big enough, every panel is shown in full. When it isn't, the 
 
 Click **Instrument ⌄** or **Noise gate ⌄** to open the full panel, with the headstock, the reference tone or the level meter, in a floating window next to the button. It may reach past the edges of a small tuner window. A click outside it or <kbd>Esc</kbd> closes it.
 
+<p align="center">
+  <img src="docs/screenshots/small-dark.png" width="432" alt="Kamerton in its smallest window, A2 in tune, Breeze Dark">
+</p>
+
+The smallest window is just big enough for this layout. To keep it above your DAW in Plasma, right-click its title bar and choose **More Actions → Keep Above Others**.
+
 ### Tuning by ear
 
 When you can't use the microphone, for example in a noisy room, turn **Auto-detect string** off. Every string then gets a small ▶ badge:
@@ -234,7 +240,6 @@ docs/
 
 Coming next:
 - Flatpak, deb and rpm packages.
-- A compact always-on-top mini tuner.
 - Sharing tunings as files.
 
 See [docs/TODO.md](docs/TODO.md) for everything planned.
