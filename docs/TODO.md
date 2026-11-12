@@ -1,6 +1,28 @@
 # Kamerton — TODO
 
-Mockups: [mockups/index.html](mockups/index.html) (open in a browser; v3 "C2" plus v4 "E" is the implemented layout)
+Mockups: [mockups/index.html](mockups/index.html) (open in a browser; v10 is the implemented layout)
+
+## Done: window sizes and the headstock (v9, v10, v11 C)
+
+- [x] Two states: every panel in full when the window has room; otherwise the Detector stays and Instrument and Noise gate shrink to one-line panels
+- [x] Side column or one column, whichever gives the bigger meter; the Detector always first; scrolling only as the last resort
+- [x] The small panels' buttons open the full panel in a popup window that may reach past the tuner window, closed by a click outside or Esc
+- [x] Floating Noise gate shows the level on the meter's top row
+- [x] Small Noise gate panel: gate value in grey like the other summaries, level bar colored like the big meter
+- [x] Narrow Detector panel: Needle / Strobe / Bar show icons only
+- [x] Les Paul style headstock (outline traced from a photo, smoothed): black face, cream binding, bell cover, chrome bushings; fixed proportions
+- [x] Tuner keys are wide chrome buttons with note, string number and frequency; the chosen one tinted with the selection color, a bigger ✓ badge when tuned
+- [x] Qt 6.8 or newer, for popup windows
+
+## Done: panels and the VU meter (v5 D, v7)
+
+- [x] No toolbar: instrument, tuning and A4 in the **Instrument** panel; display style buttons and the main menu in the **Detector** panel
+- [x] **Noise gate** in its own panel under the Instrument panel, level in its heading
+- [x] Needle / Strobe / Bar and Pluck / Sine / Organ as joined, equal-width buttons with drawn icons
+- [x] The "x of N tuned" button keeps its normal look; a ✓ badge replaces its reset icon when every string is tuned, the reset icon is back on hover
+- [x] Needle display is an analog VU meter: golden-ratio case that scales with the window, face lit like a bulb behind glass, bezel in a dark KDE color, glass glare and edge, needle shadow, a domed "In tune" LED under the glass
+- [x] Under the window: Hz and target on the left, the big note in the middle, cents and what to do on the right; nothing shown twice
+- [x] With no sound the needle sinks to its stop instead of the display dimming
 
 ## Done: noise gate on the level meter (v4, variant E)
 
@@ -33,7 +55,7 @@ Mockups: [mockups/index.html](mockups/index.html) (open in a browser; v3 "C2" pl
 
 ## Later
 
-- [ ] Compact always-on-top mini tuner window (needs its own mockup first)
+- [x] Compact mini tuner: the smallest window shows the meter and the small Instrument and Noise gate panels (v9, v10); "Keep Above Others" comes from the Plasma window menu
 - [ ] Share tunings as files (import / export)
 
 ### Street mode: tuning in noisy places

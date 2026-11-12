@@ -17,7 +17,8 @@ qt_add_qml_module(kamerton
     QML_FILES
         qml/Main.qml
         qml/TunerPage.qml
-        qml/NeedleGauge.qml
+        qml/VuMeter.qml
+        qml/SegmentedButtons.qml
         qml/StrobeDisplay.qml
         qml/BarDisplay.qml
         qml/Headstock.qml

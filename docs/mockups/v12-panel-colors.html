@@ -1,0 +1,772 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Kamerton v12, panel colors</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700&amp;display=swap">
+<style>
+/* Mockup chrome: the bar with controls and the desk the window sits on. Not part of the app. */
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body { margin: 0; display: flex; flex-direction: column; overflow: hidden; background: #17181b; color: #d8d8dc; font: 13px/1.4 'Noto Sans', system-ui, sans-serif; }
+button, input, select { font: inherit; }
+.controls { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; padding: 8px 12px; background: #222328; border-bottom: 1px solid #34353b; }
+.controls .group { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.controls .label { color: #8c8d94; margin-right: 2px; }
+.controls button { height: 26px; padding: 0 9px; border: 1px solid #44454c; border-radius: 4px; background: #2c2d33; color: inherit; cursor: pointer; }
+.controls button[aria-pressed="true"] { background: #3d3e7a; border-color: #6667f0; }
+.controls input { width: 58px; height: 26px; padding: 0 6px; border: 1px solid #44454c; border-radius: 4px; background: #1b1c20; color: inherit; }
+.controls .status { flex: 1 1 260px; color: #a9aab2; }
+.stage { flex: 1; position: relative; overflow: hidden; }
+.screen { position: absolute; left: 16px; top: 16px; transform-origin: 0 0; overflow: hidden; border-radius: 4px; outline: 1px solid #3a3b40; background: #1d1e22; }
+.daw { position: absolute; inset: 0; display: flex; flex-direction: column; font-size: 12px; color: #6e7078; }
+.daw .bar { height: 30px; background: #26272c; border-bottom: 1px solid #333; display: flex; align-items: center; padding: 0 12px; gap: 18px; }
+.daw .lane { flex: 1; border-bottom: 1px solid #2a2b30; position: relative; }
+.daw .lane span { position: absolute; top: 12%; bottom: 12%; border-radius: 3px; opacity: 0.35; }
+.win { position: absolute; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.55); border: 1px solid rgba(255,255,255,0.08); }
+.grip { position: absolute; right: 0; bottom: 0; width: 18px; height: 18px; cursor: nwse-resize; z-index: 30;
+  background: linear-gradient(135deg, transparent 50%, rgba(128,128,128,0.6) 50%, rgba(128,128,128,0.6) 58%, transparent 58%, transparent 70%, rgba(128,128,128,0.6) 70%, rgba(128,128,128,0.6) 78%, transparent 78%); }
+
+/* The app window. Every color is a KDE color scheme role or a mix of two (set in JS). */
+.titlebar { height: 34px; display: flex; align-items: center; gap: 10px; padding: 0 10px; background: var(--header); color: var(--text); position: relative; }
+.titlebar .title { position: absolute; left: 0; right: 0; text-align: center; pointer-events: none; font-weight: 500; }
+.titlebar .appicon { width: 20px; height: 20px; border-radius: 4px; background: linear-gradient(#5aa9f0, #2f6fd0); }
+.titlebar .wbtns { margin-left: auto; display: flex; gap: 16px; }
+.page { position: relative; height: calc(100% - 34px); background: var(--window); color: var(--text); font-size: 14px; overflow: hidden; }
+.page.scroll { overflow-y: auto; }
+.cols { display: flex; gap: 8px; padding: 8px; height: 100%; }
+.page.scroll .cols { height: auto; min-height: 100%; }
+
+
+
+
+.card { background: var(--view); border: 1px solid var(--border); border-radius: 6px; padding: 10px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.phead { display: flex; align-items: center; gap: 6px; min-height: 30px; }
+.phead h3 { margin: 0; font-size: 15px; font-weight: 500; white-space: nowrap; }
+.summary { display: none; flex: 1; min-width: 0; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.spacer { flex: 1; }
+
+.pill { height: 30px; padding: 0 12px; border: 1px solid var(--border); border-radius: 15px; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; background: transparent; color: var(--text); }
+.btn { height: 34px; padding: 0 12px; border: 1px solid var(--border); border-radius: 5px; background: var(--button); color: var(--text); display: inline-flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap; min-width: 0; }
+.dd { justify-content: space-between; flex: 1; }
+.dd span { overflow: hidden; text-overflow: ellipsis; }
+.muted { color: var(--muted); }
+.row { display: flex; align-items: center; gap: 8px; }
+.hsep { height: 1px; background: var(--border); }
+
+.instrument { flex: none; }
+.instrument > .pbody { display: flex; flex-direction: column; gap: 10px; flex: 1; }
+.strings { flex: 1; display: flex; align-items: center; justify-content: center; }
+.headstock { width: 100%; aspect-ratio: 522 / 514; flex: none; }
+.headstock svg { display: block; width: 100%; height: 100%; }
+.headstock .key { cursor: pointer; }
+.headstock .key:hover .cap { filter: brightness(1.07); }
+.chipsmode .headstock { display: none; }
+.chiprow { display: none; gap: 6px; }
+.chipsmode .strings .chiprow { display: flex; flex: 1; }
+.chip { position: absolute; width: 106px; height: 44px; border: 1.5px solid var(--border); border-radius: 22px; display: flex; align-items: center; gap: 6px; padding: 0 10px; cursor: pointer; background: var(--view); }
+.chip.on, .mchip.on { border: 2px solid var(--hl); background: var(--sel); }
+.chip .n { font-size: 22px; line-height: 1; }
+.chip .n sub, .mchip sub { font-size: 11px; vertical-align: -1px; }
+.chip .t { margin-left: auto; text-align: right; white-space: nowrap; font-size: 10.5px; line-height: 1.25; color: var(--muted); }
+.mchip { flex: 1; min-width: 0; height: 32px; border: 1.5px solid var(--border); border-radius: 16px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 15px; }
+.switch { width: 40px; height: 22px; border-radius: 11px; background: var(--hl); position: relative; flex: none; }
+.switch::after { content: ""; position: absolute; right: 1px; top: 1px; width: 20px; height: 20px; border-radius: 50%; background: var(--button); border: 1px solid var(--border); box-sizing: border-box; }
+.spin { height: 34px; padding: 0 6px 0 10px; border: 1px solid var(--border); border-radius: 5px; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+
+.sub { display: flex; flex-direction: column; gap: 10px; opacity: 0.45; }
+.sub > .phead { min-height: 26px; }
+.sub > .phead h3 { font-size: 14px; }
+.sub > .pbody { display: flex; flex-direction: column; gap: 10px; }
+.seg { display: flex; height: 32px; border: 1px solid var(--border); border-radius: 5px; overflow: hidden; background: var(--segbg); flex: none; }
+.seg > div { flex: 1 1 0; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 0 12px; border-left: 1px solid var(--border); white-space: nowrap; cursor: pointer; position: relative; }
+.seg > div:first-child { border-left: 0; }
+.seg > div.on { background: var(--sel); }
+.seg > div.on::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--hl); }
+.seg svg { width: 16px; height: 16px; flex: none; }
+.slider { flex: 1; height: 4px; border-radius: 2px; background: var(--border); position: relative; }
+.slider::after { content: ""; position: absolute; right: -2px; top: -8px; width: 20px; height: 20px; border-radius: 50%; background: var(--button); border: 1px solid var(--border); }
+.check { width: 18px; height: 18px; border: 1px solid var(--border); border-radius: 3px; flex: none; }
+
+.gate { flex: none; }
+.gate > .pbody { display: flex; flex-direction: column; gap: 6px; }
+.gmeter { position: relative; height: 16px; border-radius: 3px; background: var(--border); }
+.gmeter .lvl { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 3px; background: var(--neu); }
+.gmeter .hatch { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 3px 0 0 3px;
+  background: repeating-linear-gradient(-45deg, var(--neu) 0 3px, var(--hatch) 3px 6px); }
+.gmeter .knob { position: absolute; top: -4px; width: 12px; height: 24px; margin-left: -6px; border-radius: 3px; background: var(--neu); border: 2px solid var(--button); }
+.gscale { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); }
+.gvalue { color: var(--neu); font-size: 13px; }
+.minibar { display: none; position: relative; flex: 1; min-width: 40px; height: 6px; border-radius: 3px; background: var(--border); overflow: hidden; }
+.minibar .lvl { position: absolute; left: 0; top: 0; bottom: 0; background: var(--neu); }
+.minibar .gt { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--text); }
+
+.detector { display: flex; flex-direction: column; gap: 10px; container-type: inline-size; container-name: det; }
+.dhead { display: flex; align-items: center; gap: 6px; min-height: 34px; }
+.dhead h3 { margin: 0 0 0 2px; font-size: 15px; font-weight: 500; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; }
+.vsep { width: 1px; height: 24px; background: var(--border); margin: 0 6px; }
+.roundbtn { width: 34px; height: 34px; border-radius: 17px; display: inline-flex; align-items: center; justify-content: center; flex: none; cursor: pointer; color: var(--text); }
+.roundbtn:hover { background: var(--hover); }
+.meterbox { position: relative; flex: 1; min-height: 0; }
+.meterbox svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+@container det (max-width: 520px) { .dhead .seg .lb { display: none; } .dhead .seg > div { padding: 0 10px; } }
+@container det (max-width: 300px) { .dhead h3 { visibility: hidden; } }
+
+/* v9: two states. Full: every panel open. Compact: the Detector plus small panels that open the full one in a popup. */
+.page[class*="-side"] .cols { flex-direction: row; }
+.page[class*="-stack"] .cols { flex-direction: column; }
+.page[class*="-side"] .side { width: 422px; flex: none; order: -1; display: flex; flex-direction: column; gap: 8px; overflow: hidden; }
+.mode-compact-side .side { width: 330px; }
+.page[class*="-side"] .detector { flex: 1; min-width: 0; }
+.page[class*="-stack"] .detector { flex: 1 1 auto; min-height: 0; }
+.page[class*="-stack"] .side { flex: none; display: flex; flex-direction: column; gap: 8px; }
+.page.clamped .detector { flex: none; }
+.page.clamped .meterbox { flex: none; }
+.mode-full-side .instrument { flex: 1 0 auto; }
+.instrument > .pbody { display: flex; flex-direction: column; gap: 10px; flex: 1; }
+.chiprow.show { display: flex; }
+
+.strip { gap: 8px; }
+.strip .phead { min-height: 34px; }
+.strip .summary { display: block; }
+.strip .minibar { display: block; }
+.panelbtn { display: inline-flex; align-items: center; gap: 6px; height: 34px; padding: 0 8px 0 10px; margin-left: -8px; flex: none;
+  border-radius: 5px; border: 1px solid transparent; background: transparent; color: var(--text); cursor: pointer;
+  font-size: 15px; font-weight: 500; white-space: nowrap; }
+.panelbtn:hover { background: var(--hover); border-color: var(--border); }
+.panelbtn.on { background: var(--sel); border-color: var(--hl); }
+.panelbtn .ico { color: var(--muted); display: flex; }
+
+.popup { position: absolute; z-index: 40; font-size: 14px; color: var(--text); display: none; border-radius: 6px; box-shadow: 0 10px 32px rgba(0,0,0,0.5); }
+.popup.show { display: flex; flex-direction: column; }
+.popup.scroll { overflow-y: auto; }
+.popup > .card { flex: 1 0 auto; }
+
+
+/* v12: colored panels like the sections of Fender Studio's effects. Each panel has its own color in --pc, text on it in --pt. */
+.card[data-pc="detector"] { --pc: var(--pc-detector); --pt: var(--pt-detector); }
+.card[data-pc="instrument"] { --pc: var(--pc-instrument); --pt: var(--pt-instrument); }
+.card[data-pc="gate"] { --pc: var(--pc-gate); --pt: var(--pt-gate); }
+.style-band .card[data-pc], .style-border .card[data-pc] { border: 2px solid var(--pc); }
+.style-band .card[data-pc] { padding: 0 0 10px; overflow: hidden; }
+.style-band .card[data-pc] > :not(.phead):not(.dhead) { margin-left: 10px; margin-right: 10px; }
+.style-band .card[data-pc] > .phead, .style-band .card[data-pc] > .dhead {
+  background: var(--pc); color: var(--pt); margin: 0; padding: 4px 8px 4px 12px; min-height: 42px; }
+.style-band .card[data-pc] > .phead h3, .style-band .card[data-pc] > .dhead h3, .style-band .card[data-pc] .panelbtn {
+  text-transform: uppercase; letter-spacing: 0.14em; font-size: 13px; font-weight: 700; color: var(--pt); }
+.style-band .card[data-pc] .panelbtn .ico { color: inherit; }
+.style-band .card[data-pc] .panelbtn:hover { background: rgba(0,0,0,0.1); border-color: transparent; }
+.style-band .card[data-pc] .panelbtn.on { background: rgba(0,0,0,0.16); border-color: var(--pt); }
+.style-band .card[data-pc] > .phead .summary, .style-band .card[data-pc] > .phead .muted { color: var(--pt); opacity: 0.75; }
+.style-band .card[data-pc] > .phead .pill { color: var(--pt); border-color: var(--pt); }
+.style-band .card[data-pc] > .dhead .roundbtn, .style-band .card[data-pc] > .dhead .vsep { color: var(--pt); }
+.style-band .card[data-pc] > .dhead .vsep { background: var(--pt); opacity: 0.4; }
+.style-band .card[data-pc] > .dhead .seg { background: var(--view); }
+.style-band .card[data-pc] > .phead .minibar { background: rgba(0,0,0,0.25); }
+.style-band .card[data-pc] > .phead .minibar .lvl { background: var(--pt); opacity: 0.8; }
+.popup .card[data-pc] { padding-top: 10px; }
+</style>
+</head>
+<body>
+<div class="controls">
+  <div class="group"><span class="label">Theme</span><span id="themes"></span></div>
+  <div class="group"><span class="label">Panels</span><span id="styles"></span></div>
+  <div class="group"><span class="label">Colors</span><span id="palettes"></span></div>
+  <div class="group"><span class="label">Inlay</span><span id="inlays"></span></div>
+  <div class="group"><span class="label">Screen</span><span id="screens"></span></div>
+  <div class="group"><span class="label">Window</span><span id="presets"></span>
+    <input id="iw" type="number" aria-label="Window width"> × <input id="ih" type="number" aria-label="Window height"></div>
+  <div class="status" id="status"></div>
+</div>
+<div class="stage" id="stage"><div class="screen" id="screen">
+  <div class="daw" id="daw"></div>
+  <div class="win" id="win">
+    <div class="titlebar" id="titlebar" title="Drag to move"><div class="appicon"></div><span class="title">Kamerton</span>
+      <div class="wbtns"><span>–</span><span>□</span><span>✕</span></div></div>
+    <div class="page" id="page"><div class="cols" id="cols"></div></div>
+    <div class="grip" id="grip" title="Drag to resize"></div>
+  </div>
+  <div class="popup" id="popup" role="dialog"></div>
+</div></div>
+
+<script>
+const params = new URLSearchParams(location.search);
+const S = {
+  style: ['band', 'border', 'none'].includes(params.get('style')) ? params.get('style') : 'band',
+  palette: ['fender', 'muted', 'kde'].includes(params.get('palette')) ? params.get('palette') : 'fender',
+  inlay: params.get('inlay') === 'diamond' ? 'diamond' : 'none',
+  done: new Set([1]),   // A2 is already tuned, to show the badge
+  sw: +params.get('sw') || 1536, sh: +params.get('sh') || 864,   // screen, in logical pixels
+  corner: params.get('corner') || 'br', wx: 0, wy: 0,            // where the window sits; null corner = dragged
+  variant: params.get('variant') === 'drawer' ? 'drawer' : 'collapse',
+  theme: ['layan', 'dark', 'light'].includes(params.get('theme')) ? params.get('theme') : 'layan',
+  det: params.get('det') === 'left' ? 'left' : 'right',
+  w: +params.get('w') || 432, h: +params.get('h') || 540,
+  pop: ['instrument', 'gate'].includes(params.get('open')) ? params.get('open') : null,  // open floating panel
+  manual: {},          // panels the user folded or unfolded by hand
+  active: 0,           // index in STRINGS
+  display: 'needle'
+};
+
+// KDE color scheme roles, as in v7.
+const SCHEMES = {
+  dark: { positive: [39, 174, 96], window: [32, 35, 38], view: [20, 22, 24], header: [41, 44, 48], button: [41, 44, 48], text: [252, 252, 252], inactive: [161, 169, 177], neutral: [246, 116, 0], accent: [61, 174, 233] },
+  light: { positive: [39, 174, 96], window: [239, 240, 241], view: [255, 255, 255], header: [222, 224, 226], button: [252, 252, 252], text: [35, 38, 41], inactive: [112, 125, 138], neutral: [246, 116, 0], accent: [61, 174, 233] },
+  layan: { positive: [0, 110, 40], window: [49, 49, 58], view: [49, 49, 58], header: [49, 49, 58], button: [68, 69, 75], text: [234, 234, 234], inactive: [153, 153, 153], neutral: [176, 128, 0], accent: [86, 87, 245] }
+};
+const rgb = (v, a) => a === undefined ? `rgb(${v.join(',')})` : `rgba(${v.join(',')},${a})`;
+const mix = (a, b, t) => rgb(a.map((x, i) => Math.round(x + (b[i] - x) * t)));
+const lum = (v) => 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2];
+
+function applyTheme() {
+  const K = SCHEMES[S.theme];
+  const dark = lum(K.text) > lum(K.view);
+  const vars = {
+    window: rgb(K.window), view: rgb(K.view), header: rgb(K.header), button: rgb(K.button), text: rgb(K.text), muted: rgb(K.inactive),
+    pos: rgb(K.positive || [39, 174, 96]), border: mix(K.window, K.text, 0.2), hover: rgb(K.accent, 0.1), hl: rgb(K.accent), sel: rgb(K.accent, 0.22), neu: rgb(K.neutral),
+    hatch: mix(K.view, K.neutral, 0.35), segbg: mix(K.view, K.text, 0.04),
+    wood: mix(K.window, K.text, 0.12), woodEdge: mix(K.window, K.text, 0.3), stringCol: mix(K.view, K.text, 0.6), chrome: mix(K.window, K.text, 0.55), nut: mix(K.view, K.text, 0.85),
+    plateTop: mix(K.button, K.text, 0.06), plateBottom: rgb(K.button),
+    frameTop: dark ? mix(K.view, K.text, 0.1) : mix(K.text, K.view, 0.42),
+    frameBottom: dark ? rgb(K.view) : mix(K.text, K.view, 0.3),
+    frameEdge: dark ? 'rgba(0,0,0,0.55)' : mix(K.text, K.view, 0.2)
+  };
+  const screen = document.getElementById('screen');  // the popup is on the screen too, outside the window
+  for (const [k, v] of Object.entries(vars)) screen.style.setProperty('--' + k, v);
+  // Panel colors. Fender: like the sections of Fender Studio's effects. Muted: the same, a third of the way to the window color.
+  // KDE: the scheme's accent, positive and neutral roles.
+  const FENDER = { detector: [31, 166, 173], instrument: [224, 56, 45], gate: [235, 168, 40] };
+  const KDE = { detector: K.accent, instrument: K.positive, gate: K.neutral };
+  for (const panel of ['detector', 'instrument', 'gate']) {
+    let c = S.palette === 'kde' ? KDE[panel] : FENDER[panel];
+    if (S.palette === 'muted') c = c.map((x, i) => Math.round(x + (K.window[i] - x) * 0.35));
+    screen.style.setProperty('--pc-' + panel, rgb(c));
+    screen.style.setProperty('--pt-' + panel, lum(c) > 150 ? '#1b1c1f' : '#ffffff');
+  }
+  screen.className = 'screen style-' + S.style;
+}
+
+const STRINGS = [ // left column top to bottom, then right column
+  { n: 6, l: 'E', o: 2, f: 82.41 }, { n: 5, l: 'A', o: 2, f: 110.0 }, { n: 4, l: 'D', o: 3, f: 146.83 },
+  { n: 3, l: 'G', o: 3, f: 196.0 }, { n: 2, l: 'B', o: 3, f: 246.94 }, { n: 1, l: 'E', o: 4, f: 329.63 }
+];
+// Headstock: pegs top to bottom are strings 4, 5, 6 on the left and 3, 2, 1 on the right.
+const PEGS = [[2, 0, 45], [1, 0, 125], [0, 0, 205], [3, 1, 45], [4, 1, 125], [5, 1, 205]];
+
+const ICON = {
+  chev: '<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>',
+  down: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>',
+  reset: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 5v5h5M4.5 10A8 8 0 1 1 6 16"/></svg>',
+  mic: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>',
+  menu: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="8" cy="12" r="0.8" fill="currentColor"/><circle cx="12" cy="12" r="0.8" fill="currentColor"/><circle cx="16" cy="12" r="0.8" fill="currentColor"/></svg>',
+  drawer: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16M5.5 8h1.5M5.5 11h1.5M5.5 14h1.5"/></svg>'
+};
+const glyph = (d) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="${d}"/></svg>`;
+const segment = (items, chosen) => `<div class="seg">${items.map(([v, label, d]) =>
+  `<div data-seg="${v}" class="${v === chosen ? 'on' : ''}">${glyph(d)}<span class="lb">${label}</span></div>`).join('')}</div>`;
+
+function chipsRow(extraClass) {
+  const order = [0, 1, 2, 3, 4, 5];
+  return `<div class="chiprow ${extraClass}">${order.map((i) => {
+    const s = STRINGS[i];
+    return `<div class="mchip${i === S.active ? ' on' : ''}" data-s="${i}">${s.l}<sub>${s.o}</sub></div>`;
+  }).join('')}</div>`;
+}
+
+/// Outline C from v11: traced from a straight-on photo of a Les Paul Custom and smoothed.
+/// Left half; x is the offset from the centre line, y goes down from the top humps, in the photo's pixels.
+const HEAD_C = {
+  side: [[-102, 846], [-102, 800], [-106, 760], [-120, 712], [-160, 666], [-185, 642], [-189, 620], [-180, 520], [-168, 380], [-170, 220], [-180, 100], [-186, 41]],
+  top: [[-186, 41], [-150, 39], [-110, 31.5], [-70, 15], [-30, 0], [0, 8]],
+  posts: [168, 348, 543], postX: 118, nut: 846
+};
+
+/// Catmull-Rom through the points, as cubic Bézier segments.
+function spline(pts) {
+  let d = '';
+  for (let i = 0; i < pts.length - 1; ++i) {
+    const p0 = pts[Math.max(0, i - 1)], p1 = pts[i], p2 = pts[i + 1], p3 = pts[Math.min(pts.length - 1, i + 2)];
+    const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6];
+    const c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+    d += `C${c1[0].toFixed(1)} ${c1[1].toFixed(1)} ${c2[0].toFixed(1)} ${c2[1].toFixed(1)} ${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`;
+  }
+  return d;
+}
+
+/// Les Paul style headstock, one SVG of 522 × 514 units that only ever scales as a whole.
+/// The tuner keys are wide chrome buttons carrying the string's note, number and frequency.
+/// Like the VU meter it is hardware, so it has its own colors; only selection and progress use KDE roles.
+function headstock() {
+  const W = 522, cx = 261, top = 6, k = 105 / 186, ox = 0;   // outline C scaled to a 210 units wide top
+  const at = ([x, y]) => [cx + x * k, top + y * k];
+  const side = HEAD_C.side.map(at), topEdge = HEAD_C.top.map(at);
+  const mirror = (pts) => pts.map(([x, y]) => [2 * cx - x, y]).reverse();
+  const outline = `M${side[0][0]} ${side[0][1]}` + spline(side) + spline(topEdge) + spline(mirror(topEdge)) + spline(mirror(side)) + 'Z';
+  const rows = HEAD_C.posts.map((y) => top + y * k);
+  const nutY = top + HEAD_C.nut * k, H = Math.ceil(nutY + 30);
+  const nutX = (si) => 213.5 + si * 19;                    // string 6 … 1, left to right
+  const postX = (side) => cx + (side ? 1 : -1) * HEAD_C.postX * k;
+  // Where the outline is at height y, for the shafts of the keys.
+  const edgeX = (s, y) => {
+    for (let i = side.length - 1; i > 0; --i) {
+      const [x1, y1] = side[i], [x0, y0] = side[i - 1];
+      if (y >= y1 && y <= y0) { const l = x1 + (x0 - x1) * (y - y1) / (y0 - y1); return s ? 2 * cx - l : l; }
+    }
+    return s ? W - 160 : 160;
+  };
+  const keyW = 138, keyH = 52;
+  const wound = [true, true, true, false, false, false];
+  let shafts = '', keys = '', posts = '', strings = '', sel = '';
+  for (const [si, side, y0] of PEGS) {
+    const y = rows[Math.round((y0 - 45) / 80)];
+    const st = STRINGS[si], on = si === S.active, done = S.done.has(si);
+    const kx = side ? W - 4 - keyW : 4;
+    const ex = edgeX(side, y);
+    shafts += side ? `<rect x="${ex - 4}" y="${y - 5}" width="${kx - ex + 6}" height="10" fill="url(#shaft)"/>
+        <rect x="${kx - 8}" y="${y - 8}" width="10" height="16" rx="2" fill="url(#shaft)"/>`
+      : `<rect x="${kx + keyW - 2}" y="${y - 5}" width="${ex - kx - keyW + 6}" height="10" fill="url(#shaft)"/>
+        <rect x="${kx + keyW - 2}" y="${y - 8}" width="10" height="16" rx="2" fill="url(#shaft)"/>`;
+    const px = postX(side);
+    posts += `<circle cx="${px}" cy="${y}" r="14" fill="url(#bushing)" stroke="#55585e" stroke-width="1"/>
+      <circle cx="${px}" cy="${y}" r="8.5" fill="#2a2b2f"/><circle cx="${px}" cy="${y}" r="5.2" fill="url(#post)"/>`;
+    const path = `M${px} ${y}L${nutX(si)} ${nutY}L${nutX(si)} ${H}`;
+    if (on) sel = path;
+    else strings += `<path d="${path}" stroke="${wound[si] ? '#a88a5c' : '#c9cacd'}" stroke-width="${wound[si] ? 1.9 : 1.3}" fill="none"/>`;
+    const ky = y - keyH / 2;
+    const badgeX = side ? kx + keyW - 6 : kx + 6;
+    keys += `<g class="key" data-s="${si}" role="button" aria-pressed="${on}">
+      ${on ? `<rect x="${kx - 3}" y="${ky - 3}" width="${keyW + 6}" height="${keyH + 6}" rx="${keyH / 2 + 3}" fill="none" stroke="var(--hl)" stroke-width="6" opacity="0.35"/>` : ''}
+      <rect class="cap" x="${kx}" y="${ky}" width="${keyW}" height="${keyH}" rx="${keyH / 2}" fill="url(#chrome)" stroke="${on ? 'var(--hl)' : '#6f737a'}" stroke-width="${on ? 2.5 : 1.2}"/>
+      <ellipse cx="${kx + keyW / 2}" cy="${ky + 12}" rx="${keyW / 2 - 18}" ry="5" fill="#fff" opacity="0.55" filter="url(#soft)"/>
+      <text x="${kx + 15}" y="${ky + 36}" font-size="27" fill="#1d1f23">${st.l}<tspan font-size="14" dx="1" fill="#454950">${st.o}</tspan></text>
+      <text x="${kx + keyW - 15}" y="${ky + 22}" text-anchor="end" font-size="12.5" fill="#454950">string ${st.n}</text>
+      <text x="${kx + keyW - 15}" y="${ky + 39}" text-anchor="end" font-size="13.5" fill="#1d1f23" style="font-variant-numeric:tabular-nums">${st.f.toFixed(2)} Hz</text>
+      ${done ? `<circle cx="${badgeX}" cy="${ky + 4}" r="9" fill="var(--pos)" stroke="var(--view)" stroke-width="2"/>
+        <path d="M${badgeX - 4} ${ky + 4}l3 3 5-6" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>` : ''}
+    </g>`;
+  }
+  const inlay = S.inlay === 'diamond' ? `
+    <path d="M261 93L300 198L261 303L222 198Z" fill="url(#pearl)"/>
+    <path d="M261 93V303M218 214L304 174M218 230L304 190" stroke="#111114" stroke-width="4" clip-path="url(#diamondClip)"/>` : '';
+  return `<div class="headstock"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" aria-label="Strings">
+  <defs>
+    <linearGradient id="face" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#202024"/><stop offset="1" stop-color="#0d0d0f"/></linearGradient>
+    <linearGradient id="chrome" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbfbfc"/><stop offset="0.45" stop-color="#cfd2d7"/><stop offset="0.56" stop-color="#a9adb4"/><stop offset="1" stop-color="#dcdee2"/></linearGradient>
+    <linearGradient id="shaft" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e4e6ea"/><stop offset="0.5" stop-color="#8e9299"/><stop offset="1" stop-color="#5d6067"/></linearGradient>
+    <radialGradient id="bushing" cx="0.4" cy="0.35" r="0.7"><stop offset="0" stop-color="#f4f5f7"/><stop offset="0.6" stop-color="#a3a7ae"/><stop offset="1" stop-color="#5f6269"/></radialGradient>
+    <radialGradient id="post" cx="0.35" cy="0.3" r="0.7"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#8a8e95"/></radialGradient>
+    <linearGradient id="pearl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#efe4c4"/><stop offset="0.5" stop-color="#cdbb8e"/><stop offset="1" stop-color="#e8dcb8"/></linearGradient>
+    <linearGradient id="gloss" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0.09"/><stop offset="0.5" stop-color="#fff" stop-opacity="0"/></linearGradient>
+    <filter id="soft" x="-20%" y="-50%" width="140%" height="200%"><feGaussianBlur stdDeviation="2"/></filter>
+    <clipPath id="diamondClip"><path d="M261 93L300 198L261 303L222 198Z"/></clipPath>
+    <clipPath id="faceClip"><path d="${outline}"/></clipPath>
+  </defs>
+  ${shafts}
+  <g transform="translate(${ox} 0)">
+  <path d="M203.4 ${nutY}L318.6 ${nutY}L319 ${H}L203 ${H}Z" fill="#2b1f18"/>
+  <path d="M203 ${nutY + 20}H319" stroke="#b9bcc2" stroke-width="2.5"/>
+  <path d="${outline}" fill="url(#face)"/>
+  <g clip-path="url(#faceClip)"><rect x="150" y="0" width="222" height="${nutY}" fill="url(#gloss)"/></g>
+  ${inlay}
+  <path d="M261 312C246 312 243 324 243 338C243 373 240 411 234 437C230 453 222 463 212 469L310 469C300 463 292 453 288 437C282 411 279 373 279 338C279 324 276 312 261 312Z" fill="#141416" stroke="#e6d9b0" stroke-width="2"/>
+  <circle cx="261" cy="325" r="3" fill="url(#post)"/><circle cx="261" cy="459" r="3" fill="url(#post)"/>
+  <path d="${outline}" fill="none" stroke="#e6d9b0" stroke-width="9"/>
+  <path d="${outline}" fill="none" stroke="#141416" stroke-width="5"/>
+  <path d="${outline}" fill="none" stroke="#e6d9b0" stroke-width="1.8"/>
+  ${posts}
+  <rect x="201" y="${nutY - 5}" width="120" height="10" rx="1.5" fill="#efe7cf" stroke="#c9bf9f" stroke-width="0.8"/>
+  ${strings}
+  ${sel ? `<path d="${sel}" stroke="var(--hl)" stroke-width="2.6" fill="none"/>` : ''}
+  </g>
+  ${keys}
+</svg></div>`;
+}
+
+// The VU meter of v7, drawn as one SVG 100 × 61.8 units (golden ratio), so it scales as a whole.
+function meterSvg() {
+  const P = [300, 400];
+  const pt = (r, c) => { const a = c * 0.8 * Math.PI / 180; return [P[0] + r * Math.sin(a), P[1] - r * Math.cos(a)]; };
+  const arc = (r, c1, c2) => { const a = pt(r, c1), b = pt(r, c2); return `M${a[0].toFixed(1)} ${a[1].toFixed(1)}A${r} ${r} 0 0 1 ${b[0].toFixed(1)} ${b[1].toFixed(1)}`; };
+  const ink = '#2a1c10', red = '#b5281e', green = '#2f7d3a';
+  // Stroke for stroke the app's ScaleArt in VuMeter.qml.
+  const ticks = (vals, r0, r1) => vals.map((c) => { const a = pt(r0, c), b = pt(r1, c); return `M${a[0].toFixed(1)} ${a[1].toFixed(1)}L${b[0].toFixed(1)} ${b[1].toFixed(1)}`; }).join('');
+  const range = (a, b, step) => { const out = []; for (let v = a; v <= b; v += step) out.push(v); return out; };
+  let scale = `<path d="${arc(300, -30, 30)}" fill="none" stroke="${ink}" stroke-width="4"/>
+    <path d="${arc(301.5, -50, -30)}${arc(301.5, 30, 50)}" fill="none" stroke="${red}" stroke-width="7"/>
+    <path d="${arc(289, -3, 3)}" fill="none" stroke="${green}" stroke-width="5"/>
+    <path d="${ticks([-20, -10, 0, 10, 20], 300, 318)}" stroke="${ink}" stroke-width="2.6"/>
+    <path d="${ticks([-50, -40, -30, 30, 40, 50], 300, 318)}" stroke="${red}" stroke-width="2.6"/>
+    <path d="${ticks(range(-45, 45, 10), 300, 310)}" stroke="${ink}" stroke-width="1.8"/>
+    <path d="${ticks(range(-38, 38, 2), 272, 280)}" stroke="${ink}" stroke-width="1.1"/>`;
+  for (const c of [-50, -30, -20, -10, 0, 10, 20, 30, 50]) {
+    const p = pt(334, c);
+    const t = c > 0 ? '+' + c : c < 0 ? '−' + -c : '0';
+    scale += `<text x="${p[0].toFixed(1)}" y="${p[1].toFixed(1)}" text-anchor="middle" dominant-baseline="central" font-size="19" font-weight="600" fill="${Math.abs(c) >= 30 ? red : ink}">${t}</text>`;
+  }
+  scale += `<text x="300" y="150" text-anchor="middle" dominant-baseline="central" font-size="16" font-weight="700" letter-spacing="2" fill="${ink}">CENTS</text>
+    <text x="74" y="205" text-anchor="middle" dominant-baseline="central" font-size="26" fill="${ink}">♭</text>
+    <text x="526" y="205" text-anchor="middle" dominant-baseline="central" font-size="26" fill="${ink}">♯</text>`;
+  const s = 0.15767, ox = 2.7, oy = 2.94;
+  return `<svg viewBox="0 0 100 61.8" preserveAspectRatio="xMidYMid meet" style="overflow:visible">
+  <defs>
+    <linearGradient id="plate" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--plateTop)"/><stop offset="1" stop-color="var(--plateBottom)"/></linearGradient>
+    <linearGradient id="bezel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--frameTop)"/><stop offset="1" stop-color="var(--frameBottom)"/></linearGradient>
+    <radialGradient id="lamp" gradientUnits="userSpaceOnUse" cx="50" cy="42.6" r="75.7" gradientTransform="translate(50 42.6) scale(1 0.6063) translate(-50 -42.6)">
+      <stop offset="0" stop-color="#ffd998"/><stop offset="0.32" stop-color="#f5bb6a"/><stop offset="0.6" stop-color="#df9748"/><stop offset="0.84" stop-color="#b06a2e"/><stop offset="1" stop-color="#7c4521"/></radialGradient>
+    <radialGradient id="hot" gradientUnits="userSpaceOnUse" cx="50" cy="42.6" r="28.4" gradientTransform="translate(50 42.6) scale(1 0.5915) translate(-50 -42.6)">
+      <stop offset="0" stop-color="rgb(255,248,222)" stop-opacity="0.95"/><stop offset="0.45" stop-color="rgb(255,232,182)" stop-opacity="0.55"/><stop offset="1" stop-color="rgb(255,220,160)" stop-opacity="0"/></radialGradient>
+    <linearGradient id="rtop" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgb(46,23,5)" stop-opacity="0.5"/><stop offset="1" stop-color="rgb(46,23,5)" stop-opacity="0"/></linearGradient>
+    <linearGradient id="rleft" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="rgb(46,23,5)" stop-opacity="0.4"/><stop offset="1" stop-color="rgb(46,23,5)" stop-opacity="0"/></linearGradient>
+    <linearGradient id="rright" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="rgb(46,23,5)" stop-opacity="0.4"/><stop offset="1" stop-color="rgb(46,23,5)" stop-opacity="0"/></linearGradient>
+    <linearGradient id="gtop" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0.1"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+    <radialGradient id="ledOn" cx="0.5" cy="0.58" r="0.5"><stop offset="0" stop-color="#c8ffc8"/><stop offset="0.16" stop-color="#5dff70"/><stop offset="0.42" stop-color="#1ee63b"/><stop offset="0.74" stop-color="#0c9e26"/><stop offset="1" stop-color="#075f17"/></radialGradient>
+    <radialGradient id="ledOff" cx="0.38" cy="0.32" r="0.62"><stop offset="0" stop-color="#a3c286"/><stop offset="0.24" stop-color="#5d874c"/><stop offset="0.62" stop-color="#3b5f32"/><stop offset="1" stop-color="#284424"/></radialGradient>
+    <radialGradient id="glow"><stop offset="0" stop-color="rgb(90,255,120)" stop-opacity="0.75"/><stop offset="0.4" stop-color="rgb(90,255,120)" stop-opacity="0.35"/><stop offset="1" stop-color="rgb(90,255,120)" stop-opacity="0"/></radialGradient>
+    <filter id="blur" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="0.35"/></filter>
+    <clipPath id="faceclip"><rect x="2.7" y="2.7" width="94.6" height="39.9"/></clipPath>
+  </defs>
+  <rect x="0.1" y="0.1" width="99.8" height="61.6" rx="1.2" fill="url(#plate)" stroke="var(--border)" stroke-width="0.12"/>
+  <rect x="1.8" y="1.8" width="96.4" height="41.7" rx="0.7" fill="url(#bezel)" stroke="var(--frameEdge)" stroke-width="0.12"/>
+  <g clip-path="url(#faceclip)">
+    <rect x="2.7" y="2.7" width="94.6" height="39.9" fill="url(#lamp)"/>
+    <rect x="2.7" y="2.7" width="94.6" height="39.9" fill="url(#hot)"/>
+    <rect x="2.7" y="2.7" width="94.6" height="1.4" fill="url(#rtop)"/>
+    <rect x="2.7" y="2.7" width="1.1" height="39.9" fill="url(#rleft)"/>
+    <rect x="96.2" y="2.7" width="1.1" height="39.9" fill="url(#rright)"/>
+    <g transform="translate(${ox} ${oy}) scale(${s})">${scale}</g>
+    <line id="needleShadow" x1="0" y1="0" x2="0" y2="0" stroke="rgba(60,28,4,0.42)" stroke-width="0.5" filter="url(#blur)"/>
+    <line id="needle" x1="0" y1="0" x2="0" y2="0" stroke="${ink}" stroke-width="0.4" stroke-linecap="round"/>
+    <text x="90.6" y="6.9" text-anchor="end" font-size="2.5" font-weight="700" letter-spacing="0.31" fill="${ink}">IN TUNE</text>
+    <circle id="ledGlow" cx="93" cy="6.05" r="3.4" fill="url(#glow)" opacity="0"/>
+    <circle cx="93" cy="6.05" r="1.25" fill="rgba(40,24,8,0.45)"/>
+    <circle id="led" cx="93" cy="6.05" r="1.05" fill="url(#ledOff)"/>
+    <ellipse cx="92.7" cy="5.6" rx="0.5" ry="0.3" fill="#fff" opacity="0.55" filter="url(#blur)"/>
+    <polygon points="40,2.7 58,2.7 26,42.6 8,42.6" fill="#fff" opacity="0.06"/>
+    <rect x="2.7" y="2.7" width="94.6" height="9" fill="url(#gtop)"/>
+    <rect x="2.85" y="2.85" width="94.3" height="39.6" fill="none" stroke="rgba(255,255,255,0.17)" stroke-width="0.3"/>
+  </g>
+  <g style="fill:var(--text)">
+    <text x="2.7" y="51.6" font-size="4"><tspan id="hz">82.41</tspan><tspan dx="0.6" font-size="2" style="fill:var(--muted)">Hz</tspan></text>
+    <text id="target" x="2.7" y="56.3" font-size="1.8" style="fill:var(--muted)"></text>
+    <text x="50" y="57.6" text-anchor="middle" font-size="12" font-weight="300"><tspan id="note">E</tspan><tspan id="oct" font-size="4" style="fill:var(--muted)">2</tspan></text>
+    <text x="97.3" y="51.6" text-anchor="end" font-size="4"><tspan id="cents">0.0</tspan><tspan dx="0.6" font-size="2" style="fill:var(--muted)">¢</tspan></text>
+    <text id="hint" x="97.3" y="56.3" text-anchor="end" font-size="1.8" style="fill:var(--muted)"></text>
+  </g>
+</svg>`;
+}
+
+
+const DISPLAYS = [['needle', 'Needle', 'M3 17a9 9 0 0 1 18 0M12 17l4-6'], ['strobe', 'Strobe', 'M4 5v14M8 5v14M12 5v14M16 5v14M20 5v14'], ['bar', 'Bar', 'M3 10v4M7 8v8M11 5v14M15 8v8M19 10v4']];
+const TIMBRES = [['pluck', 'Pluck', 'M12 21c-3-3-8-8.5-8-13 0-3 4-5 8-5s8 2 8 5c0 4.5-5 10-8 13z'], ['sine', 'Sine', 'M2 12Q6.5 2 11 12T20 12M20 12h2'], ['organ', 'Organ', 'M5 20v-9M9.5 20V6M14.5 20V4M19 20v-10M3 20h18']];
+const PANEL_ICON = '<span class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></span>';
+const progress = () => `<span class="pill">${ICON.reset}${S.done.size} of 6 tuned</span>`;
+const $ = (id) => document.getElementById(id);
+
+function detectorHtml() {
+  return `<section class="card detector" id="detector" data-pc="detector">
+    <div class="dhead">
+      <h3>Detector</h3>
+      ${segment(DISPLAYS, S.display)}
+      <div class="vsep"></div>
+      <span class="roundbtn" title="Main menu">${ICON.menu}</span>
+    </div>
+    <div class="meterbox" id="meterbox">${meterSvg()}</div>
+  </section>`;
+}
+
+/// The full Instrument panel: in the side column, or floating over the window in the compact layout.
+/// In a popup the heading row is left out: the small panel's heading and progress stay visible right above it.
+function instrumentFull(chips, heading = true) {
+  return `<section class="card instrument${chips ? ' chipsmode' : ''}" data-pc="instrument">
+    ${heading ? `<div class="phead"><h3>Instrument</h3><span class="spacer"></span>${progress()}</div>` : ''}
+    <div class="pbody">
+      <div class="row"><span class="btn dd"><span><b style="font-weight:500">Guitar</b> <span class="muted">6-string</span></span>${ICON.down}</span>
+        <span class="btn dd"><span style="font-weight:500">Standard</span>${ICON.down}</span></div>
+      <div class="strings">${headstock()}${chipsRow('')}</div>
+      <div class="row"><span class="switch"></span><span>Auto-detect string</span><span class="spacer"></span>
+        <span class="spin">A4 440 Hz <span class="muted" style="display:flex;flex-direction:column;line-height:0.8;font-size:11px">⌃<br>⌄</span></span></div>
+      <div class="hsep"></div>
+      <div class="sub">
+        <div class="phead"><h3>Reference tone</h3></div>
+        <div class="pbody">
+          ${segment(TIMBRES, 'pluck')}
+          <div class="row"><span class="muted" style="display:flex"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4zM16.5 9a4 4 0 0 1 0 6"/></svg></span><span class="slider"></span><span class="muted" style="font-size:12px;margin-left:8px">100%</span></div>
+          <div class="row"><span class="check"></span><span>Cycle through all strings</span></div>
+        </div>
+      </div>
+    </div>
+  </section>`;
+}
+
+function gateFull(heading = true) {
+  return `<section class="card gate" data-pc="gate">
+    ${heading ? '<div class="phead"><h3>Noise gate</h3><span class="spacer"></span><span class="lvlText" style="font-variant-numeric:tabular-nums">−14.2 dB</span></div>' : ''}
+    <div class="pbody">
+      <div class="gvalue" style="padding-left:24px">−64 dB</div>
+      <div class="gmeter"><span class="hatch" style="width:8.6%"></span><span class="lvl gLvl" style="left:8.6%"></span><span class="knob" style="left:8.6%"></span></div>
+      <div class="gscale"><span>−70</span><span>−60</span><span>−50</span><span>−40</span><span>−30</span><span>−20</span><span>−10</span><span>0</span></div>
+      <div class="row"><span class="btn" style="flex:1">${ICON.reset}Reset</span><span class="btn" style="flex:2">${ICON.mic}Set from room noise</span></div>
+    </div>
+  </section>`;
+}
+
+/// Small Instrument panel: what is being tuned, progress, and the strings. Its heading opens the full panel.
+function instrumentStrip() {
+  return `<section class="card strip" data-pc="instrument">
+    <div class="phead"><button class="panelbtn${S.pop === 'instrument' ? ' on' : ''}" data-pop="instrument" title="Show the Instrument panel" aria-haspopup="dialog">Instrument${PANEL_ICON}</button>
+      <span class="summary">Guitar 6-string · Standard · A4 440 Hz</span>${progress()}</div>
+    ${chipsRow('show')}
+  </section>`;
+}
+
+function gateStrip() {
+  return `<section class="card strip" data-pc="gate">
+    <div class="phead"><button class="panelbtn${S.pop === 'gate' ? ' on' : ''}" data-pop="gate" title="Show the Noise gate panel" aria-haspopup="dialog">Noise gate${PANEL_ICON}</button>
+      <span class="muted" style="white-space:nowrap">−64 dB</span>
+      <span class="minibar"><span class="lvl miniLvl"></span><span class="gt" style="left:8.6%"></span></span></div>
+  </section>`;
+}
+
+function build(mode) {
+  const st = STRINGS[S.active];
+  const compact = mode.startsWith('compact');
+  $('cols').innerHTML = detectorHtml() +
+    `<div class="side" id="side">${compact ? instrumentStrip() + gateStrip() : instrumentFull(false) + gateFull()}</div>`;
+  $('target').textContent = `target ${st.f.toFixed(2)} Hz · string ${st.n}`;
+  $('note').textContent = st.l;
+  $('oct').textContent = st.o;
+}
+
+// --- Choosing the layout ------------------------------------------------------------------------
+const FULL_MIN = 480;     // the full layout needs at least this meter width…
+const FULL_SHARE = 0.7;   // …and at least this share of the meter the compact layout would give
+const MIN_METER = 260;    // below this even the compact layout scrolls
+
+function meterWidth() {
+  const b = $('meterbox');
+  return Math.round(Math.min(b.clientWidth, b.clientHeight * 1.618));
+}
+function measure(mode) {
+  $('page').className = `page mode-${mode}`;
+  build(mode);
+  const side = $('side'), cols = $('cols');
+  const fits = mode.endsWith('side') ? side.scrollHeight <= side.clientHeight + 1 : cols.scrollHeight <= cols.clientHeight + 1;
+  return { mode, fits, meter: meterWidth() };
+}
+const biggest = (list) => list.reduce((a, b) => (!a || b.meter > a.meter ? b : a), null);
+
+function layout() {
+  const wide = $('page').clientWidth >= 720;
+  const full = biggest([...(wide ? ['full-side'] : []), 'full-stack'].map(measure).filter((r) => r.fits));
+  const compact = biggest([...(wide ? ['compact-side'] : []), 'compact-stack'].map(measure).filter((r) => r.fits && r.meter >= MIN_METER));
+  let pick, why;
+  if (full && full.meter >= FULL_MIN && (!compact || full.meter >= FULL_SHARE * compact.meter)) {
+    pick = full; why = 'everything fits';
+  } else if (compact) {
+    pick = compact;
+    why = !full ? 'the full panels don’t fit' : `the full layout would leave a ${full.meter} px meter`;
+  } else {
+    pick = { mode: 'compact-stack', scroll: true }; why = 'nothing fits';
+  }
+  measure(pick.mode);
+  const page = $('page'), box = $('meterbox');
+  if (pick.scroll) {
+    page.classList.add('scroll', 'clamped');
+    box.style.height = (MIN_METER / 1.618) + 'px';
+  } else if (pick.mode.endsWith('stack')) {
+    // The meter keeps its shape; whatever height is left goes under the panels, not around the meter.
+    const w = box.clientWidth, h = box.clientHeight;
+    page.classList.add('clamped');
+    box.style.height = Math.min(h, w / 1.618) + 'px';
+  }
+  if (!pick.mode.startsWith('compact')) S.pop = null;
+  const names = { 'full-side': 'Full, side column', 'full-stack': 'Full, one column', 'compact-side': 'Compact, side column', 'compact-stack': 'Compact, one column' };
+  $('status').textContent = `${names[pick.mode]} · meter ${meterWidth()} px · ${why}` + (pick.scroll ? ' · SCROLLS (last resort)' : '');
+  renderPopup();
+}
+
+// --- Floating panel -------------------------------------------------------------------------------
+/// Opens under its button like a menu (or above it when there is no room), and closes on a click outside or Esc.
+function renderPopup() {
+  const pop = $('popup');
+  document.querySelectorAll('.panelbtn').forEach((b) => b.classList.toggle('on', b.dataset.pop === S.pop));
+  pop.className = 'popup';
+  pop.removeAttribute('style');
+  if (!S.pop) { pop.innerHTML = ''; return; }
+  const btn = document.querySelector(`.panelbtn[data-pop="${S.pop}"]`);
+  // A popup window: placed on the screen, so it may reach past the edges of a small app window.
+  const screen = $('screen');
+  let ax = 0, ay = 0;
+  for (let el = btn; el && el !== screen; el = el.offsetParent) { ax += el.offsetLeft; ay += el.offsetTop; }
+  ay -= $('page').scrollTop;
+  const pw = S.sw, ph = S.sh, gap = 4, margin = 8;
+  const width = Math.min(422, pw - 2 * margin);
+  const left = Math.max(margin, Math.min(ax - 10, pw - width - margin));
+  const below = ph - (ay + btn.offsetHeight + gap) - margin, above = ay - gap - margin;
+  // Like a menu: under the button if it fits, else above it, else shifted to stay inside the window.
+  // Only a screen too short for the whole panel gets the string chips instead of the headstock.
+  for (const chips of [false, true]) {
+    pop.innerHTML = S.pop === 'instrument' ? instrumentFull(chips, false) : gateFull(false);
+    pop.style.cssText = `left:${left}px;width:${width}px;top:0`;
+    pop.classList.add('show');
+    const h = pop.offsetHeight;
+    if (h <= below) { pop.style.top = (ay + btn.offsetHeight + gap) + 'px'; return; }
+    if (h <= above) { pop.style.top = (ay - gap - h) + 'px'; return; }
+    if (h <= ph - 2 * margin) { pop.style.top = Math.max(margin, Math.min(ay + btn.offsetHeight + gap, ph - h - margin)) + 'px'; return; }
+  }
+  pop.style.top = margin + 'px';
+  pop.style.maxHeight = (ph - 2 * margin) + 'px';
+  pop.classList.add('scroll');
+}
+
+// --- Window size and controls ------------------------------------------------------------------
+const SCREENS = [['Full HD at 125%', 1536, 864], ['Full HD', 1920, 1080], ['1280 × 720', 1280, 720], ['Netbook', 1024, 600], ['Very small', 800, 480]];
+const PRESETS = [
+  ['Corner, minimum', 432, 540, 'br'], ['Corner, small', 520, 620, 'br'], ['Narrow, tall', 640, 1100, 'tr'], ['Wide', 1180, 720, 'tl'],
+  ['Maximized', 0, 0, 'max']
+];
+function placeWindow() {
+  if (S.corner === 'max') { S.w = S.sw; S.h = S.sh; }
+  S.w = Math.min(S.w, S.sw);
+  S.h = Math.min(S.h, S.sh);
+  const m = S.corner === 'max' ? 0 : 12;
+  if (S.corner) {
+    S.wx = S.corner.includes('r') ? S.sw - S.w - m : m;
+    S.wy = S.corner.includes('b') ? S.sh - S.h - m : m;
+  }
+  S.wx = Math.max(0, Math.min(S.wx, S.sw - S.w));
+  S.wy = Math.max(0, Math.min(S.wy, S.sh - S.h));
+  const win = document.getElementById('win');
+  Object.assign(win.style, { left: S.wx + 'px', top: S.wy + 'px', width: S.w + 'px', height: S.h + 'px' });
+  document.getElementById('iw').value = S.w;
+  document.getElementById('ih').value = S.h;
+}
+function fitStage() {
+  const stage = document.getElementById('stage');
+  const screen = document.getElementById('screen');
+  screen.style.width = S.sw + 'px';
+  screen.style.height = S.sh + 'px';
+  S.k = Math.min(1, (stage.clientWidth - 32) / S.sw, (stage.clientHeight - 32) / S.sh);
+  screen.style.transform = `scale(${S.k})`;
+  placeWindow();
+}
+// A DAW behind the tuner: tracks with clips.
+(function daw() {
+  const colors = ['#d0654f', '#d8a53d', '#5fae6b', '#4f8fd0', '#9b6fd0', '#d06fa5', '#4fb8b0', '#a0a050'];
+  let html = '<div class="bar"><b style="color:#9a9ca4">Session</b><span>▶ ■ ●</span><span>120 BPM · 4/4</span></div>';
+  for (let i = 0; i < 8; ++i) {
+    let clips = '';
+    for (let x = (i * 7) % 15; x < 100; x += 18 + (i * 5) % 11) clips += `<span style="left:${x}%;width:${8 + (i * 3) % 9}%;background:${colors[i]}"></span>`;
+    html += `<div class="lane">${clips}</div>`;
+  }
+  document.getElementById('daw').innerHTML = html;
+})();
+function refresh() {
+  fitStage();
+  layout();
+  renderControls();
+}
+function buttons(id, items, current, set) {
+  const host = document.getElementById(id);
+  host.innerHTML = '';
+  for (const [value, label] of items) {
+    const b = document.createElement('button');
+    b.textContent = label;
+    b.setAttribute('aria-pressed', String(current(value)));
+    b.onclick = () => { set(value); refresh(); };
+    host.append(b);
+  }
+}
+function renderControls() {
+  buttons('styles', [['band', 'Title band'], ['border', 'Border only'], ['none', 'Plain (v10)']], (v) => v === S.style, (v) => { S.style = v; applyTheme(); });
+  buttons('palettes', [['fender', 'Fender'], ['muted', 'Muted'], ['kde', 'KDE roles']], (v) => v === S.palette, (v) => { S.palette = v; applyTheme(); });
+  buttons('inlays', [['none', 'None'], ['diamond', 'Split diamond']], (v) => v === S.inlay, (v) => { S.inlay = v; });
+  buttons('themes', [['layan', 'Layan'], ['dark', 'Breeze Dark'], ['light', 'Breeze Light']], (v) => v === S.theme, (v) => { S.theme = v; applyTheme(); });
+  buttons('screens', SCREENS.map((p, i) => [i, p[0]]), (i) => SCREENS[i][1] === S.sw && SCREENS[i][2] === S.sh, (i) => { S.sw = SCREENS[i][1]; S.sh = SCREENS[i][2]; S.pop = null; });
+  buttons('presets', PRESETS.map((p, i) => [i, p[0]]), (i) => PRESETS[i][3] === 'max' ? S.corner === 'max' : PRESETS[i][1] === S.w && PRESETS[i][2] === S.h && S.corner !== 'max',
+    (i) => { [, S.w, S.h, S.corner] = PRESETS[i]; S.pop = null; });
+}
+document.getElementById('iw').onchange = (e) => { S.w = Math.max(432, +e.target.value || S.w); if (S.corner === 'max') S.corner = 'tl'; refresh(); };
+document.getElementById('ih').onchange = (e) => { S.h = Math.max(540, +e.target.value || S.h); if (S.corner === 'max') S.corner = 'tl'; refresh(); };
+
+let drag = null;
+document.getElementById('grip').onpointerdown = (e) => {
+  drag = { x: e.clientX, y: e.clientY, w: S.w, h: S.h, k: S.k };
+  if (S.corner === 'max') S.corner = 'tl';
+  e.target.setPointerCapture(e.pointerId);
+};
+document.getElementById('grip').onpointermove = (e) => {
+  if (!drag) return;
+  S.w = Math.max(432, Math.round(drag.w + (e.clientX - drag.x) / drag.k));
+  S.h = Math.max(540, Math.round(drag.h + (e.clientY - drag.y) / drag.k));
+  placeWindow();
+  layout();
+};
+// Moving the window by its title bar, like a real one; a moved window no longer sticks to a corner.
+let move = null;
+document.getElementById('titlebar').onpointerdown = (e) => {
+  move = { x: e.clientX, y: e.clientY, wx: S.wx, wy: S.wy };
+  S.corner = null;
+  e.currentTarget.setPointerCapture(e.pointerId);
+};
+document.getElementById('titlebar').onpointermove = (e) => {
+  if (!move) return;
+  S.wx = Math.round(move.wx + (e.clientX - move.x) / S.k);
+  S.wy = Math.round(move.wy + (e.clientY - move.y) / S.k);
+  placeWindow();
+};
+document.getElementById('titlebar').onpointerup = () => { move = null; refresh(); };
+document.getElementById('grip').onpointerup = () => { drag = null; refresh(); };
+
+document.addEventListener('pointerdown', (e) => {
+  if (S.pop && !e.target.closest('#popup') && !e.target.closest('.panelbtn')) { S.pop = null; renderPopup(); }
+});
+document.getElementById('screen').addEventListener('click', (e) => {
+  const pb = e.target.closest('.panelbtn');
+  if (pb) { S.pop = S.pop === pb.dataset.pop ? null : pb.dataset.pop; renderPopup(); return; }
+  const chip = e.target.closest('[data-s]');
+  if (chip) { S.active = +chip.dataset.s; layout(); return; }
+  const seg = e.target.closest('.dhead [data-seg]');
+  if (seg) { S.display = seg.dataset.seg; layout(); }
+});
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && S.pop) { S.pop = null; renderPopup(); } });
+new ResizeObserver(fitStage).observe(document.getElementById('stage'));
+
+// --- A string ringing slightly out of tune and settling ------------------------------------------
+function tick(t) {
+  const sec = t / 1000;
+  const cents = 9 * Math.exp(-((sec % 9) / 3)) * Math.cos(sec * 1.3) + 0.6 * Math.sin(sec * 3.1);
+  const a = cents * 0.8 * Math.PI / 180;
+  const s = 0.15767, px = 2.7 + 300 * s, py = 2.94 + 400 * s, r = 322 * s;
+  const x = px + r * Math.sin(a), y = py - r * Math.cos(a);
+  const n = $('needle');
+  if (n) {
+    n.setAttribute('x1', px); n.setAttribute('y1', py); n.setAttribute('x2', x); n.setAttribute('y2', y);
+    const sh = $('needleShadow');
+    sh.setAttribute('x1', px + 0.9); sh.setAttribute('y1', py + 0.6); sh.setAttribute('x2', x + 0.9); sh.setAttribute('y2', y + 0.6);
+    const inTune = Math.abs(cents) < 1.5;
+    $('led').setAttribute('fill', inTune ? 'url(#ledOn)' : 'url(#ledOff)');
+    $('ledGlow').setAttribute('opacity', inTune ? 1 : 0);
+    $('hz').textContent = (STRINGS[S.active].f * Math.pow(2, cents / 1200)).toFixed(2);
+    $('cents').textContent = (cents > 0.05 ? '+' : cents < -0.05 ? '−' : '') + Math.abs(cents).toFixed(1);
+    $('hint').textContent = inTune ? '' : cents < 0 ? 'Too low · tighten' : 'Too high · loosen';
+  }
+  const lvl = -14 + 2 * Math.sin(sec * 2.3);
+  const pct = ((lvl + 70) / 70 * 100).toFixed(1) + '%';
+  document.querySelectorAll('.lvlText').forEach((el) => { el.textContent = lvl.toFixed(1).replace('-', '−') + ' dB'; });
+  document.querySelectorAll('.miniLvl').forEach((el) => { el.style.width = pct; });
+  document.querySelectorAll('.gLvl').forEach((el) => { el.style.width = `calc(${pct} - 8.6%)`; });
+  requestAnimationFrame(tick);
+}
+
+applyTheme();
+renderControls();
+fitStage();
+document.fonts.ready.then(refresh);
+refresh();
+requestAnimationFrame(tick);
+
+</script>
+</body>
+</html>

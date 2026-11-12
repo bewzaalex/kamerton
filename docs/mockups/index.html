@@ -65,13 +65,103 @@ a { color: var(--accent); }
   <p>Adjust the noise gate while tuning. Plucks ring out and decay into the room noise; the tuner dims while the input is below the gate.
      Try dragging the orange marker, the arrow keys and the mouse wheel on it. Add <code>&amp;room=noisy</code> for a louder room. All colors come from KDE color scheme roles: <code>theme=dark</code>, <code>light</code> (Breeze) or <code>layan</code>.</p>
   <div class="grid" data-pages='[
-    ["v4-noise-gate.html?gate=e&theme=layan", "E · Meter with its label inline, two centered buttons", "“Noise gate adjust” and the level on the meter line; the −/+ box is gone; Reset and Set from room noise, same size. This is the layout implemented in the app.", true],
+    ["v4-noise-gate.html?gate=e&theme=layan", "E · Meter with its label inline, two centered buttons", "“Noise gate adjust” and the level on the meter line; the −/+ box is gone; Reset and Set from room noise, same size. Implemented before the v5 panels.", true],
     ["v4-noise-gate.html?gate=d&theme=layan", "D · Your Layan colors", "Big meter in the tuner card, plus −/+, Reset and Set from room noise under it. No status bar."],
     ["v4-noise-gate.html?gate=d&theme=light&room=noisy", "D · Light theme, noisy room", "Press Set from room noise: the gate jumps above the noise and the tuner calms down."],
     ["v4-noise-gate.html?gate=a", "A · Drag the marker on the status bar meter", "Wider meter, a handle you can grab, hatched zone for ignored sounds, tooltip while dragging. Double-click resets."],
     ["v4-noise-gate.html?gate=b&open=true", "B · Click the meter for a noise gate popup", "Large meter with a scale, −/+ buttons, Reset, and Set from room noise (listens 2 s, sets the gate 6 dB above it)."],
     ["v4-noise-gate.html?gate=c", "C · Big input meter in the tuner card", "Always visible under the note, full width, easiest to hit. The status bar only shows the gate value."],
     ["v4-noise-gate.html?gate=a&theme=light&room=noisy", "A · Light theme, noisy room", "With the default −55 dB gate the room noise keeps the tuner busy; drag the gate above it."]
+  ]'></div>
+
+  <h2>v5 — noise gate in its own panel</h2>
+  <p>The noise gate leaves the tuner card and gets a panel of its own, with a “Noise gate” heading like Strings and Reference tone.
+     The meter, Reset and Set from room noise work as in v4 E. Try <code>&amp;room=noisy</code> and the three themes.</p>
+  <div class="grid" data-pages='[
+    ["v5-panels.html?panel=d&theme=layan", "D · Instrument, Noise gate and Detector panels, no toolbar", "Instrument, tuning and A4 move into the panel with the headstock, renamed “Instrument”. The toolbar is gone; the tuner card is “Detector”, with Needle / Strobe / Bar as one block and the menu in its top right corner."],
+    ["v5-panels.html?panel=d&theme=light&startInstrument=violin&startDisplay=bar", "D · Light theme, violin, LED bar", ""],
+    ["v5-panels.html?panel=a&theme=layan", "A · Panel under the tuner", "Heading and buttons on one row, the meter under them. The tuner card keeps only the display."],
+    ["v5-panels.html?panel=b&theme=layan", "B · Panel across the whole window", "Same panel, under both cards: the longest meter, easiest to set precisely."],
+    ["v5-panels.html?panel=c&theme=layan", "C · Panel in the side column", "Under Strings and Reference tone, with everything that is about sound on the left. Shorter meter."],
+    ["v5-panels.html?panel=a&theme=light&room=noisy", "A · Light theme, noisy room", "Press Set from room noise: the gate jumps above the noise and the tuner calms down."]
+  ]'></div>
+  <h2>v6 — hardware-style needle</h2>
+  <p>The v5 D layout with the needle drawn like studio hardware. A and C take every color from the KDE color scheme; B, the chosen one, uses KDE colors too,
+     except for what KDE has no role for: the lamp-lit face, its printed ink and the bright In tune lamp.
+     The needle has some weight and drops to its stop when there is no sound. <code>gauge=flat</code> is the v5 needle for comparison.</p>
+  <div class="grid" data-pages='[
+    ["v6-gauges.html?gauge=a&theme=layan", "A · Round studio gauge", "Knurled bezel, ¢ scale over 240°, “In tune” lamp and an LCD readout."],
+    ["v6-gauges.html?gauge=b&theme=layan", "B · VU meter, chosen", "Fills the Detector panel and scales with the window. Face lit like an incandescent lamp; the note, frequencies, cents and a bright In tune lamp sit under the window. KDE colors everywhere else.", true],
+    ["v6-gauges.html?gauge=c&theme=layan", "C · Hi-fi meter", "Dark brushed glass, warm light from below, glowing needle in the accent color over a chrome dome."],
+    ["v6-gauges.html?gauge=a&theme=light", "A · Breeze Light", ""],
+    ["v6-gauges.html?gauge=b&theme=light", "B · Breeze Light", ""],
+    ["v6-gauges.html?gauge=b&frame=a&theme=layan", "B frame a · KDE case", "The case in KDE colors, no bezel."],
+    ["v6-gauges.html?gauge=b&frame=b&theme=layan", "B frame b · Black bezel", "The KDE case with a black bezel around the window."],
+    ["v6-gauges.html?gauge=b&frame=c&theme=layan", "B frame c · Brushed plate, KDE tint", "Brushed metal in the scheme’s button color, black bezel, four screws."],
+    ["v6-gauges.html?gauge=b&frame=d&theme=layan", "B frame d · Aluminium plate", "Silver brushed aluminium, our own color, dark print."],
+    ["v6-gauges.html?gauge=b&frame=e&theme=layan", "B frame e · Champagne plate", "Gold-tinted plate like a studio leveling amplifier."],
+    ["v6-gauges.html?gauge=b&theme=layan&room=noisy", "B · Noisy room", ""],
+    ["v6-gauges.html?gauge=c&theme=dark", "C · Breeze Dark", ""]
+  ]'></div>
+  <h2>v7 — readouts and frames</h2>
+  <p>v6 B with the glass and LED. The bezels around the meter take a dark KDE color instead of black, and the row under the meter is plain text:
+     the frequency and the target on the left, the big note in the middle, the cents and what to do on the right.</p>
+  <div class="grid" data-pages='[
+    ["v7-lcd.html?theme=layan", "Layan · implemented", "This is the needle display in the app, in the v5 D layout. Bigger Hz and cents, smaller target, string and hint; nothing shown twice.", true],
+    ["v7-lcd.html?theme=light", "Breeze Light", "The bezel is a soft dark grey from the scheme, not black."]
+  ]'></div>
+  <h2>v8 — window sizes</h2>
+  <p>How the v7 layout adapts to the window. The Detector always comes first and its meter is as big as the window allows; Instrument comes second and Noise gate third.
+     The page scrolls only when nothing else helps. Pick a size at the top, type one in, or drag the window’s bottom-right corner; the line at the top says what was folded.
+     Click a panel heading to fold or unfold it by hand.</p>
+  <div class="grid" data-pages='[
+    ["v8-responsive.html?variant=collapse&w=1480&h=760", "Collapsible · wide, short", "Side column next to the meter. When it is too short, Reference tone folds first, then Noise gate, then the headstock becomes a row of string chips, then Instrument folds to its heading and the chips."],
+    ["v8-responsive.html?variant=collapse&w=640&h=1100", "Collapsible · narrow, tall", "One column: Detector across the full width, Instrument and Noise gate under it, folded as needed."],
+    ["v8-responsive.html?variant=collapse&w=980&h=1060", "Collapsible · nearly square", "Where the side column would leave a small meter, the one-column layout is used instead."],
+    ["v8-responsive.html?variant=collapse&w=432&h=540", "Collapsible · minimum window", "Everything folded: Instrument heading with string chips, Noise gate heading with a small level bar. Still no scrolling."],
+    ["v8-responsive.html?variant=drawer&w=1480&h=760&open=1", "Drawer · wide, short, drawer open", "The side column stays only while it fits unfolded; otherwise Instrument and Noise gate move into a drawer opened from the Detector heading."],
+    ["v8-responsive.html?variant=drawer&w=640&h=1100", "Drawer · narrow, tall", "Only the Detector, with the string chips under the meter."]
+  ]'></div>
+  <h2>v9 — compact panels</h2>
+  <p>Two states instead of folding step by step. When the window has room, every panel is shown in full. Otherwise the Detector stays and
+     Instrument and Noise gate are replaced by small panels; the button with their name opens the full panel as a popup window, like a menu.
+     It is placed on the screen, not inside the tuner window, so a tiny tuner in a corner next to a DAW still opens the full panel with the headstock.
+     The popup closes on a click outside or Esc. Only a very small screen gets the string chips in the popup instead of the headstock.
+     Drag the window by its title bar or its bottom-right corner.</p>
+  <div class="grid" data-pages='[
+    ["v9-compact.html?open=instrument", "Tuner in the corner of a DAW · Instrument open", "432 × 540 window on a Full HD screen at 125%. The full Instrument panel opens above its button and reaches past the window."],
+    ["v9-compact.html?open=gate", "Tuner in the corner · Noise gate open", ""],
+    ["v9-compact.html?corner=max", "Maximized · full", "Instrument and Noise gate in the side column, nothing hidden."],
+    ["v9-compact.html?w=1180&h=720&corner=tl&theme=light&open=gate", "Breeze Light · wide window, Noise gate open", ""],
+    ["v9-compact.html?sw=800&sh=480&open=instrument", "Very small screen · Instrument open", "The screen is too short for the headstock, so the popup shows the string chips."]
+  ]'></div>
+  <h2>v10 — Les Paul style headstock</h2>
+  <p>v9 with a new headstock in outline C from v11 (traced from a straight-on photo of a Les Paul Custom and smoothed): the open-book top, a waist a third of the way down, shoulders below the lowest posts and a quick curve into the nut, black face with cream binding, a plain bell cover, chrome bushings and a short piece of fretboard; no branding.
+     The tuner keys are wide chrome buttons with the note, string number and frequency; click one to pick the string. The whole headstock is one drawing
+     that only scales as a whole, so its proportions never change with the window. It has its own colors, like the VU meter; the chosen string and the
+     tuned badge use KDE colors. <code>inlay=diamond</code> adds a split-diamond inlay.</p>
+  <div class="grid" data-pages='[
+    ["v10-headstock.html?corner=max&sw=1920&sh=1080", "Maximized on Full HD · Layan · implemented", "The full Instrument panel in the side column.", true],
+    ["v10-headstock.html?open=instrument", "Tuner in the corner · Instrument open", "The same headstock in the floating panel."],
+    ["v10-headstock.html?corner=max&sw=1920&sh=1080&theme=light&inlay=diamond", "Breeze Light · split-diamond inlay", ""]
+  ]'></div>
+  <h2>v11 — headstock outlines</h2>
+  <p>Les Paul headstock outlines on their own, without the app, traced from straight-on photos: a waist about a third of the way down,
+     shoulders below the lowest posts, then a quick curve into the nut. The chosen outline goes into the v10 app mockup.</p>
+  <div class="grid" data-pages='[
+    ["v11-headstock-outlines.html", "A, B, C and all three on top of each other", ""],
+    ["v11-headstock-outlines.html?look=outline&posts=0", "Outlines only", ""]
+  ]'></div>
+  <h2>v12 — colored panels (not used, the app stays with v10)</h2>
+  <p>v10 with each panel in its own color, like the sections of Fender Studio’s effects: a colored title band with the heading in capitals and a
+     colored border, or the border only. Colors: Fender-like teal, red and amber; the same toned down; or the KDE scheme’s accent, positive and
+     neutral roles.</p>
+  <div class="grid" data-pages='[
+    ["v12-panel-colors.html?corner=max&sw=1920&sh=1080", "Title band · Fender colors", ""],
+    ["v12-panel-colors.html?corner=max&sw=1920&sh=1080&palette=muted", "Title band · muted", ""],
+    ["v12-panel-colors.html?corner=max&sw=1920&sh=1080&style=border&palette=muted", "Border only · muted", ""],
+    ["v12-panel-colors.html?corner=max&sw=1920&sh=1080&palette=kde&theme=light", "Title band · KDE roles, Breeze Light", ""],
+    ["v12-panel-colors.html?open=instrument", "Tuner in the corner · Instrument open", "The small panels and the floating one keep their colors."]
   ]'></div>
 </main>
 <script>

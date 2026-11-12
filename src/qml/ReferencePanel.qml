@@ -98,30 +98,19 @@ ColumnLayout {
         }
     }
 
-    RowLayout {
+    SegmentedButtons {
         Layout.fillWidth: true
-        spacing: 0
-        uniformCellSizes: true
-
-        QQC2.ButtonGroup {
-            id: timbreGroup
-        }
-        Repeater {
-            model: [
-                { timbre: TunerController.Pluck, label: i18nc("@action:button sound type", "Pluck") },
-                { timbre: TunerController.Sine, label: i18nc("@action:button sound type", "Sine") },
-                { timbre: TunerController.Organ, label: i18nc("@action:button sound type", "Organ") }
-            ]
-            delegate: QQC2.ToolButton {
-                required property var modelData
-                Layout.fillWidth: true
-                text: modelData.label
-                checkable: true
-                checked: TunerController.timbre === modelData.timbre
-                QQC2.ButtonGroup.group: timbreGroup
-                onClicked: TunerController.timbre = modelData.timbre
-            }
-        }
+        accessibleName: i18nc("@label", "Sound")
+        value: TunerController.timbre
+        model: [
+            { value: TunerController.Pluck, label: i18nc("@action:button sound type", "Pluck"),
+              glyph: "M12 21c-3-3-8-8.5-8-13 0-3 4-5 8-5s8 2 8 5c0 4.5-5 10-8 13z" },
+            { value: TunerController.Sine, label: i18nc("@action:button sound type", "Sine"),
+              glyph: "M2 12Q6.5 2 11 12T20 12M20 12h2" },
+            { value: TunerController.Organ, label: i18nc("@action:button sound type", "Organ"),
+              glyph: "M5 20v-9M9.5 20V6M14.5 20V4M19 20v-10M3 20h18" }
+        ]
+        onPicked: value => TunerController.timbre = value
     }
 
     RowLayout {

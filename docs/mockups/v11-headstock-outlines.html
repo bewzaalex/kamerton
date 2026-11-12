@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Kamerton v11, headstock outlines</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600&amp;display=swap">
+<style>
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; background: #202125; color: #dcdce0; font: 14px/1.45 'Noto Sans', system-ui, sans-serif; }
+.controls { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; padding: 10px 16px; background: #26272c; border-bottom: 1px solid #36373d; }
+.controls .group { display: flex; align-items: center; gap: 4px; }
+.controls .label { color: #8c8d94; margin-right: 4px; }
+.controls button { height: 28px; padding: 0 10px; border: 1px solid #44454c; border-radius: 4px; background: #2e2f35; color: inherit; font: inherit; cursor: pointer; }
+.controls button[aria-pressed="true"] { background: #3d3e7a; border-color: #6667f0; }
+main { padding: 20px 16px 40px; }
+p.lead { max-width: 75ch; margin: 0 0 20px; color: #a6a7ae; }
+.grid { display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start; }
+.card { background: #2a2b30; border: 1px solid #393a40; border-radius: 8px; padding: 14px 16px 16px; width: 330px; display: flex; flex-direction: column; gap: 8px; }
+.card h2 { margin: 0; font-size: 16px; font-weight: 600; }
+.card span { color: #a6a7ae; font-size: 13px; }
+.card svg { width: 100%; height: auto; display: block; }
+</style>
+</head>
+<body>
+<div class="controls">
+  <div class="group"><span class="label">Show</span><span id="look"></span></div>
+  <div class="group"><span class="label">Posts</span><span id="posts"></span></div>
+</div>
+<main>
+  <p class="lead">Les Paul headstock outlines only, without the app. A and B are traced from your straight-on photos pixel by pixel;
+    C is A with fewer points, so its curves are softer. All are scaled to the same top width. Pick one and it goes into the app mockup.</p>
+  <div class="grid" id="grid"></div>
+</main>
+<script>
+// Left half of each outline: x is the offset from the centre line, y goes down from the top humps (source pixels).
+// The right half is the mirror image.
+const OUTLINES = {
+  A: {
+    title: 'A · Traced from the photo', note: 'Les Paul Custom, straight on. Waist at a third of the length, shoulders below the lowest posts.',
+    side: [[-102, 846], [-102, 816], [-103, 796], [-104, 776], [-108, 756], [-113, 736], [-125, 706], [-149.5, 676], [-171.5, 656], [-184, 646], [-189.5, 634],
+           [-188, 612], [-184, 576], [-174.5, 476], [-169, 396], [-166, 276], [-171, 216], [-176.5, 116], [-182.5, 76], [-186, 41]],
+    top: [[-186, 41], [-170, 40], [-150, 39], [-130, 37.5], [-110, 31.5], [-90, 24.5], [-70, 15], [-49, 5], [-29, 0], [-14, 3], [0, 8]],
+    posts: [[-118, 168], [-118, 348], [-118, 543]], nut: 846, color: '#5fd38d'
+  },
+  B: {
+    title: 'B · Traced from the illustration', note: 'Narrower nut, deeper waist and sharper shoulders; humps close to the centre.',
+    side: [[-67.5, 571], [-69, 546], [-73, 526], [-79, 506], [-84, 496], [-92, 486], [-101, 476], [-112, 466], [-124, 456], [-125, 446],
+           [-121.5, 396], [-118, 286], [-121, 186], [-124.5, 146], [-136, 56], [-138, 41], [-139, 31]],
+    top: [[-139, 31], [-117, 31], [-97, 30], [-87, 28], [-77, 25], [-67, 21], [-57, 15], [-47, 10], [-37, 5], [-27, 1], [-17, 0], [-8, 2], [0, 3.5]],
+    posts: [[-81, 136], [-81, 268], [-81, 401]], nut: 571, color: '#f0a03c'
+  },
+  C: {
+    title: 'C · A, smoothed', note: 'Same proportions as A with softer curves; reads better when small.',
+    side: [[-102, 846], [-102, 800], [-106, 760], [-120, 712], [-160, 666], [-185, 642], [-189, 620], [-180, 520], [-168, 380], [-170, 220], [-180, 100], [-186, 41]],
+    top: [[-186, 41], [-150, 39], [-110, 31.5], [-70, 15], [-30, 0], [0, 8]],
+    posts: [[-118, 168], [-118, 348], [-118, 543]], nut: 846, color: '#6aa8ff'
+  }
+};
+const S = { look: 'filled', posts: true };
+
+/// Catmull-Rom through the points, as cubic Bézier segments.
+function spline(pts) {
+  let d = '';
+  for (let i = 0; i < pts.length - 1; ++i) {
+    const p0 = pts[Math.max(0, i - 1)], p1 = pts[i], p2 = pts[i + 1], p3 = pts[Math.min(pts.length - 1, i + 2)];
+    const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6];
+    const c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+    d += `C${c1[0].toFixed(1)} ${c1[1].toFixed(1)} ${c2[0].toFixed(1)} ${c2[1].toFixed(1)} ${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`;
+  }
+  return d;
+}
+/// Up the left side, across the top to the centre notch, then the mirror image back down to the nut.
+function outlinePath(o) {
+  const mirror = (pts) => pts.map(([x, y]) => [-x, y]).reverse();
+  return `M${o.side[0][0]} ${o.side[0][1]}` + spline(o.side) + spline(o.top) + spline(mirror(o.top)) + spline(mirror(o.side)) + 'Z';
+}
+
+// Every outline is scaled to a top width of 300 units.
+function drawing(o, id) {
+  const k = 300 / (-2 * o.top[0][0]);
+  const H = o.nut * k + 60;
+  const d = outlinePath(o);
+  const nutW = -2 * o.side[0][0];
+  let posts = '';
+  if (S.posts) for (const [x, y] of o.posts) for (const px of [x, -x]) {
+    posts += `<circle cx="${px}" cy="${y}" r="${15 / k}" fill="url(#bush${id})" stroke="#55585e" stroke-width="${1 / k}"/>
+      <circle cx="${px}" cy="${y}" r="${8 / k}" fill="#2a2b2f"/><circle cx="${px}" cy="${y}" r="${5 / k}" fill="#d9dbdf"/>`;
+  }
+  const body = S.look === 'filled' ? `
+      <path d="M${-nutW / 2} ${o.nut}h${nutW}v${60 / k}h${-nutW}Z" fill="#2b1f18"/>
+      <path d="${d}" fill="url(#face${id})"/>
+      <path d="${d}" fill="none" stroke="#e6d9b0" stroke-width="${9 / k}"/>
+      <path d="${d}" fill="none" stroke="#141416" stroke-width="${5 / k}"/>
+      <path d="${d}" fill="none" stroke="#e6d9b0" stroke-width="${1.8 / k}"/>
+      ${posts}
+      <rect x="${-nutW / 2 - 2 / k}" y="${o.nut - 5 / k}" width="${nutW + 4 / k}" height="${10 / k}" fill="#efe7cf"/>`
+    : `<path d="${d}" fill="none" stroke="${o.color}" stroke-width="${2.5 / k}"/>${posts}`;
+  return `<svg viewBox="-170 -14 340 ${H + 20}" aria-label="${o.title}">
+    <defs>
+      <linearGradient id="face${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#202024"/><stop offset="1" stop-color="#0d0d0f"/></linearGradient>
+      <radialGradient id="bush${id}" cx="0.4" cy="0.35" r="0.7"><stop offset="0" stop-color="#f4f5f7"/><stop offset="0.6" stop-color="#a3a7ae"/><stop offset="1" stop-color="#5f6269"/></radialGradient>
+    </defs>
+    <g transform="scale(${k})">${body}</g></svg>`;
+}
+
+function overlay() {
+  let paths = '', maxH = 0;
+  for (const o of Object.values(OUTLINES)) {
+    const k = 300 / (-2 * o.top[0][0]);
+    maxH = Math.max(maxH, o.nut * k);
+    paths += `<g transform="scale(${k})"><path d="${outlinePath(o)}" fill="none" stroke="${o.color}" stroke-width="${2.5 / k}"/></g>`;
+  }
+  return `<svg viewBox="-170 -14 340 ${maxH + 40}">${paths}</svg>`;
+}
+
+function render() {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  for (const [id, o] of Object.entries(OUTLINES)) {
+    grid.insertAdjacentHTML('beforeend', `<div class="card"><h2>${o.title}</h2><span>${o.note}</span>${drawing(o, id)}</div>`);
+  }
+  grid.insertAdjacentHTML('beforeend', `<div class="card"><h2>All three on top of each other</h2>
+    <span><b style="color:${OUTLINES.A.color}">A</b> · <b style="color:${OUTLINES.B.color}">B</b> · <b style="color:${OUTLINES.C.color}">C</b>, same top width</span>${overlay()}</div>`);
+  buttons('look', [['filled', 'Headstock'], ['outline', 'Outline only']], 'look');
+  buttons('posts', [[true, 'On'], [false, 'Off']], 'posts');
+}
+function buttons(id, items, key) {
+  const host = document.getElementById(id);
+  host.innerHTML = '';
+  for (const [v, label] of items) {
+    const b = document.createElement('button');
+    b.textContent = label;
+    b.setAttribute('aria-pressed', String(S[key] === v));
+    b.onclick = () => { S[key] = v; render(); };
+    host.append(b);
+  }
+}
+const params = new URLSearchParams(location.search);
+if (params.get('look') === 'outline') S.look = 'outline';
+if (params.get('posts') === '0') S.posts = false;
+render();
+</script>
+</body>
+</html>
