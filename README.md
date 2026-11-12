@@ -37,9 +37,23 @@ Listens through your microphone, or plays a reference tone to tune by ear.
 
 ## Installation
 
-Kamerton is built from source. That takes about a minute.
+### Flatpak
 
-### Dependencies
+Download `kamerton-0.1.0.flatpak` from the [latest release](https://github.com/bewzaalex/kamerton/releases/latest) and install it:
+
+```sh
+flatpak install --user kamerton-0.1.0.flatpak
+```
+
+Flatpak fetches the KDE runtime from Flathub if you don't have it yet. Kamerton then appears in the application launcher. The file is for x86_64 PCs, and there are no automatic updates yet: to update, install the file from a newer release.
+
+To uninstall: `flatpak uninstall --user io.github.bewzaalex.kamerton`.
+
+### From source
+
+Building from source takes about a minute.
+
+#### Dependencies
 
 | Component | Version |
 | --- | --- |
@@ -53,7 +67,7 @@ Kamerton is built from source. That takes about a minute.
 
 A Plasma 6 desktop already has most of these at run time. To build, install your distribution's development packages for them, usually named with `-dev` or `-devel`.
 
-### Build and run
+#### Build and run
 
 ```sh
 git clone https://github.com/bewzaalex/kamerton.git
@@ -241,7 +255,7 @@ packaging/
 ## Roadmap
 
 Coming next:
-- Flatpak, deb and rpm packages.
+- Flathub, deb and rpm packages.
 - Sharing tunings as files.
 
 See [docs/TODO.md](docs/TODO.md) for everything planned.

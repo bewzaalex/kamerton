@@ -1,7 +1,10 @@
 # Flatpak
 
 `io.github.bewzaalex.kamerton.yml` builds Kamerton on the KDE runtime, with single-precision FFTW as
-its only extra module. The same manifest goes to Flathub.
+its only extra module. Each GitHub release gets a Flatpak bundle built from it.
+
+Kamerton isn't on Flathub. Flathub doesn't accept manifests written with AI help, so a Flathub
+submission needs its own manifest, written and submitted by a person.
 
 ## Build and test
 
@@ -17,7 +20,7 @@ included:
 ```sh
 mkdir -p build/flatpak && cd build/flatpak
 flatpak run org.flatpak.Builder --user --force-clean --repo=repo \
-    --mirror-screenshots-url=https://dl.flathub.org/media/ \
+    --compose-url-policy=full --mirror-screenshots-url=https://dl.flathub.org/media/ \
     app ../../packaging/flatpak/io.github.bewzaalex.kamerton.yml
 flatpak install --user ./repo io.github.bewzaalex.kamerton
 flatpak run io.github.bewzaalex.kamerton
@@ -30,8 +33,8 @@ flatpak run --command=flatpak-builder-lint org.flatpak.Builder manifest ../../pa
 flatpak run --command=flatpak-builder-lint org.flatpak.Builder repo repo
 ```
 
-In a local build the repo check reports `appstream-external-screenshot-url` and
-`appstream-remote-icon-not-mirrored`: Flathub's own build servers host the screenshots and icons.
+Both should pass with no errors. The two URL options put the screenshots and icons in the catalog
+with their Flathub addresses, as Flathub's own builds do.
 
 The manifest builds the release tag, not your working copy. To try local changes, replace the `git`
 source of the `kamerton` module with `type: dir` and `path: ../..` (relative to the manifest).
@@ -42,7 +45,14 @@ source of the `kamerton` module with `type: dir` and `path: ../..` (relative to 
    the new tag.
 2. Tag it (`vX.Y.Z`) and publish a GitHub release.
 3. In the manifest, set `tag` and `commit` of the `kamerton` module to the new tag.
-4. Open a pull request with the same change in the Flathub repository of the app.
+4. Build and check it as above, then make the bundle in `build/flatpak/` and attach it to the GitHub release:
+
+   ```sh
+   flatpak build-bundle --runtime-repo=https://dl.flathub.org/repo/flathub.flatpakrepo \
+       repo kamerton-X.Y.Z.flatpak io.github.bewzaalex.kamerton master
+   ```
+
+5. Update the version in the file name in the top README's Flatpak section.
 
 ## Clean up
 
