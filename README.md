@@ -58,19 +58,19 @@ A Plasma 6 desktop already has most of these at run time. To build, install your
 ```sh
 git clone https://github.com/bewzaalex/kamerton.git
 cd kamerton
-cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
-cmake --build build
-./build/bin/kamerton
+cmake -B build/cmake -G Ninja -DCMAKE_BUILD_TYPE=Release
+cmake --build build/cmake
+./build/cmake/bin/kamerton
 ```
 
-Running from `build/` changes nothing outside that folder. To get Kamerton in the application launcher, install it into your home directory:
+Everything is built in `build/`, and running from there changes nothing outside that folder. To get Kamerton in the application launcher, install it into your home directory:
 
 ```sh
-cmake -B build -DCMAKE_INSTALL_PREFIX=$HOME/.local
-cmake --build build && cmake --install build
+cmake -B build/cmake -DCMAKE_INSTALL_PREFIX=$HOME/.local
+cmake --build build/cmake && cmake --install build/cmake
 ```
 
-To uninstall, remove the files listed in `build/install_manifest.txt`.
+To uninstall, remove the files listed in `build/cmake/install_manifest.txt`.
 
 ## How to tune
 
@@ -233,6 +233,8 @@ docs/
   TODO.md            roadmap, backlog and open questions
   mockups/           interactive design mockups, open index.html in a browser
   screenshots/
+packaging/
+  flatpak/           Flatpak manifest, see its README for building and testing
 ```
 </details>
 
