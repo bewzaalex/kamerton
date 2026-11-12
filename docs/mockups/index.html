@@ -85,6 +85,18 @@ a { color: var(--accent); }
     ["v5-panels.html?panel=c&theme=layan", "C · Panel in the side column", "Under Strings and Reference tone, with everything that is about sound on the left. Shorter meter."],
     ["v5-panels.html?panel=a&theme=light&room=noisy", "A · Light theme, noisy room", "Press Set from room noise: the gate jumps above the noise and the tuner calms down."]
   ]'></div>
+  <h2>v6 — hardware-style needle</h2>
+  <p>The v5 D layout with the needle drawn like studio hardware. Every color is still a mix of the KDE color scheme roles:
+     the VU face is the scheme’s neutral color lit from behind, the hi-fi needle is the accent color.
+     The needle has some weight and drops to its stop when there is no sound. <code>gauge=flat</code> is the v5 needle for comparison.</p>
+  <div class="grid" data-pages='[
+    ["v6-gauges.html?gauge=a&theme=layan", "A · Round studio gauge", "Knurled bezel, ¢ scale over 240°, “In tune” lamp and an LCD readout."],
+    ["v6-gauges.html?gauge=b&theme=layan", "B · Backlit VU meter", "Wide window, needle pivot hidden under the shroud, red ends of the scale, LCD and lamp under the window."],
+    ["v6-gauges.html?gauge=c&theme=layan", "C · Hi-fi meter", "Dark brushed glass, warm light from below, glowing needle in the accent color over a chrome dome."],
+    ["v6-gauges.html?gauge=a&theme=light", "A · Breeze Light", ""],
+    ["v6-gauges.html?gauge=b&theme=light", "B · Breeze Light", ""],
+    ["v6-gauges.html?gauge=c&theme=dark", "C · Breeze Dark", ""]
+  ]'></div>
 </main>
 <script>
 for (const grid of document.querySelectorAll('[data-pages]')) {
