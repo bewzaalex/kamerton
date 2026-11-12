@@ -17,6 +17,10 @@
     <category>Audio</category>
     <category>Music</category>
   </categories>
+  <branding>
+    <color type="primary" scheme_preference="light">#a6d8f5</color>
+    <color type="primary" scheme_preference="dark">#16486b</color>
+  </branding>
   <content_rating type="oars-1.1"/>
   <supports>
     <control>pointing</control>
@@ -25,7 +29,15 @@
   <screenshots>
     <screenshot type="default">
       <caption>Tuning a guitar with the VU meter</caption>
-      <image>https://raw.githubusercontent.com/bewzaalex/kamerton/main/docs/screenshots/main-dark.png</image>
+      <image>https://raw.githubusercontent.com/bewzaalex/kamerton/v0.1.0/docs/screenshots/main-dark.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Tuning a violin with the strobe display</caption>
+      <image>https://raw.githubusercontent.com/bewzaalex/kamerton/v0.1.0/docs/screenshots/violin-light.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>The smallest window, next to a DAW</caption>
+      <image>https://raw.githubusercontent.com/bewzaalex/kamerton/v0.1.0/docs/screenshots/small-dark.png</image>
     </screenshot>
   </screenshots>
   <description>
@@ -42,6 +54,18 @@
     </ul>
   </description>
   <releases>
-    <release version="0.1.0" date="2026-11-11"/>
+    <release version="0.1.0" date="2026-11-12">
+      <url type="details">https://github.com/bewzaalex/kamerton/releases/tag/v0.1.0</url>
+      <description>
+        <p>First release.</p>
+        <ul>
+          <li>VU meter, strobe and LED bar displays</li>
+          <li>Les Paul style headstock with chrome tuner keys</li>
+          <li>Automatic string detection and reference tones</li>
+          <li>Noise gate you can drag on the input level meter</li>
+          <li>A compact layout for small windows, with floating full panels</li>
+        </ul>
+      </description>
+    </release>
   </releases>
 </component>
