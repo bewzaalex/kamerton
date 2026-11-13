@@ -39,13 +39,13 @@ Listens through your microphone, or plays a reference tone to tune by ear.
 
 ### Flatpak
 
-Download `kamerton-0.1.0.flatpak` from the [latest release](https://github.com/bewzaalex/kamerton/releases/latest) and install it:
+Download `kamerton-0.1.0-x86_64.flatpak` from the [latest release](https://github.com/bewzaalex/kamerton/releases/latest) and install it:
 
 ```sh
-flatpak install --user kamerton-0.1.0.flatpak
+flatpak install --user kamerton-0.1.0-x86_64.flatpak
 ```
 
-Flatpak fetches the KDE runtime from Flathub if you don't have it yet. Kamerton then appears in the application launcher. The file is for x86_64 PCs, and there are no automatic updates yet: to update, install the file from a newer release.
+Flatpak fetches the KDE runtime from Flathub if you don't have it yet. Kamerton then appears in the application launcher. It is for x86_64 PCs. There are no automatic updates yet: to update, install the file from a newer release.
 
 To uninstall: `flatpak uninstall --user io.github.bewzaalex.kamerton`.
 

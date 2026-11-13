@@ -49,7 +49,7 @@ source of the `kamerton` module with `type: dir` and `path: ../..` (relative to 
 
    ```sh
    flatpak build-bundle --runtime-repo=https://dl.flathub.org/repo/flathub.flatpakrepo \
-       repo kamerton-X.Y.Z.flatpak io.github.bewzaalex.kamerton master
+       repo kamerton-X.Y.Z-$(flatpak --default-arch).flatpak io.github.bewzaalex.kamerton master
    ```
 
 5. Update the version in the file name in the top README's Flatpak section.
